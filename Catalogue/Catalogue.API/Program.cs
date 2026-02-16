@@ -259,9 +259,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Env
     
 }
 
+var staticFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles");
+if (!Directory.Exists(staticFilesPath))
+    Directory.CreateDirectory(staticFilesPath);
+
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),
+    FileProvider = new PhysicalFileProvider(staticFilesPath),
     RequestPath = "/StaticFiles"
 });
 

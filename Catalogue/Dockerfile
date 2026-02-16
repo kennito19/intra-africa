@@ -16,5 +16,6 @@ RUN dotnet publish -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+COPY --from=build /src/Catalogue.API/StaticFiles ./StaticFiles
 ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Catalogue.API.dll"]
