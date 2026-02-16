@@ -1,0 +1,160 @@
+.row-grid {
+  @apply grid grid-cols-12 gap-4;
+}
+.row-grid > div {
+  @apply overflow-hidden rounded-[0.3125rem];
+}
+.row-grid > div .custom_gridimg {
+  @apply transform transition-transform ease-in-out duration-500;
+}
+.row-grid > div:hover .custom_gridimg {
+  @apply transform scale-110;
+}
+.col_12 {
+  @apply col-span-12;
+}
+.col_10 {
+  @apply col-span-12 sm:col-span-6 md:col-span-10;
+}
+
+.col_9 {
+  @apply col-span-12 sm:col-span-6 md:col-span-9;
+}
+.col_8 {
+  @apply col-span-12 sm:col-span-6 md:col-span-8;
+}
+.col_7 {
+  @apply col-span-12 sm:col-span-6 md:col-span-7;
+}
+.col_6 {
+  @apply col-span-12 sm:col-span-6;
+}
+.col_5 {
+  @apply col-span-12 sm:col-span-6 md:col-span-5;
+}
+.col_4 {
+  @apply col-span-12 sm:col-span-6 md:col-span-4;
+}
+.col_3 {
+  @apply col-span-12 sm:col-span-6 md:col-span-3;
+}
+.col_2 {
+  @apply col-span-12 sm:col-span-6 md:col-span-2;
+}
+.col_1 {
+  @apply col-span-12;
+}
+.custom_gridimg {
+  @apply w-full h-full object-cover;
+}
+.custom_grid_wrapper .row-grid:not(:last-child) {
+  @apply mb-6;
+}
+
+
+
+
+
+/* Category grid css */
+
+.pv-home-thumbline-main-1 {
+  @apply grid grid-cols-12 gap-4
+}
+.categories-col-1 {
+  @apply col-span-12;
+}
+
+.pv-home-thumbline-main-2 {
+  @apply grid grid-cols-1 sm:grid-cols-2  gap-4
+}
+.categories-col-2 {
+  @apply col-span-12 sm:col-span-1;
+}
+
+.pv-home-thumbline-main-3 {
+  @apply grid grid-cols-1 sm:grid-cols-4 md:grid-cols-3  gap-4
+}
+.categories-col-3 {
+  @apply col-span-12 sm:col-span-2 md:col-span-1;
+}
+
+
+.pv-home-thumbline-main-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-4
+}
+.categories-col-4 {
+  @apply col-span-12 sm:col-span-1 md:col-span-1;
+}
+
+
+.pv-home-thumbline-main-5 {
+  @apply grid sm:grid-cols-4 md:grid-cols-5  gap-4
+}
+.categories-col-5 {
+  @apply col-span-1 sm:col-span-2 md:col-span-1;
+}
+
+
+.pv-home-thumbline-main-6 {
+  @apply grid grid-cols-1  Esm:grid-cols-2 sm:grid-cols-3 md:grid-cols-6  gap-4
+}
+.categories-col-6 {
+  @apply col-span-1 sm:col-span-1 md:col-span-1;
+}
+
+
+.pv-home-thumbline-main-7 {
+  @apply grid grid-cols-1  Esm:grid-cols-2 sm:grid-cols-3 md:grid-cols-7  gap-4
+}
+.categories-col-7 {
+  @apply col-span-1 sm:col-span-1 md:col-span-1;
+}
+
+
+/* .pv-home-thumbline-main-8 {
+  @apply grid grid-cols-8 gap-4
+}
+.categories-col-8 {
+  @apply col-span-12 sm:col-span-6 md:col-span-8;
+}
+
+
+.pv-home-thumbline-main-9 {
+  @apply grid grid-cols-9 gap-4
+}
+.categories-col-9 {
+  @apply col-span-12 sm:col-span-6 md:col-span-9;
+}
+
+
+.pv-home-thumbline-main-10 {
+  @apply grid grid-cols-10 gap-4
+}
+.categories-col-10 {
+  @apply col-span-12 sm:col-span-6 md:col-span-10;
+}
+
+.pv-home-thumbline-main-11 {
+  @apply grid grid-cols-11 gap-4
+}
+.categories-col-11 {
+  @apply col-span-12 sm:col-span-6 md:col-span-10;
+}
+
+.pv-home-thumbline-main-12 {
+  @apply grid grid-cols-12 gap-4
+}
+.categories-col-12 {
+  @apply col-span-12;
+} */
+
+
+
+
+
+
+
+
+
+
+

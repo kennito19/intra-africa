@@ -1,0 +1,62 @@
+.pv-tierpricing-main {
+  @apply relative overflow-hidden mb-3 pr-9;
+}
+.pv-tierpricing-inner {
+  @apply flex items-center space-x-4 overflow-x-auto pb-3 sm:pb-2 ;
+}
+
+.pv-tierpricing-inner::-webkit-scrollbar {
+  @apply w-4 h-1 mt-1 rounded;
+}
+
+.pv-tierpricing-inner::-webkit-scrollbar-thumb {
+  @apply bg-BluishGrey rounded;
+}
+/* .pv-tierpricing-inner::-webkit-scrollbar-track {
+  @apply bg-Gray;
+} */
+
+/* .pv-tierprice-btnleft {
+  @apply absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-400 rounded-full text-12 p-1 text-white;
+}
+.pv-tierprice-btnright {
+  @apply absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-400 rounded-full text-12 p-1 text-white;
+} */
+
+.pv-tierprice-btnleft{
+  @apply  inline-block  bg-white rounded px-2 shadow
+}
+ .pv-tierprice-btnright{
+  @apply  inline-block  bg-white rounded px-2 shadow
+}
+.pv-tierpricebtn-main {
+  @apply absolute top-[12%] right-1 flex flex-col-reverse gap-3
+}
+ .pv-tierprice-btnleft::after{
+  @apply content-['<'] bg-cover 
+}
+ .pv-tierprice-btnright::after{
+  @apply content-['>'] bg-cover 
+}
+
+.pv-tierbtn-none {
+  @apply pointer-events-none hidden;
+}
+.actual_pricing_product,
+.product-slab-value,
+.total_pricing_product {
+  @apply whitespace-nowrap;
+}
+.actual_pricing_product {
+  @apply flex gap-2
+}
+.total_pricing_product {
+  @apply font-semibold tracking-wider;
+}
+.product-pricing-tier {
+  @apply flex flex-col p-1.5 border-[2px] rounded-md bg-white;
+}
+.product-pricing-tier .product-slab-value {
+  @apply font-medium text-sm;
+}
+

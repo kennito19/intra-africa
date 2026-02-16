@@ -1,0 +1,40 @@
+
+.hero-slider-wrapper .swiper .swiper-button-prev, .hero-slider-wrapper .swiper .swiper-button-next{
+    @apply absolute bottom-0 top-auto inline-block cursor-pointer;
+}
+.hero-slider-wrapper .swiper .swiper-button-prev{
+    @apply right-20 left-auto;
+}
+.hero-slider-wrapper .swiper .swiper-button-disabled:is(.swiper-button-prev,.swiper-button-next){
+    @apply opacity-100 after:filter after:brightness-0 after:invert-[0.5];
+}
+.hero-slider-wrapper .swiper .swiper-button-next{
+    @apply right-7 left-auto;
+}
+.hero-slider-wrapper .swiper .swiper-button-prev::after{
+    @apply content-[''] bg-[url('/images/Arrow.png')] w-7 h-3 bg-no-repeat bg-contain inline-block -rotate-180 filter invert-[68%] sepia-[29%] saturate-[7449%] hue-rotate-[322deg] brightness-[82%] contrast-[98%];
+}
+.hero-slider-wrapper .swiper .swiper-button-next::after{
+    @apply content-[''] bg-[url('/images/Arrow.png')] w-7 h-3 bg-no-repeat bg-contain inline-block;
+}
+.hero-slider-wrapper .swiper :is(.swiper-button-prev,.swiper-button-next){
+    @apply bg-white w-auto h-auto py-1 px-3 hidden sm:block;
+}
+.hero-slider-wrapper .swiper .swiper-pagination .swiper-pagination-bullet{
+    @apply w-[6px] h-[6px];
+}
+.hero-slider-img{
+    @apply w-full object-cover;
+}
+.swiper-horizontal>.swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal{
+    @apply z-[1];
+}
+.swiper-pagination-bullet{
+    @apply bg-themegrey shadow-none opacity-100 !important;
+}
+.swiper-pagination-bullet-active{
+    @apply bg-primary  w-[3.75rem] rounded-md !important;
+}
+.hero-slider-wrapper .swiper-pagination {
+    position: unset !important; 
+}

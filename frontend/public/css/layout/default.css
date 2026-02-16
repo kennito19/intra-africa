@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply font-poppins text-TextTitle text-base bg-[#f1f3f6];
+  }
+  *:is(h1, h2, h3, h4, h5, h6) {
+    @apply text-gray-800 font-poppins;
+  }
+  *:is(p, span) {
+    @apply font-nunitoSans text-gray-800;
+  }
+  img {
+    user-select: none;
+  }
+  ::selection {
+    @apply bg-primary text-white;
+  }
+  main {
+    @apply grow shrink-0;
+  }
+  footer {
+    @apply shrink-0 border-t;
+  }
+  .h2_pos {
+    @apply sm:text-40 text-32 font-semibold;
+  }
+  *:focus-visible {
+    @apply outline-primary;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  body,
+  html {
+    @apply scroll-smooth;
+  }
+
+  .pv-maintitle {
+    @apply text-[26px];
+  }
+  .pv-subtitle {
+    @apply text-24;
+  }
+  .pv-mainheading {
+    @apply text-[22px];
+  }
+  .pv-subheading {
+    @apply text-[20px];
+  }
+  .pv-extrasub-head {
+    @apply text-[18px];
+  }
+
+  .pv-para-xl {
+    @apply text-[16px];
+  }
+  .pv-para-md {
+    @apply text-[14px];
+  }
+  .pv-para-sm {
+    @apply text-12px;
+  }
+}
+
+.body_wrapper {
+  @apply min-h-screen flex flex-col items-stretch;
+}
+.site-container {
+  @apply max-w-[67.5rem] w-full px-[0.9375rem] sm:px-5 mx-auto;
+}
+.site-container-max {
+  @apply max-w-[90rem] w-full px-[0.9375rem] sm:px-5 md:px-[2.8125rem] mx-auto;
+}
+.site-container .site-container {
+  @apply !px-[0rem];
+}
+
+.small-container {
+  @apply max-w-[78.75rem] w-full px-[0.9375rem] sm:px-5 mx-auto;
+}
+.section_spacing_b {
+  @apply py-6;
+}
+input {
+  @apply accent-primary;
+}
+/* Reset autofill styles using attribute selectors */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  /* Reset any other unwanted styles */
+}
+
+.pv-text-right {
+  @apply text-end;
+}

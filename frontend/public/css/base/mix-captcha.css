@@ -1,0 +1,43 @@
+.captchaContainer {
+  @apply flex flex-row-reverse justify-end gap-3 items-center;
+}
+.captchaContainer .captch_input_validation {
+  @apply w-full;
+}
+.captchaContainer > div {
+  @apply mb-3;
+}
+.captchaContainer_fl {
+  @apply inline-flex items-center border border-solid border-[#ced4da] gap-[15px] px-3 py-1 rounded-md bg-[#f0f8ff];
+}
+.m_icon_refresh {
+  @apply bg-[url('/icon/refresh.svg')];
+}
+.captchaContainer .captcha_form .input-wrapper-main {
+  @apply mb-0;
+}
+.captchaContainer .captcha_form {
+  @apply flex items-center gap-3 flex-wrap;
+}
+.captchaContainer .captcha_form .input-wrapper-main label {
+  @apply hidden;
+}
+
+.captcha {
+  @apply text-18 font-medium select-none cursor-not-allowed;
+}
+.captchaContainer_input {
+  @apply text-base p-[6px];
+}
+.newCaptchaButton {
+  @apply flex items-center justify-center;
+}
+.capt_btn {
+  @apply bg-[#1f3561] hover:bg-[#05215b] text-white;
+}
+.captch_input_validation .input-wrapper-main {
+  @apply mb-0;
+}
+.captchaContainer .checkout_btn {
+  @apply mt-0 w-full;
+}

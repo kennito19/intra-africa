@@ -1,0 +1,31 @@
+.nav_checkoutwrapper {
+  @apply flex gap-2 items-center justify-between xl:gap-20  max-h-[86px] py-4;
+}
+
+.mp-security-icons {
+  @apply flex items-center gap-4;
+}
+
+.mp-security-icons > div {
+  @apply flex items-center flex-col space-y-1;
+}
+.mp-security-icons > div i::after {
+  @apply bg-gray-300 rounded-xl w-8 h-8;
+}
+.mp-header-menu {
+  @apply text-lightGraytext;
+}
+.mp-checkout-action {
+  @apply flex items-center gap-4;
+}
+.mp-header-menu {
+  @apply text-[19px];
+}
+
+.mp-header-menu.active {
+  @apply text-black font-semibold;
+}
+
+.mp-header-menu.true {
+  @apply text-primary font-semibold border-b-2 border-b-primary;
+}

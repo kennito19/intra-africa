@@ -1,0 +1,13 @@
+.p-prdlist-grid_change
+  .pd-list__card
+  .prd-card-list__wrapper
+  .prd-list-btn__wrapper {
+  @apply sm:justify-center;
+}
+.p-prdlist-grid_change .pd-list__card .prd-card-list__wrapper .btn-add-cart,
+.p-prdlist-grid_change
+  .pd-list__card-gridview
+  .prd-list-btn__wrapper-gridview
+  .btn-add-cart {
+  @apply hidden;
+}

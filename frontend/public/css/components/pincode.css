@@ -1,0 +1,21 @@
+.pincode_fl-main{
+    @apply relative max-w-[18.75rem] w-full;
+}
+.pincode_fl-main .input-wrapper-main{
+    @apply mb-1;
+}
+.btn-check{
+    @apply absolute text-14 sm:text-base leading-normal top-[2.125rem] right-3 text-[#4067BC];
+}
+.m-icon-delevery-cart{
+    @apply bg-[url('/icon/delivery.svg')] flex justify-center items-center cursor-pointer;
+}
+.dl_fl-fle{
+    @apply flex items-center gap-2;
+}
+.err_msg-msg{
+    @apply text-red-700;
+}
+.success_msg-succ{
+    @apply text-green-700;
+}

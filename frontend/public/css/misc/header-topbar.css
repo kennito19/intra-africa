@@ -1,0 +1,41 @@
+/* Header Topbar */
+.headersticky .h__topbar {
+  @apply hidden;
+}
+.h__topbar {
+  @apply bg-grayishBlueWhite text-slategrey text-center hidden md:block;
+}
+.h__topbar-content {
+  @apply flex justify-between flex-wrap xl:flex-row flex-col gap-2 items-center;
+}
+
+.pv-topbar-leftpara p {
+  @apply text-14 font-[500];
+}
+.pv-viewcollection-main {
+  @apply flex items-center gap-3;
+}
+.pv-viewcollection-main p {
+  @apply text-12 font-[600];
+}
+.pv-topbar-contact-main {
+  @apply flex items-center justify-between gap-[1.0625rem];
+}
+.pv-topbar-call-main,
+.pv-topbar-mail-main {
+  @apply list-none;
+}
+.pv-topbar-call-main li a,
+.pv-topbar-mail-main li a {
+  @apply text-14 font-semibold;
+}
+.pv-topbar-call-main li::before {
+  @apply content-[''] inline-block w-[0.6875rem] h-[0.6875rem] relative top-0.5 mr-1
+  bg-[url('/icon/call.svg')]
+  bg-contain;
+}
+.pv-topbar-mail-main li::before {
+  @apply content-[''] inline-block w-4 h-4 relative top-[0.3rem] mr-1
+  bg-[url('/icon/mail.svg')]
+  bg-contain;
+}

@@ -1,0 +1,30 @@
+/* swiper globale style */
+
+/* Categories swiper css */
+/* .category-slider-main .swiper-button-prev ,.category-slider-main .swiper-button-next{
+    @apply overflow-hidden
+}
+.category-slider-main .swiper-button-prev::after{
+    @apply content-[''] bg-[url('/images/arrows_home_slider.png')] bg-no-repeat bg-cover inline-block w-[50px] h-[50px]
+}
+.category-slider-main .swiper-button-next::after{
+    @apply content-[''] bg-[url('/images/arrows_home_slider.png')] bg-no-repeat bg-cover inline-block w-[50px] h-[50px] rotate-180
+}
+.category-slider-main .swiper-button-next.swiper-button-disabled::after , .category-slider-main .swiper-button-prev.swiper-button-disabled::after{
+    @apply hidden
+} */
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply overflow-hidden;
+}
+.swiper-button-prev::after {
+  @apply !content-[''] bg-[url('/images/arrows_home_slider.png')] bg-no-repeat bg-cover inline-block w-[50px] h-[50px];
+}
+.swiper-button-next::after {
+  @apply !content-[''] bg-[url('/images/arrows_home_slider.png')] bg-no-repeat bg-cover inline-block w-[50px] h-[50px] rotate-180;
+}
+.swiper-button-next.swiper-button-disabled::after,
+.swiper-button-prev.swiper-button-disabled::after {
+  @apply hidden;
+}

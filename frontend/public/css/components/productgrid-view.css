@@ -1,0 +1,12 @@
+.pd-list__card-gridview {
+  @apply overflow-hidden  sm:flex gap-5 relative bg-grayishBlueWhite p-2 sm:p-4  mt-3 border border-[#D6D6D6];
+}
+.prd-list__details-gridview {
+  @apply bg-grayishBlueWhite  p-2 relative overflow-hidden ;
+}
+.prd-list-btn__wrapper-gridview {
+  @apply gap-4 flex items-center mt-2 sm:mt-5;
+}
+.prd-list-price__wrapper-gridview {
+  @apply flex gap-4 mt-2 items-center;
+}

@@ -1,0 +1,29 @@
+.check-out-main {
+  @apply flex w-full gap-5 md:flex-row flex-col-reverse pt-6;
+}
+.check-orderlist {
+  @apply flex flex-col md:w-[70%] w-full;
+}
+.check-orderlist .modal-body{
+  @apply pb-[50px];
+}
+.offer-price-details {
+  @apply flex flex-col gap-5 md:w-[30%] h-fit w-full relative top-0 md:sticky md:top-[6.875rem];
+}
+/* .offer-price-details .coupan-main{
+  @apply sticky md:top-[6.25rem];
+} */
+
+.check-out-main .check-orderlist .accordion .accordion_item .check-delivery {
+  @apply p-0 border-none mb-0;
+}
+.check-out-main .check-orderlist .accordion .accordion_item .d-address-name {
+  @apply mb-2;
+}
+.check-out-main .check-orderlist .accordion .accordion_item .check-login-main {
+  @apply p-0 mb-0 border-none;
+}
+
+.captcha_number {
+  @apply ml-2 flex items-end gap-2 mb-3;
+}

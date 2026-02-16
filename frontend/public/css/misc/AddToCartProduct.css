@@ -1,0 +1,112 @@
+.cart-product-main {
+  @apply flex flex-wrap sm:flex-row p-4 sm:py-3 sm:px-6 mt-3 border-b;
+}
+
+.cart-product-main.cart-instock {
+  @apply bg-red-500/10 border-red-600;
+}
+.pv-product-oldselling {
+  @apply w-full text-center border-[1px] bg-red-500/10 border-red-500/30  rounded-md py-1 text-sm;
+}
+.cart-product-image {
+  @apply relative min-h-[10rem] m-auto w-full sm:w-[20%];
+}
+.cart-product-image .product-img-add-to-cart {
+  @apply absolute inset-0 object-contain h-full w-[95%];
+}
+.cart-product-details {
+  @apply w-full sm:w-[80%] sm:pt-4 sm:ps-4;
+}
+
+.cart-product-details h3 {
+  @apply text-base text-TextTitle pb-1;
+}
+.cart-product-title {
+  @apply text-base font-medium text-TextTitle pb-1 sm:leading-none leading-7;
+}
+.cart-size span {
+  @apply text-slategrey text-14;
+}
+.cart-size b {
+  @apply pl-1 font-medium text-14 text-black;
+}
+.cart-size {
+  @apply flex gap-10 pb-[0.2rem];
+}
+.cart-seller-name {
+  @apply text-slategrey text-14 pb-2 flex items-baseline gap-1;
+}
+.seller-name-title {
+  @apply text-black;
+}
+.pv-coupon-applytext {
+  @apply text-green-600 mb-1 inline-block;
+}
+.cart-rupees {
+  @apply flex gap-[0.625rem] items-center pb-4;
+}
+.cart-rupees strong {
+  @apply text-base font-bold;
+}
+.cart-rupees s {
+  @apply text-[0.9375rem] font-medium text-Scarlet;
+}
+.cart-rupees span {
+  @apply text-[1rem] font-semibold text-JungleGreen;
+}
+.cart-count-btn button {
+  @apply bg-[#DEDEDE] px-3 py-1 text-base font-bold text-TextTitle;
+}
+.cart-count-btn button:disabled {
+  @apply opacity-50;
+}
+.cart-count-btn p {
+  @apply bg-WhiteSmoke flex items-center justify-center w-12 text-base font-semibold border-r border-l border-x-slategrey;
+}
+.cart-product-wishlist-icon {
+  @apply bg-[url('/icon/wishe.svg')] bg-center bg-no-repeat bg-cover;
+}
+.cart-product-delete-icon {
+  @apply bg-[url('/icon/delete.svg')] bg-center bg-no-repeat bg-cover cursor-pointer;
+}
+.cart-count-btn .delete-btn {
+  @apply cursor-pointer;
+}
+.remove_items_cart_sn {
+  @apply text-red-500 hover:text-red-700;
+}
+.remove_items_cart_sn.cancel {
+  @apply underline text-link hover:text-red-500;
+}
+
+.counter-btn-cart {
+  @apply flex border-[0.0313rem] border-[#dedede] rounded-l-md rounded-r-md overflow-hidden;
+}
+.cart-count-btn {
+  @apply flex justify-between items-end my-3;
+}
+.btn-title {
+  @apply flex justify-between sm:pt-0 pt-3;
+}
+
+/*  Exclusive Warrant css*/
+.pv-warranty-cardmain {
+  @apply bg-[#f5f7fa] rounded  relative p-4 border;
+}
+.pv-warranty-tablemain {
+  @apply w-full border-collapse text-center rounded mt-2;
+}
+
+.pv-warranty-tablemain td:nth-child(even),
+.pv-warranty-tablemain th:nth-child(even) {
+  @apply text-14  border-x;
+}
+.pv-warranty-tablemain th {
+  @apply text-14 border-b;
+}
+.pv-warranty-cardbtn {
+  @apply absolute right-0 top-0 p-1 bg-white border-none;
+}
+.pv-warranty-cardbtn .closetoggle-icon {
+  @apply hover:scale-125 w-6 h-6;
+}

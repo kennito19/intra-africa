@@ -1,0 +1,19 @@
+/* breadcrumb */
+.breadcrumb_wrapper{
+  @apply py-2 px-2 sm:px-4 bg-white rounded my-4;
+}
+.breadcrumb_wrapper *{
+  @apply text-14;
+}
+.breadcrumb_wrapper a{
+  @apply hover:underline capitalize text-lighttext;
+}
+.breadcrumb_wrapper a:last-child{
+  @apply  text-primary;
+}
+.breadcrumb_active{
+  @apply text-primary;
+}
+.breadcrumb_seprator{
+  @apply inline-block mx-1 sm:mx-2 text-gray-400;
+}

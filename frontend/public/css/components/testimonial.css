@@ -1,0 +1,18 @@
+.pv-testimonial-main .pv-testimonial-inner {
+  @apply border-[1px] px-3 py-12 h-full rounded shadow-md;
+}
+
+.pv-testimonial-inner .testimonial_box-img {
+  @apply max-w-[70px] rounded-[100%] m-auto border;
+}
+.testimonial_box-job,
+.testimonial_box-name,
+.testimonial_box-img {
+  @apply !mb-3 text-center;
+}
+.testimonial_box-text:has(p) {
+  @apply text-lightGraytext text-14 font-normal text-center;
+}
+.pv-testimonial-main .swiper-slide {
+  @apply h-auto;
+}

@@ -1,0 +1,118 @@
+.product-list-wrapper {
+  @apply grid  gap-5 grid-cols-1 sm:grid-cols-2  md:grid-cols-4;
+}
+.pd-list__card {
+  @apply bg-white h-full rounded overflow-hidden cursor-pointer relative shadow-productcard hover:shadow-card;
+}
+.pd-list__card_loader {
+  @apply bg-white overflow-hidden relative hover:shadow-prdboxshadow;
+}
+.pd-list__card .pd-list-out-of-stock-badge {
+  @apply absolute top-[1rem] left-[-25px] bg-red-600 px-[1.1rem] text-[12px] font-medium text-red-50 ring-1 ring-inset ring-red-600/10 transform -rotate-45 z-[5];
+}
+.pd-list__card-gridview .pd-list-out-of-stock-badge {
+  @apply absolute top-[1rem] left-[-25px] bg-red-600 px-[1.1rem] text-[12px] font-medium text-red-50 ring-1 ring-inset ring-red-600/10 transform -rotate-45 z-[5];
+}
+.btn-whishlist {
+  @apply absolute top-2 right-2 p-2 z-[1] shadow-lg;
+}
+.btn-whishlist:hover .m-wishlist-icon {
+  @apply bg-[url('/icon/wishlist-fill.svg')] scale-125;
+}
+.wishlist-checked {
+  @apply bg-[url('/icon/wishlist-fill.svg')];
+}
+.prd-list__details {
+  @apply bg-white relative overflow-hidden flex gap-1 flex-col;
+}
+.p-prdgrid-view__wrapper .pd-list__img {
+  @apply min-h-[150px] sm:min-h-[15.625rem];
+}
+.p-prdgrid-view__wrapper .jp_prdlist_content {
+  @apply line-clamp-5;
+}
+.pd-list__img {
+  @apply overflow-hidden relative bg-[#fafafa] min-h-[15.625rem];
+}
+.pd-list__img img {
+  @apply w-full h-full object-contain absolute inset-0 p-3;
+}
+.prd-list-image {
+  @apply object-cover transform transition duration-500 scale-100 w-full;
+}
+.pd-list__card:hover .prd-list-image {
+  @apply md:transform md:transition md:duration-500 md:scale-110;
+}
+.prd-list-title {
+  @apply text-TextTitle font-semibold capitalize text-base;
+}
+.prd-list-contains {
+  @apply text-lighttext font-normal capitalize text-14 line-clamp-2;
+}
+
+.prd-list-color__title {
+  @apply text-TextTitle font-normal capitalize text-base;
+}
+.prd-list-price__wrapper {
+  @apply flex items-center gap-2 pt-1 flex-wrap;
+}
+.prd-total-price {
+  @apply text-TextTitle font-semibold text-14 flex-shrink-0;
+}
+.prd-check-price {
+  @apply text-red-600 font-normal text-12 flex-shrink-0 line-through;
+}
+.prd-list-offer {
+  @apply text-[#198754] font-normal text-12 flex-shrink-0;
+}
+.prd-card-list__wrapper {
+  @apply relative;
+}
+.prd-list-btn__wrapper {
+  @apply flex items-center md:gap-[3px] justify-start sm:justify-around lg:gap-[3px] gap-3 bg-white py-2 px-2 sm:py-3 flex-wrap sm:absolute -top-[3.875rem] sm:top-0 left-0 right-0 transition-all duration-500 ease-in-out shadow-prdbuttonshadow sm:shadow-none;
+}
+.pd-list__card:hover .prd-list-btn__wrapper {
+  @apply sm:-top-[3.875rem] shadow-prdbuttonshadow;
+}
+.sort_productlist {
+  @apply list-none m-0 p-0 bg-[#fff] z-10;
+}
+.sortby {
+  @apply font-bold text-[#3e4152];
+}
+.sort_productlist span li {
+  @apply my-4 mx-auto;
+}
+.m-popularity {
+  @apply bg-[url('../../icon/popularity.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.m-latest {
+  @apply bg-[url('../../icon/latest.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.m-discount {
+  @apply bg-[url('../../icon/discount.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.m-hightolow {
+  @apply bg-[url('../../icon/hightolow.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.m-lowtohigh {
+  @apply bg-[url('../../icon/lowtohigh.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.m-rating {
+  @apply bg-[url('../../icon/rating.svg')] bg-center bg-no-repeat bg-cover h-5 w-5;
+}
+.ripple-container .default {
+  @apply flex items-center gap-2;
+}
+.pv-productcard-main .swiper-wrapper {
+  @apply py-4;
+}
+.pv-productcard-main .swiper-slide {
+  @apply h-auto;
+}
+/* .pv-productcard-main .main_prd_fl {
+  @apply min-h-[190px];
+} */
+.pv-productcard-main .prd-list-title {
+  @apply line-clamp-2;
+}

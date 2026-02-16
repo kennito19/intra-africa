@@ -1,0 +1,50 @@
+.pv-creative-feature-main {
+  @apply py-[2.5rem];
+}
+.pv-creative-feature-inner {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-[1.625rem];
+}
+.pv-creative-feature-inner .pv-creative-feature-col:nth-child(2) {
+    @apply mt-3;
+}
+.pv-creative-feature-img {
+  @apply w-full h-full object-cover;
+}
+.pv-creat-feature-list {
+  @apply list-none;
+}
+/* .pv-creat-feature-list li {
+  @apply ;
+} */
+
+.pv-creat-feature-list li a {
+  @apply text-14 font-semibold;
+}
+.pv-creat-feature-list li:nth-child(1):before {
+  @apply content-[''] inline-block w-[1.5rem] h-[1.5rem] relative top-[2.125rem] mr-[1.5625rem]
+  bg-[url('/icon/Best-controllers.svg')]
+  bg-contain;
+}
+.pv-creat-feature-list li:nth-child(2):before {
+  @apply content-[''] inline-block w-[1.5rem] h-[1.5rem] relative top-[2.125rem] mr-[1.5625rem]
+    bg-[url('/icon/Customize-settings.svg')]
+    bg-contain;
+}
+.pv-creat-feature-list li:nth-child(3):before {
+  @apply content-[''] inline-block w-[1.5rem] h-[1.5rem] relative top-[3.125rem] mr-[1.5625rem]
+    bg-[url('/icon/High-end-display.svg')]
+    bg-contain;
+}
+.pv-creat-feature-list li h3 {
+    @apply text-22;
+}
+.pv-creat-feature-list li p {
+    @apply text-14 font-[400] mt-4;
+}
+.pv-creat-featute-box {
+    @apply ps-[3.125rem];
+}
+
+.categories-section .swiper {
+  @apply py-4 px-2
+}

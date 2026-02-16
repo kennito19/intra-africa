@@ -1,0 +1,10 @@
+.m-search {
+  @apply relative w-full;
+}
+.m-search__ip {
+  @apply relative text-slategrey w-full capitalize py-[0.4375rem] pr-2 pl-10 rounded-e-none rounded-md  border-primary border-2 font-light placeholder-slategrey focus-visible:outline-none text-base;
+  -webkit-appearance: none !important;
+}
+.m-search__icon {
+  @apply absolute top-1/2 -translate-y-1/2 left-4 w-4 h-4 bg-[url('/icon/search.svg')] bg-no-repeat cursor-pointer;
+}

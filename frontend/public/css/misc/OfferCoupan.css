@@ -1,0 +1,75 @@
+.offer-icon {
+  @apply bg-[url('/icon/Discount-cupan.svg')] bg-center bg-no-repeat bg-cover h-[1.35rem] w-[1.35rem];
+}
+.coupan-main {
+  @apply bg-white md:w-full max-w-none rounded-md;
+}
+.offer {
+  @apply flex justify-between items-center pb-5 pl-4 pt-3 pr-4;
+}
+.offer-title {
+  @apply text-base text-TextTitle font-semibold pl-4 pt-3 uppercase;
+}
+.apply-code {
+  @apply flex gap-2 items-center;
+}
+.apply-code p {
+  @apply md:text-base text-14 font-semibold text-TextTitle;
+}
+.apply-btn {
+  @apply text-[0.85rem] font-semibold leading-4 text-primary border-2 rounded-md border-primary px-5 py-[0.45rem] hover:bg-primary-hover hover:text-white;
+}
+.HeaderText {
+  @apply font-medium text-base sm:text-18 capitalize;
+}
+.Dnone {
+  @apply hidden;
+}
+.pos_rel {
+  @apply relative;
+}
+/* .btn_apply_offer {
+  @apply flex;
+} */
+.btn_apply_offer button {
+  @apply absolute border-[2px] top-[1px] right-0 bg-primary text-white  hover:bg-primary-hover;
+}
+.custom_padding {
+  @apply pr-[5.5rem];
+}
+.best_offer_text {
+  @apply py-2 px-3  bg-classicSilver font-semibold  uppercase mb-3 rounded;
+}
+.parent_offer {
+  @apply mb-3;
+}
+.offer_apply {
+  @apply py-4 px-3 border border-solid border-[#ced4da]  rounded-md flex justify-between items-center;
+}
+.offer_name {
+  @apply text-[#2D2D2D] font-[600] text-base sm:text-18;
+}
+.offer_detail {
+  @apply text-[#333] text-[14px] leading-none;
+}
+.offer_code {
+  @apply bg-[#eee] text-[#333] text-xs sm:text-sm font-[600] outline-none border border-dashed border-[#333]  py-2  px-4 inline-flex items-center  rounded-md capitalize tracking-wide gap-1;
+}
+.m-btn_applycode {
+  @apply rounded-t-none w-[100%] justify-center py-1 border-[#ced4da] bg-[#eee] text-[#333] font-[600] hover:bg-[#e4e4e4];
+}
+.m-btn_applycode.clicked {
+  @apply bg-bluishgreen text-darkgreen;
+}
+.offer_code.active {
+  @apply bg-bluishgreen text-darkgreen border-darkgreen;
+}
+.m-icon_offer_applied {
+  @apply bg-[url('/icon/double_tick.svg')] w-5 h-5 bg-center bg-no-repeat bg-cover;
+}
+.parent_offer.disable_offer .offer_detail {
+  @apply text-[#842029];
+}
+.parent_offer.disable_offer .m-btn_applycode {
+  @apply bg-[#ECECEC] text-[#707070];
+}

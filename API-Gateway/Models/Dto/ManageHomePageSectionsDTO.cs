@@ -1,0 +1,33 @@
+﻿namespace API_Gateway.Models.Dto
+{
+    public class ManageHomePageSectionsDTO
+    {
+        public int Id { get; set; }
+        public int LayoutId { get; set; }
+        public int LayoutTypeId { get; set; }
+        public string Name { get; set; }
+        public int? Sequence { get; set; }
+        public int? SectionColumns { get; set; }
+        public bool? IsTitleVisible { get; set; }
+        public string? Title { get; set; }
+        public string? SubTitle { get; set; }
+        public string? TitlePosition { get; set; }
+        public string? LinkIn { get; set; }
+        public string? LinkText { get; set; }
+        public string? Link { get; set; }
+        public string? LinkPosition { get; set; }
+        public string Status { get; set; }
+        public int? TotalRowsInSection { get; set; } = null;
+        public bool? IsCustomGrid { get; set; } = null;
+        public int? NumberOfImages { get; set; } = null;
+        public int? Column1 { get; set; } = null;
+        public int? Column2 { get; set; } = null;
+        public int? Column3 { get; set; } = null;
+        public int? Column4 { get; set; } = null;
+        public string? BackgroundColor { get; set; } = null;
+        public bool? InContainer { get; set; } = null;
+        public string? TitleColor { get; set; } = null;
+        public string? TextColor { get; set; } = null;
+
+    }
+}

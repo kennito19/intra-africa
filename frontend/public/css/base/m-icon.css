@@ -1,0 +1,40 @@
+.m-icon {
+  @apply inline-block w-[1.5625rem] h-[1.5625rem] bg-no-repeat bg-contain bg-center;
+}
+.m-wishlist-icon {
+  @apply bg-[url('/icon/add-whishlist.svg')] md:w-4 md:h-4 w-4 h-4;
+}
+.m-cart-icon {
+  @apply bg-[url('/icon/add-cart.svg')]  w-5 h-5;
+}
+.m-buynow-icon {
+  @apply bg-[url('/icon/buy-now.svg')] w-5 h-5;
+}
+.m-closetoggle-icon {
+  @apply bg-[url('/icon/close_icon.svg')] w-5 h-5;
+}
+.closetoggle-icon {
+  @apply bg-[url('/icon/closetoggle-icon.svg')];
+}
+
+.pv-headset {
+  @apply bg-[url('/icon/callicon.svg')]  aspect-square;
+}
+.pv-emailicon {
+  @apply bg-[url('/icon/emailicon.svg')]  aspect-square;
+}
+.pv-address {
+  @apply bg-[url('/icon/location.svg')]  aspect-square;
+}
+
+.mp-secure {
+  @apply bg-[url('/icon/safeandsecure.svg')] aspect-square;
+}
+
+.mp-lock {
+  @apply bg-[url('/icon/lock.svg')] aspect-square;
+}
+
+.mp-protection {
+  @apply bg-[url('/icon/Protection.svg')] aspect-square;
+}

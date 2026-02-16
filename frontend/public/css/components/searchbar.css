@@ -1,0 +1,54 @@
+.search_form {
+    @apply  flex items-center;
+  }
+  .search_textbox {
+    @apply shadow-none outline-none w-full max-w-full block h-[2.4375rem] box-border bg-[#f7f8fa] text-[#777] placeholder:text-14 rounded transition-all duration-[0.2s] ease-[cubic-bezier(0.19,0.26,0.17,0.99)] m-0 pl-4 py-[0.4rem] border-solid border-[#ccc] border;
+  }
+  .search_textbox::-webkit-search-cancel-button{
+    @apply brightness-[0.4] ml-2;
+  }
+  .search_textbox:focus {
+    @apply text-[#0a0a0a] rounded-[0.25rem] border bg-white shadow-[0_0_5px_#e4e5e7] border-solid border-[#777];
+  }
+  .search_submit {
+    @apply absolute mx-4 inline-flex items-center justify-center right-0;
+  }
+  .search_submit .m-search-icon{
+    @apply w-4 h-4;
+  }
+  .m-search-icon {
+    @apply bg-[url('/icon/search.svg')];
+  }
+  .search_container {
+    @apply static md:relative;
+  }
+  .suggestions_container {
+    @apply absolute rounded-bl rounded-br shadow-lg z-[21] max-h-[calc(100vh_-_4rem)] overflow-y-auto top-[120%] left-2 right-2 md:inset-[100%_0_auto] bg-white;
+  }
+  .suggestions_container .p_indide {
+    @apply p-4;
+  }
+  .suggestions_container .suggestions_list {
+    @apply pb-3 last:pb-0;
+  }
+  .static_title {
+    @apply font-semibold;
+  }
+  .responsive_searchbar {
+    @apply fixed inset-0 bg-[#f7f8fa] z-[22];
+  }
+  .responsive_searchbar_fl {
+    @apply flex items-center gap-2 relative px-0 py-2 border-b-[#cdcdcd] border-b border-solid bg-white;
+  }
+  .responsive_searchbar .responsive_searchbar_fl .search_container {
+    @apply w-full;
+  }
+  .responsive_searchbar .responsive_searchbar_fl .search_textbox{
+      @apply pl-12 border-none bg-white focus:shadow-none;
+  }
+  .m_icon_left_back {
+    @apply bg-[url('/icon/left-arrow.svg')];
+  }
+  .responsive_searchbar .responsive_searchbar_fl .left_arrow {
+    @apply flex items-center justify-center absolute z-[13] -translate-y-2/4 left-4 top-2/4;
+  }

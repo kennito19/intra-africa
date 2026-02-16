@@ -1,0 +1,152 @@
+.tb-res {
+  @apply overflow-y-auto;
+}
+.specification_table {
+  @apply w-[100%];
+}
+.specification_table tr td:first-child {
+  @apply pl-0;
+}
+.specification_table tr td {
+  @apply px-[8px] py-[8px] sm:px-[50px] sm:py-[8px]  border-b border-[#DBDBDB];
+}
+
+.specification_table tr td span {
+  @apply text-14 text-[#707070] whitespace-nowrap;
+}
+.specification_table tr td p {
+  @apply text-base font-[600];
+}
+.m_pad_add {
+  @apply px-4;
+}
+.see_more_prdt_detail {
+  @apply text-14 text-[#4067BC] font-[600];
+}
+.last_see_more {
+  @apply border-none;
+}
+.prdt-details-grid_wrapper {
+  @apply grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 gap-4 my-4;
+}
+.thumbsmySwiper .swiper-slide.swiper-slide-thumb-active {
+  @apply border border-primary overflow-hidden rounded-md border-solid border-primary;
+}
+.thumbsmySwiper .thumbsSwiperimg {
+  @apply m-auto w-[100px] h-[100px] object-cover;
+}
+.thumbsmySwiper {
+  @apply mt-5;
+}
+.MainDetialsImgSlider {
+  @apply m-auto;
+}
+.swiper-pagination-bullet {
+  @apply shadow-[0_0_5px_#BDBDBD];
+}
+.overlay {
+  @apply absolute w-full h-full bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1] left-0 top-0;
+}
+.view-more {
+  @apply text-[white] text-base cursor-pointer bg-[rgba(255,255,255,0.5)] px-4 py-1.5 rounded-[5px];
+}
+
+.MainSwiperDetails .swiper-wrapper {
+  @apply items-center py-4;
+}
+
+.product-details {
+  @apply flex justify-between items-start relative;
+}
+
+.thumbnails{
+  @apply border p-1 border-gray-300 overflow-hidden;
+}
+
+.thumbnails-container{
+  @apply w-[15%] relative;
+}
+
+.icon-down-arrow{
+  @apply bg-[url('/icon/arrow-down-black.svg')];
+}
+.icon-up-arrow{
+  @apply bg-[url('/icon/arrow-up-black.svg')];
+}
+.thumbs_btn{
+  @apply absolute bg-white z-10 border border-gray-300 flex justify-center items-center;
+}
+.thumbs_top_btn{
+  @apply inset-x-0 top-0;
+}
+.thumbs_btm_btn{
+  @apply inset-x-0 bottom-0;
+}
+
+.thumbnail{
+  @apply flex cursor-pointer border border-transparent;
+}
+
+.thumbnails img {
+  @apply block w-full h-[5.9375rem] object-contain border border-transparent;
+}
+.video-thumbnail {
+  @apply relative cursor-pointer border border-transparent;
+}
+.thumbnail.active, .video-thumbnail.active {
+  @apply border border-primary;
+}
+
+
+.video-thumbnail .play-icon {
+  @apply -translate-x-2/4 -translate-y-2/4 absolute bg-[#0000006b] text-[2rem] leading-10 text-[white] w-full h-full justify-center items-center flex  left-2/4 top-2/4;
+}
+.play_video_icon{
+  @apply bg-[url('/icon/play-arrow.svg')];
+}
+.main-media {
+  @apply md:w-4/5 w-full border border-gray-300 rounded;
+}
+
+.modal-video_md .video-container{
+  @apply w-[92%];
+}
+
+.main-media img,
+.main-media iframe {
+  @apply block w-full transition-opacity duration-300;
+}
+
+.thumbnails img:hover + .main-media img,
+.video-thumbnail:hover + .main-media img,
+.thumbnails img:hover + .main-media iframe,
+.video-thumbnail:hover + .main-media iframe {
+  @apply opacity-70;
+}
+
+/* .thumbnails::-webkit-scrollbar-track {
+  @apply bg-neutral-100;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+.thumbnails::-webkit-scrollbar {
+  @apply w-[5px] bg-neutral-100;
+}
+.thumbnails::-webkit-scrollbar-thumb {
+  @apply bg-[#6c6868] border-2 border-solid border-[#555555];
+} */
+.main-media.slider-mode .swiper-wrapper {
+  @apply items-center py-4;
+}
+.modal-video_md {
+  @apply fixed w-full h-full z-10 flex items-center justify-center bg-[rgba(0,0,0,0.8)] left-0 top-0;
+}
+
+.m-sub-prditems_specified{
+  @apply flex items-center gap-3;
+}
+.m-sub-prditems_specified:not(:last-child){
+  @apply mb-2;
+}
+.h2_cmn{
+  @apply text-28 capitalize mb-5 font-medium;
+}

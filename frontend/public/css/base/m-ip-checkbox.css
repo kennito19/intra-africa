@@ -1,0 +1,26 @@
+.ip-checkbox__wrapper {
+  @apply block;
+}
+
+.ip-checknox__input {
+  @apply p-0 hidden cursor-pointer mb-0;
+}
+
+.ip-chekbox__lable {
+  @apply relative cursor-pointer flex items-center gap-1;
+}
+
+.ip-chekbox__lable:before {
+  @apply border border-[#A7A7A7] bg-transparent p-[0.375rem] inline-block relative align-middle cursor-pointer mr-1 rounded content-[''];
+}
+
+.ip-checkbox__wrapper .ip-checknox__input:checked + .ip-chekbox__lable:before {
+  @apply border-primary;
+}
+.ip-checknox__input:checked ~ .ip-chekbox__lable {
+  @apply text-primary opacity-100 font-medium;
+}
+
+.ip-checkbox__wrapper .ip-checknox__input:checked + .ip-chekbox__lable:after {
+  @apply block content-[''] absolute top-[45%] left-[0.25rem] w-[0.375rem] h-[8px] border border-primary rotate-45 border-l-0 border-t-0 border-b-2 border-r-2 transform -translate-y-1/2;
+}

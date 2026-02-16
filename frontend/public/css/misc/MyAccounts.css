@@ -1,0 +1,79 @@
+.my-account-wrapper{
+    @apply hidden md:flex order-2 md:order-none  items-center justify-center gap-4 md:gap-[1rem] [&>*:nth-child(4)]:hidden lg:[&>*:nth-child(4)]:block;
+}
+.my-account-link{
+    @apply flex flex-col items-center justify-center ;
+}
+/* .my-account-item:first-child .my-account-link{
+    @apply py-4;
+} */
+.my-account-item{
+    @apply relative;
+}
+.profile-icon {
+  @apply bg-[url('/icon/profile.svg')] w-[18px] h-[18px];
+}
+.wishlist-icon {
+  @apply bg-[url('/icon/wishlist.svg')] w-5 h-5;
+}
+.bag-icon {
+  @apply bg-[url('/icon/bag.svg')] w-5 h-5;
+}
+.my-account-name{
+    @apply text-[0.8125rem] text-TextTitle font-medium leading-loose;
+}
+.my-account-item:last-child .my-account-link{
+    @apply relative;    
+}
+.my-account-bag-item{
+    @apply absolute top-0 -translate-y-1/2 -right-2 bg-yellow w-[20px] h-[20px] text-black text-base font-medium p-2 rounded-full flex items-center justify-center overflow-hidden;
+}
+.my-account-profile-details-wrapper{
+    @apply absolute top-[140%] opacity-0 invisible bg-white p-3 shadow-light  w-80 -left-3/4 -translate-x-2/4 transition-all duration-300 ease-out;
+}
+.my-account-item{
+    @apply px-2;
+}
+.my-account-item:first-child{
+    @apply relative;
+}
+.my-account-item:first-child:hover{
+    @apply before:content-[''] before:absolute before:h-[0.2rem] before:left-0 before:right-0 before:bottom-[-16px] before:bg-primary;
+}
+.my-account-item.active .my-account-profile-details-wrapper{
+    @apply opacity-100 visible z-10;
+}
+
+.my-account-wrapper .my-account-item:first-child{
+    @apply hidden md:block;
+}
+.my-account-wrapper .my-account-item:not(:first-child) .my-account-link .my-account-name{
+    @apply hidden md:block ;
+}
+.my-account-profile-login-wrapper{
+    @apply py-2;
+}
+.my-account-profile-titel{
+    @apply text-primary text-14 font-semibold mb-2 capitalize;
+}
+.my-account-profile-info{
+    @apply text-slategrey text-14 font-medium mb-3;
+}
+.my-account-profile-after-login .my-account-profile-info{
+    @apply mb-0;
+}
+.my-account-profile-login-signup{
+    @apply inline-block py-1 px-3 text-primary uppercase text-base font-normal rounded-md border-[1px] border-lightGray hover:border-primary;
+}
+.my-account-profile-details-item{
+    @apply pt-4 border-t-[1px] border-[#DBDBDB];
+}
+.my-account-profile-details-item:last-child{
+    @apply border-none;
+}
+.my-account-profile-link{
+    @apply block;
+}
+.my-account-profile-details-list{
+    @apply text-slategrey text-14 font-medium pb-3 capitalize hover:text-primary hover:font-semibold;
+}

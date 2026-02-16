@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDServer.Domain", "IDServer.Domain\IDServer.Domain.csproj", "{7FDAEEF7-9A52-403B-BA35-5A8B6ECD0661}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDServer.Infrastructure", "IDServer.Infrastructure\IDServer.Infrastructure.csproj", "{1426C478-66F2-4161-AD0A-146A7500C0D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDServerApplication", "IDServerApplication\IDServerApplication.csproj", "{4C447861-E216-4F66-80FE-D04968A6EDDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWTTokenProvider.API", "JWTTokenProvider.API\JWTTokenProvider.API.csproj", "{0E3EE7D6-D602-4739-9B27-69D32B29A8AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FDAEEF7-9A52-403B-BA35-5A8B6ECD0661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FDAEEF7-9A52-403B-BA35-5A8B6ECD0661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FDAEEF7-9A52-403B-BA35-5A8B6ECD0661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FDAEEF7-9A52-403B-BA35-5A8B6ECD0661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1426C478-66F2-4161-AD0A-146A7500C0D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1426C478-66F2-4161-AD0A-146A7500C0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1426C478-66F2-4161-AD0A-146A7500C0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1426C478-66F2-4161-AD0A-146A7500C0D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C447861-E216-4F66-80FE-D04968A6EDDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C447861-E216-4F66-80FE-D04968A6EDDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C447861-E216-4F66-80FE-D04968A6EDDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C447861-E216-4F66-80FE-D04968A6EDDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E3EE7D6-D602-4739-9B27-69D32B29A8AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E3EE7D6-D602-4739-9B27-69D32B29A8AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E3EE7D6-D602-4739-9B27-69D32B29A8AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E3EE7D6-D602-4739-9B27-69D32B29A8AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0AF09F10-D8FD-4EE3-90B5-3EB086981CDA}
+	EndGlobalSection
+EndGlobal

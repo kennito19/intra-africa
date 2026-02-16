@@ -1,0 +1,124 @@
+.p-prdlist__wrapper {
+  @apply flex md:gap-6 py-6;
+}
+.p-prdlist__sidebar .m-prd-sidebar{
+  @apply w-[80%] fixed top-0 h-fit left-[-100%] z-10 bg-white transition-all md:bg-inherit md:z-0 md:static md:w-full ;
+}
+
+.p-prdlist__sidebar{
+  @apply md:w-[20%];
+}
+
+.p-prdlist__sidebar.active .m-prd-sidebar{
+  @apply left-0 !pb-14;
+}
+
+.p-prdlist__sidebar.active::before {
+  @apply fixed inset-0 z-10 bg-black/50 content-[''];
+}
+
+.p-prdlist__sidebar.active .m-prd-sidebar {
+  @apply bg-white fixed z-10 overflow-y-auto p-3 h-[100dvh];
+}
+
+.p-prdlist__products {
+  @apply w-[100%] md:w-[80%];
+}
+.p-prdlist-right-header__wrapper {
+  @apply flex items-center justify-between py-3 bg-white p-3 mb-4 rounded;
+}
+.p-prdlist-title-wrapper {
+  @apply inline-flex items-center gap-8;
+}
+.p-prdview__wrapper {
+  @apply  items-center gap-3 hidden sm:inline-flex;
+}
+
+.p-prd-total {
+  @apply text-primary  font-semibold	 text-base;
+}
+.p-prdlist-sortby {
+  @apply text-slategrey capitalize;
+}
+.p-prdlist-sortby .cancel-order-reason {
+  @apply hidden md:block ml-0;
+}
+.p-prdview-icon {
+  @apply bg-[url('/icon/grid-view-icon.svg')] w-8 h-8 cursor-pointer;
+}
+.p-prdlist-icon {
+  @apply bg-[url('/icon/list-view-icon.svg')] w-8 h-8 cursor-pointer;
+}
+.p-prdlist-grid__wrapper {
+  @apply grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-4;
+}
+.p-prdlist-grid__wrapper.active {
+  @apply grid-cols-1;
+}
+.main_prd_fl {
+  @apply flex flex-col p-3 justify-between;
+}
+.main_prd_fl.active .prd-card-list__wrapper {
+  @apply order-1;
+}
+.pv-comparecheckbox-main-true {
+  @apply mt-1  opacity-30 cursor-not-allowed rounded;
+}
+.pv-comparecheckbox-main-true .ip-checknox__input , .pv-comparecheckbox-main-true .ip-chekbox__lable {
+  @apply  cursor-not-allowed;
+}
+.p-prdlist__products:has(.p-prdlist-grid__wrapper)
+  .p-prdlist-right-header__wrapper
+  .p-prdview__wrapper
+  i.m-icon.p-prdview-icon {
+  @apply  border-[1px] border-primary rounded-md ;
+}
+.p-prdlist__products:has(.p-prdgrid-view__wrapper)
+  .p-prdlist-right-header__wrapper
+  .p-prdview__wrapper
+  i.m-icon.p-prdlist-icon {
+  @apply  border-[1px] border-primary rounded-md;
+}
+
+/* .p-prdlist__products:has(.p-prdlist-view__wrapper)
+  .p-prdlist-right-header__wrapper
+  .p-prdview__wrapper
+  i.m-icon.p-prdlist-icon {
+  @apply  border-[1px] border-primary rounded-md;
+} */
+
+/* .btn-product-list {
+  @apply bg-primary border-0 w-full mt-1 py-4 md:py-2 text-[16px] rounded-none rounded-b-md  justify-center font-medium hover:bg-primary text-white hover:bg-primary-hover
+} */
+
+.d_none {
+  @apply hidden;
+}
+@keyframes fadeIn {
+  from {
+    @apply opacity-0;
+  }
+  to {
+    @apply opacity-100;
+  }
+}
+.p-prdlist-grid__wrapper,
+.p-prdgrid-view__wrapper {
+  @apply animate-[fadeIn_0.3s_ease-in-out] mb-3;
+}
+.p-prdgrid-view__wrapper {
+  @apply flex flex-col gap-4
+}
+
+.p-prdgrid-view__wrapper .pd-list__card{
+  @apply grid grid-cols-3 gap-0 sm:gap-4
+}
+.p-prdgrid-view__wrapper .pd-list__card .main_prd_fl{
+  @apply col-span-2;
+}
+.p-prdgrid-view__wrapper .pd-list__card .prd-list__details .jp_prdlist_content ul{
+  @apply list-disc marker:text-Gray ms-5;
+}
+.p-prdgrid-view__wrapper .pd-list__card .prd-list__details .jp_prdlist_content ul li {
+  @apply text-sm;
+}

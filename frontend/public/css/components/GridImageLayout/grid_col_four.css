@@ -1,0 +1,15 @@
+.grid_column_four {
+  @apply grid gap-2.5 grid-cols-4 grid-rows-2 items-stretch pb-12 focus:outline-none;
+}
+.grid_column_four div:nth-child(even) {
+  @apply translate-y-10;
+}
+.grid_column_four img {
+  @apply w-full object-cover h-full;
+}
+.grid_column_four a {
+  @apply w-full;
+}
+.grid_column_four div {
+  @apply w-full;
+}

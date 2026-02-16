@@ -1,0 +1,29 @@
+.toast__close-btn {
+  @apply bg-transparent text-base cursor-pointer mr-4 font-semibold border-[none];
+}
+
+.toaster-container {
+  @apply flex justify-center items-center relative z-[9999];
+}
+.toaster-content {
+  @apply z-50 fixed bottom-0 flex items-center gap-2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-md transform translate-y-full left-1/2 -translate-x-1/2;
+}
+.toaster-container.show .toaster-content {
+  animation: slideIn 0.2s forwards, fadeOut 0.3s 2.7s forwards;
+}
+.toaster-content .m-icon.success {
+  @apply bg-[url('/icon/success.svg')]  w-5 h-5;
+}
+.toaster-content .m-icon.error {
+  @apply bg-[url('/icon/error.svg')] w-5 h-5;
+}
+@keyframes slideIn {
+  to {
+    transform: translateY(-20px) translateX(-50%);
+  }
+}
+@keyframes fadeOut {
+  to {
+    transform: translateY(100%) translateX(-50%);
+  }
+}

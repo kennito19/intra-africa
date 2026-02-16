@@ -1,0 +1,54 @@
+# =========================
+# .NET Backend
+# =========================
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+**/*.cache
+**/Debug/
+**/Release/
+**/x64/
+**/x86/
+
+# Sensitive files
+**/*.pem
+**/appsettings.Development.json
+**/StaticFiles/
+**/Resources/
+
+# Publish output
+**/publish/
+**/PubTmp/
+
+# =========================
+# Node / Next.js Frontend
+# =========================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env.production.local
+frontend/.env.development.local
+frontend/.vercel
+
+# =========================
+# Archives
+# =========================
+*.zip
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
+*.swp
+*.sln.docstates

@@ -1,0 +1,50 @@
+.m-btn {
+  @apply text-[#2D2D2D] justify-center text-xs sm:text-sm font-normal outline-none border py-2  px-4 inline-flex items-center  rounded-md capitalize tracking-wide gap-1;
+}
+.pv-btnposition-center {
+  @apply text-center
+}
+.pv-btnposition-left {
+  @apply text-left
+}
+.pv-btnposition-right {
+  @apply text-right
+}
+
+
+.btn-add-cart {
+  @apply bg-yellow md:px-2 md:gap-[0.2rem]  border-yellow hover:bg-yellowHover flex-shrink-0;
+}
+
+.btn-red {
+  @apply bg-[#D0564E] text-[#fff] text-12 hover:bg-[#fff] hover:text-primary-hover leading-[0.25rem];
+}
+
+.btn-green {
+  @apply bg-primary text-[#fff] hover:bg-[#fff] hover:text-primary-hover;
+}
+
+.btn-light {
+  @apply  border-[#D6D6D6] md:gap-[0.2rem] md:px-2  bg-white hover:bg-bglight sm:w-1/4 w-full
+}
+
+/* html part in button  */
+
+/* 
+wish list button... 
+<button className='m-btn btn-whishlist'>
+  <i className='m-icon m-wishlist-icon'></i>Wishlist
+</button>
+
+add to cart...
+<button className='m-btn btn-add-cart'>
+  <i className='m-icon m-cart-icon'></i> Add to cart
+</button>
+
+view collection...
+
+<button className='m-btn btn-view-collection'>
+ view Collection 
+</button>
+
+ */
