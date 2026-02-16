@@ -9,13 +9,13 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/user/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class UserProductController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
         private readonly IConfiguration _configuration;
         public static string CatalogueUrl = string.Empty;
-        public ProductController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserProductController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

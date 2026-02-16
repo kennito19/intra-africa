@@ -8,7 +8,6 @@ using System.IO;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using Amazon;
-using Nancy;
 using Amazon.Runtime.Internal;
 using MimeKit;
 

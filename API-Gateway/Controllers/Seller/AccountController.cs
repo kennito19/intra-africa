@@ -13,9 +13,9 @@ using API_Gateway.Common;
 
 namespace API_Gateway.Controllers.Seller
 {
-    [Route("api/[controller]")]
+    [Route("api/Account")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class SellerAccountController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -24,7 +24,7 @@ namespace API_Gateway.Controllers.Seller
         BaseResponse<SignInResult> baseResponse = new BaseResponse<SignInResult>();
         private ApiHelper api;
         public string URL = string.Empty;
-        public AccountController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SellerAccountController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;

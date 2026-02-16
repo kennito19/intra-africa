@@ -12,7 +12,7 @@ namespace API_Gateway.Controllers.Seller
 {
     [Route("api/Seller/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class SellerOrderController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -23,7 +23,7 @@ namespace API_Gateway.Controllers.Seller
         public static string IDServerUrl = string.Empty;
         BaseResponse<Orders> baseResponse = new BaseResponse<Orders>();
         private ApiHelper helper;
-        public OrderController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SellerOrderController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

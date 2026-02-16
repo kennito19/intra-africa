@@ -9,7 +9,7 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/user/[controller]")]
     [ApiController]
-    public class WarehouseController : ControllerBase
+    public class UserWarehouseController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -18,7 +18,7 @@ namespace API_Gateway.Controllers.User
         public string URL = string.Empty;
         BaseResponse<Warehouse> baseResponse = new BaseResponse<Warehouse>();
 
-        public WarehouseController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserWarehouseController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

@@ -9,7 +9,7 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/User/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class UserOrderController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
@@ -17,7 +17,7 @@ namespace API_Gateway.Controllers.User
         private readonly HttpContext _httpContext;
         BaseResponse<Orders> baseResponse = new BaseResponse<Orders>();
         private ApiHelper helper;
-        public OrderController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserOrderController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

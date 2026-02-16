@@ -9,7 +9,7 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/user/[controller]")]
     [ApiController]
-    public class KYCController : ControllerBase
+    public class UserKYCController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -20,7 +20,7 @@ namespace API_Gateway.Controllers.User
         private UserKYCDetails UserKYCdetails;
         BaseResponse<KYCDetails> baseResponse = new BaseResponse<KYCDetails>();
 
-        public KYCController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserKYCController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;

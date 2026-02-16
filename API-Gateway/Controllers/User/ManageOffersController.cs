@@ -10,7 +10,7 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/user/[controller]")]
     [ApiController]
-    public class ManageOffersController : ControllerBase
+    public class UserManageOffersController : ControllerBase
     {
         private ManageOffers manageOffers;
         private readonly IConfiguration _configuration;
@@ -18,7 +18,7 @@ namespace API_Gateway.Controllers.User
         public string URL = string.Empty;
         BaseResponse<ManageOffersDTO> baseResponse = new BaseResponse<ManageOffersDTO>();
 
-        public ManageOffersController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserManageOffersController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;

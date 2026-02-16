@@ -4,7 +4,6 @@ using API_Gateway.Models.Entity.Catalogue;
 using API_Gateway.Models.Entity.User;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.IdentityModel.Tokens;
-using Nancy.Json;
 using Newtonsoft.Json;
 
 namespace API_Gateway.Common

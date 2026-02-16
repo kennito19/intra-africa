@@ -3,7 +3,6 @@ using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.Catalogue;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Nancy;
 using Swashbuckle.Swagger;
 using System.Data;
 using System.Web;

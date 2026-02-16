@@ -10,7 +10,7 @@ namespace API_Gateway.Controllers.Seller
 {
     [Route("api/Seller/[controller]")]
     [ApiController]
-    public class ManageOffersController : ControllerBase
+    public class SellerManageOffersController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -19,7 +19,7 @@ namespace API_Gateway.Controllers.Seller
         private ManageOffers manageOffers;
         BaseResponse<ManageOffersLibrary> baseResponse = new BaseResponse<ManageOffersLibrary>();
 
-        public ManageOffersController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SellerManageOffersController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

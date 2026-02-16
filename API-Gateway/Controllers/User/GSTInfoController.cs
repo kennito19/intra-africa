@@ -11,7 +11,7 @@ namespace API_Gateway.Controllers.User
 
     [Route("api/user/[controller]")]
     [ApiController]
-    public class GSTInfoController : ControllerBase
+    public class UserGSTInfoController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -20,7 +20,7 @@ namespace API_Gateway.Controllers.User
         public string URL = string.Empty;
         BaseResponse<GSTInfo> baseResponse = new BaseResponse<GSTInfo>();
 
-        public GSTInfoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserGSTInfoController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

@@ -1,5 +1,4 @@
 using API_Gateway.Models.Dto;
-using Nancy.Json;
 using Newtonsoft.Json;
 
 namespace API_Gateway.Helper
@@ -76,7 +75,7 @@ namespace API_Gateway.Helper
                     {
                         response.code = 200;
                         response.Message = "Record bind successfully.";
-                        string s = new JavaScriptSerializer().Serialize(values.FirstOrDefault());
+                        string s = JsonConvert.SerializeObject(values.FirstOrDefault());
                         var pagination = JsonConvert.DeserializeObject<Pagination>(s);
                         if (pagination.RecordCount > 0)
                         {

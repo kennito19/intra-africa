@@ -10,7 +10,7 @@ namespace API_Gateway.Controllers.Seller
 {
     [Route("api/seller/[controller]")]
     [ApiController]
-    public class BrandController : ControllerBase
+    public class SellerBrandController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -22,7 +22,7 @@ namespace API_Gateway.Controllers.Seller
         public string IDServerUrl = string.Empty;
         BaseResponse<BrandLibrary> baseResponse = new BaseResponse<BrandLibrary>();
 
-        public BrandController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SellerBrandController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

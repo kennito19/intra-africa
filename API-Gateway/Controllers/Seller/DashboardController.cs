@@ -11,7 +11,7 @@ namespace API_Gateway.Controllers.Seller
 {
     [Route("api/Seller/[controller]")]
     [ApiController]
-    public class DashboardController : ControllerBase
+    public class SellerDashboardController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
@@ -22,7 +22,7 @@ namespace API_Gateway.Controllers.Seller
         public string UserUrl = string.Empty;
         private ApiHelper helper;
 
-        public DashboardController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public SellerDashboardController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;

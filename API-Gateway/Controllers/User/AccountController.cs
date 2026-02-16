@@ -13,9 +13,9 @@ using System.Security.Cryptography;
 
 namespace API_Gateway.Controllers.User
 {
-    [Route("api/[controller]")]
+    [Route("api/Account")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class UserAccountController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -25,7 +25,7 @@ namespace API_Gateway.Controllers.User
         public string URL = string.Empty;
         private ApiHelper api;
 
-        public AccountController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserAccountController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;
