@@ -13,10 +13,7 @@
 **/x86/
 
 # Sensitive files
-**/*.pem
 **/appsettings.Development.json
-**/StaticFiles/
-**/Resources/
 
 # Publish output
 **/publish/
