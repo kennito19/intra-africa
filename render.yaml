@@ -1,0 +1,82 @@
+services:
+  - type: web
+    name: intra-api-gateway
+    runtime: docker
+    dockerfilePath: ./API-Gateway/Dockerfile
+    dockerContext: ./API-Gateway
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DBconnection
+        sync: false
+      - key: ApiURLs__CatalogueApi
+        sync: false
+      - key: ApiURLs__IDServerApi
+        sync: false
+      - key: ApiURLs__OrderAPI
+        sync: false
+      - key: ApiURLs__UserApi
+        sync: false
+      - key: ApiURLs__UserLog
+        sync: false
+
+  - type: web
+    name: intra-catalogue
+    runtime: docker
+    dockerfilePath: ./Catalogue/Dockerfile
+    dockerContext: ./Catalogue
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DBconnection
+        sync: false
+
+  - type: web
+    name: intra-idserver
+    runtime: docker
+    dockerfilePath: ./ID-Server/Dockerfile
+    dockerContext: ./ID-Server
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+
+  - type: web
+    name: intra-order
+    runtime: docker
+    dockerfilePath: ./Order/Dockerfile
+    dockerContext: ./Order
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DBconnection
+        sync: false
+
+  - type: web
+    name: intra-user
+    runtime: docker
+    dockerfilePath: ./User/Dockerfile
+    dockerContext: ./User
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DBconnection
+        sync: false
+
+  - type: web
+    name: intra-log
+    runtime: docker
+    dockerfilePath: ./Log/Dockerfile
+    dockerContext: ./Log
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DBconnection
+        sync: false
