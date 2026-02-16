@@ -13,38 +13,37 @@ export const metadata = {
   description: ''
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({ children }) {
   const headersList = headers()
   const pathname = headersList.get('next-url')
-  const getCategoryMenu = await fetchServerSideApi({
-    endpoint: apiPath?.getMenu
-  })
-    .then((response) => {
-      if (response) {
-        return response
-      }
-    })
-    .catch((error) => {
-      return error
-    })
 
-  const getStaticData = await fetchServerSideApi({
-    endpoint: apiPath?.getStaticPages,
-    userToken: getCategoryMenu?.action?.userToken
-      ? getCategoryMenu?.action?.userToken
-      : null,
-    deviceId: getCategoryMenu?.action?.deviceId
-      ? getCategoryMenu?.action?.deviceId
-      : null
-  })
-    .then((response) => {
-      if (response) {
-        return response
-      }
+  let getCategoryMenu = null
+  try {
+    const menuResponse = await fetchServerSideApi({
+      endpoint: apiPath?.getMenu
     })
-    .catch((error) => {
-      return error
+    if (menuResponse && menuResponse.code !== undefined) {
+      getCategoryMenu = JSON.parse(JSON.stringify(menuResponse))
+    }
+  } catch (error) {
+    getCategoryMenu = null
+  }
+
+  let getStaticData = null
+  try {
+    const staticResponse = await fetchServerSideApi({
+      endpoint: apiPath?.getStaticPages,
+      userToken: getCategoryMenu?.action?.userToken || null,
+      deviceId: getCategoryMenu?.action?.deviceId || null
     })
+    if (staticResponse && staticResponse.code !== undefined) {
+      getStaticData = JSON.parse(JSON.stringify(staticResponse))
+    }
+  } catch (error) {
+    getStaticData = null
+  }
 
   return (
     <html lang='en'>

@@ -3,18 +3,20 @@ import { fetchServerSideApi } from '@/utils/serverSideUtils'
 import apiPath from '@/api-urls'
 import HomepageSkeleton from '@/components/skeleton/HomepageSkeleton'
 
+export const dynamic = 'force-dynamic'
+
 const Page = async () => {
-  const getHomePage = await fetchServerSideApi({
-    endpoint: apiPath.getHomePage
-  })
-    .then((response) => {
-      if (response) {
-        return response
-      }
+  let getHomePage = null
+  try {
+    const response = await fetchServerSideApi({
+      endpoint: apiPath.getHomePage
     })
-    .catch((error) => {
-      return error
-    })
+    if (response && typeof response === 'object' && response.code !== undefined) {
+      getHomePage = JSON.parse(JSON.stringify(response))
+    }
+  } catch (error) {
+    getHomePage = null
+  }
   return (
     <>
       {getHomePage ? (
