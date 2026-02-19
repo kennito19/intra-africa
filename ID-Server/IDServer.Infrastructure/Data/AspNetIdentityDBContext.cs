@@ -15,23 +15,23 @@ namespace IDServer.Infrastructure.Data
 
             modelBuilder.Entity<Users>()
             .Property(b => b.FirstName)
-            .HasColumnType("nvarchar(250)");
+            .HasColumnType("varchar(250)");
 
             modelBuilder.Entity<Users>()
             .Property(b => b.LastName)
-            .HasColumnType("nvarchar(250)");
+            .HasColumnType("varchar(250)");
 
             modelBuilder.Entity<Users>()
             .Property(b => b.Status)
-            .HasColumnType("nvarchar(250)");
+            .HasColumnType("varchar(250)");
 
             //modelBuilder.Entity<Users>()
             //.Property(b => b.UserType)
-            //.HasColumnType("nvarchar(250)");
+            //.HasColumnType("varchar(250)");
 
             modelBuilder.Entity<Users>()
             .Property(b => b.timestamp)
-            .HasColumnType("timestamp");
+            .HasColumnType("datetime(6)");
 
             modelBuilder.Entity<Users>()
             .HasMany(u => u.userSessions)
@@ -47,8 +47,8 @@ namespace IDServer.Infrastructure.Data
 
 
             modelBuilder.Entity<Users>().Property(e => e.timestamp)
-           .IsConcurrencyToken()           // If you want to handle concurrency
-           .ValueGeneratedOnAddOrUpdate(); // This is important
+           .IsConcurrencyToken()
+           .ValueGeneratedOnAddOrUpdate();
 
             base.OnModelCreating(modelBuilder);
 

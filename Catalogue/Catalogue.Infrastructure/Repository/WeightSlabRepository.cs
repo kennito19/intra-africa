@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,30 +31,30 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@weightslab", weightSlab.WeightSlab),
-                new SqlParameter("@localcharges", weightSlab.LocalCharges),
-                new SqlParameter("@zonalcharges", weightSlab.ZonalCharges),
-                new SqlParameter("@nationalcharges", weightSlab.NationalCharges),
-                new SqlParameter("@createdby", weightSlab.CreatedBy),
-                new SqlParameter("@createdat", weightSlab.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@weightslab", weightSlab.WeightSlab),
+                new MySqlParameter("@localcharges", weightSlab.LocalCharges),
+                new MySqlParameter("@zonalcharges", weightSlab.ZonalCharges),
+                new MySqlParameter("@nationalcharges", weightSlab.NationalCharges),
+                new MySqlParameter("@createdby", weightSlab.CreatedBy),
+                new MySqlParameter("@createdat", weightSlab.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.WeightSlabs, output, newid, message, sqlParams.ToArray());
@@ -69,31 +69,31 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", weightSlab.Id),
-                new SqlParameter("@weightslab", weightSlab.WeightSlab),
-                new SqlParameter("@localcharges", weightSlab.LocalCharges),
-                new SqlParameter("@zonalcharges", weightSlab.ZonalCharges),
-                new SqlParameter("@nationalcharges", weightSlab.NationalCharges),
-                new SqlParameter("@modifiedby", weightSlab.ModifiedBy),
-                new SqlParameter("@modifiedat", weightSlab.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", weightSlab.Id),
+                new MySqlParameter("@weightslab", weightSlab.WeightSlab),
+                new MySqlParameter("@localcharges", weightSlab.LocalCharges),
+                new MySqlParameter("@zonalcharges", weightSlab.ZonalCharges),
+                new MySqlParameter("@nationalcharges", weightSlab.NationalCharges),
+                new MySqlParameter("@modifiedby", weightSlab.ModifiedBy),
+                new MySqlParameter("@modifiedat", weightSlab.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.WeightSlabs, output, newid, message, sqlParams.ToArray());
@@ -107,27 +107,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", weightSlab.Id),
-                new SqlParameter("@deletedby", weightSlab.DeletedBy),
-                new SqlParameter("@deletedat", weightSlab.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", weightSlab.Id),
+                new MySqlParameter("@deletedby", weightSlab.DeletedBy),
+                new MySqlParameter("@deletedat", weightSlab.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.WeightSlabs, output, newid, message, sqlParams.ToArray());
@@ -142,26 +142,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", weightSlab.Id),
-                new SqlParameter("@weightslab", weightSlab.WeightSlab),
-                new SqlParameter("@isdeleted", weightSlab.IsDeleted),
-                new SqlParameter("@searchtext", weightSlab.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", weightSlab.Id),
+                new MySqlParameter("@weightslab", weightSlab.WeightSlab),
+                new MySqlParameter("@isdeleted", weightSlab.IsDeleted),
+                new MySqlParameter("@searchtext", weightSlab.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetWeightSlabs, weightParserAsync, output, newid: null, message, sqlParams.ToArray());

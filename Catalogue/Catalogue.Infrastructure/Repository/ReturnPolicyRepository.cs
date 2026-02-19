@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,27 +31,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@name", returnPolicy.Name),
-                    new SqlParameter("@createdby", returnPolicy.CreatedBy),
-                    new SqlParameter("@createdat", returnPolicy.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@name", returnPolicy.Name),
+                    new MySqlParameter("@createdby", returnPolicy.CreatedBy),
+                    new MySqlParameter("@createdat", returnPolicy.CreatedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ReturnPolicy, output, newid, message, sqlParams.ToArray());
@@ -66,23 +66,23 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", returnPolicy.Id),
-                    new SqlParameter("@name", returnPolicy.Name),
-                    new SqlParameter("@modifiedBy", returnPolicy.ModifiedBy),
-                    new SqlParameter("@modifiedAt", returnPolicy.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", returnPolicy.Id),
+                    new MySqlParameter("@name", returnPolicy.Name),
+                    new MySqlParameter("@modifiedBy", returnPolicy.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", returnPolicy.ModifiedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ReturnPolicy, output, newid: null, message, sqlParams.ToArray());
@@ -98,27 +98,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", returnPolicy.Id),
-                    new SqlParameter("@deletedby", returnPolicy.DeletedBy),
-                    new SqlParameter("@deletedat", returnPolicy.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", returnPolicy.Id),
+                    new MySqlParameter("@deletedby", returnPolicy.DeletedBy),
+                    new MySqlParameter("@deletedat", returnPolicy.DeletedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ReturnPolicy, output, newid, message, sqlParams.ToArray());
@@ -131,25 +131,25 @@ namespace Catalogue.Infrastructure.Repository
 
         public async Task<BaseResponse<List<ReturnPolicy>>> GetReturnPolicy(ReturnPolicy returnPolicy, int PageIndex, int PageSize, string Mode)
         {
-            var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", returnPolicy.Id),
-                new SqlParameter("@name", returnPolicy.Name),
-                new SqlParameter("@isdeleted", returnPolicy.IsDeleted),
-                new SqlParameter("@searchtext", returnPolicy.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+            var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", returnPolicy.Id),
+                new MySqlParameter("@name", returnPolicy.Name),
+                new MySqlParameter("@isdeleted", returnPolicy.IsDeleted),
+                new MySqlParameter("@searchtext", returnPolicy.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-            SqlParameter output = new SqlParameter();
+            MySqlParameter output = new MySqlParameter();
             output.ParameterName = "@output";
             output.Direction = ParameterDirection.Output;
-            output.SqlDbType = SqlDbType.Int;
+            output.MySqlDbType = MySqlDbType.Int32;
 
-            SqlParameter message = new SqlParameter();
+            MySqlParameter message = new MySqlParameter();
             message.ParameterName = "@message";
             message.Direction = ParameterDirection.Output;
-            message.SqlDbType = SqlDbType.NVarChar;
+            message.MySqlDbType = MySqlDbType.VarChar;
             message.Size = 50;
 
             return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetReturnPolicy, ReturnPolicyParserAsync, output, newid: null, message, sqlParams.ToArray());

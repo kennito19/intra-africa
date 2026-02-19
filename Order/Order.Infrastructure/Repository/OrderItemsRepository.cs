@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -31,72 +31,72 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderid", orderItems.OrderID),
-                new SqlParameter("@suborderno", orderItems.SubOrderNo),
-                new SqlParameter("@sellerid", orderItems.SellerID),
-                new SqlParameter("@brandid", orderItems.BrandID),
-                new SqlParameter("@catId", orderItems.CategoryId),
-                new SqlParameter("@productid", orderItems.ProductID),
-                new SqlParameter("@productGuid", orderItems.ProductGUID),
-                new SqlParameter("@sellerproductid", orderItems.SellerProductID),
-                new SqlParameter("@productname", orderItems.ProductName),
-                new SqlParameter("@productskucode", orderItems.ProductSKUCode),
-                new SqlParameter("@mrp", orderItems.MRP),
-                new SqlParameter("@sellingprice", orderItems.SellingPrice),
-                new SqlParameter("@discount", orderItems.Discount),
-                new SqlParameter("@qty", orderItems.Qty),
-                new SqlParameter("@totalamount", orderItems.TotalAmount),
-                new SqlParameter("@pricetypeid", orderItems.PriceTypeID),
-                new SqlParameter("@pricetype", orderItems.PriceType),
-                new SqlParameter("@sizeid", orderItems.SizeID),
-                new SqlParameter("@sizevalue", orderItems.SizeValue),
-                new SqlParameter("@iscouponapplied", orderItems.IsCouponApplied),
-                new SqlParameter("@coupon", orderItems.Coupon),
-                new SqlParameter("@coupontdiscount", orderItems.CoupontDiscount),
-                new SqlParameter("@coupontdetails", orderItems.CoupontDetails),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderid", orderItems.OrderID),
+                new MySqlParameter("@suborderno", orderItems.SubOrderNo),
+                new MySqlParameter("@sellerid", orderItems.SellerID),
+                new MySqlParameter("@brandid", orderItems.BrandID),
+                new MySqlParameter("@catId", orderItems.CategoryId),
+                new MySqlParameter("@productid", orderItems.ProductID),
+                new MySqlParameter("@productGuid", orderItems.ProductGUID),
+                new MySqlParameter("@sellerproductid", orderItems.SellerProductID),
+                new MySqlParameter("@productname", orderItems.ProductName),
+                new MySqlParameter("@productskucode", orderItems.ProductSKUCode),
+                new MySqlParameter("@mrp", orderItems.MRP),
+                new MySqlParameter("@sellingprice", orderItems.SellingPrice),
+                new MySqlParameter("@discount", orderItems.Discount),
+                new MySqlParameter("@qty", orderItems.Qty),
+                new MySqlParameter("@totalamount", orderItems.TotalAmount),
+                new MySqlParameter("@pricetypeid", orderItems.PriceTypeID),
+                new MySqlParameter("@pricetype", orderItems.PriceType),
+                new MySqlParameter("@sizeid", orderItems.SizeID),
+                new MySqlParameter("@sizevalue", orderItems.SizeValue),
+                new MySqlParameter("@iscouponapplied", orderItems.IsCouponApplied),
+                new MySqlParameter("@coupon", orderItems.Coupon),
+                new MySqlParameter("@coupontdiscount", orderItems.CoupontDiscount),
+                new MySqlParameter("@coupontdetails", orderItems.CoupontDetails),
 
-                new SqlParameter("@shippingzone", orderItems.ShippingZone),
-                new SqlParameter("@shippingcharge", orderItems.ShippingCharge),
-                new SqlParameter("@shippingchargepaidby", orderItems.ShippingChargePaidBy),
+                new MySqlParameter("@shippingzone", orderItems.ShippingZone),
+                new MySqlParameter("@shippingcharge", orderItems.ShippingCharge),
+                new MySqlParameter("@shippingchargepaidby", orderItems.ShippingChargePaidBy),
 
-                new SqlParameter("@subtotal", orderItems.SubTotal),
-                new SqlParameter("@status", orderItems.Status),
-                new SqlParameter("@wherehouseid", orderItems.WherehouseId),
-                new SqlParameter("@isreplace", orderItems.IsReplace),
-                new SqlParameter("@parentid", orderItems.ParentID),
+                new MySqlParameter("@subtotal", orderItems.SubTotal),
+                new MySqlParameter("@status", orderItems.Status),
+                new MySqlParameter("@wherehouseid", orderItems.WherehouseId),
+                new MySqlParameter("@isreplace", orderItems.IsReplace),
+                new MySqlParameter("@parentid", orderItems.ParentID),
 
-                new SqlParameter("@returnpolicyname", orderItems.ReturnPolicyName),
-                new SqlParameter("@returnpolicytitle", orderItems.ReturnPolicyTitle),
-                new SqlParameter("@returnpolicycovers", orderItems.ReturnPolicyCovers),
-                new SqlParameter("@returnpolicydescription", orderItems.ReturnPolicyDescription),
-                new SqlParameter("@returnvaliddays", orderItems.ReturnValidDays),
-                new SqlParameter("@returnvalidtilldate", orderItems.ReturnValidTillDate),
+                new MySqlParameter("@returnpolicyname", orderItems.ReturnPolicyName),
+                new MySqlParameter("@returnpolicytitle", orderItems.ReturnPolicyTitle),
+                new MySqlParameter("@returnpolicycovers", orderItems.ReturnPolicyCovers),
+                new MySqlParameter("@returnpolicydescription", orderItems.ReturnPolicyDescription),
+                new MySqlParameter("@returnvaliddays", orderItems.ReturnValidDays),
+                new MySqlParameter("@returnvalidtilldate", orderItems.ReturnValidTillDate),
 
-                new SqlParameter("@color", orderItems.ColorName),
-                new SqlParameter("@image", orderItems.ProductImage),
-                new SqlParameter("@extradetails", orderItems.ExtraDetails),
+                new MySqlParameter("@color", orderItems.ColorName),
+                new MySqlParameter("@image", orderItems.ProductImage),
+                new MySqlParameter("@extradetails", orderItems.ExtraDetails),
 
-                new SqlParameter("@createdBy", orderItems.CreatedBy),
-                new SqlParameter("@createdAt", orderItems.CreatedAt)
+                new MySqlParameter("@createdBy", orderItems.CreatedBy),
+                new MySqlParameter("@createdAt", orderItems.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderItems, output, newid, message, sqlParams.ToArray());
@@ -110,31 +110,31 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", orderItems.Id),
-                new SqlParameter("@status", orderItems.Status),
-                new SqlParameter("@wherehouseid", orderItems.WherehouseId),
-                new SqlParameter("@returnvalidtilldate", orderItems.ReturnValidTillDate),
-                new SqlParameter("@modifiedBy", orderItems.ModifiedBy),
-                new SqlParameter("@modifiedAt", orderItems.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", orderItems.Id),
+                new MySqlParameter("@status", orderItems.Status),
+                new MySqlParameter("@wherehouseid", orderItems.WherehouseId),
+                new MySqlParameter("@returnvalidtilldate", orderItems.ReturnValidTillDate),
+                new MySqlParameter("@modifiedBy", orderItems.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orderItems.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderItems, output, newid, message, sqlParams.ToArray());
@@ -149,27 +149,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderItems.Id),
-                new SqlParameter("@deletedBy", orderItems.DeletedBy),
-                new SqlParameter("@deletedAt", orderItems.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderItems.Id),
+                new MySqlParameter("@deletedBy", orderItems.DeletedBy),
+                new MySqlParameter("@deletedAt", orderItems.DeletedAt)
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderItems, output, newid, message, sqlParams.ToArray());
@@ -184,40 +184,40 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderItems.Id),
-                new SqlParameter("@orderid", orderItems.OrderID),
-                new SqlParameter("@sellerid", orderItems.SellerID),
-                new SqlParameter("@guid", orderItems.Guid),
-                new SqlParameter("@productGuid", orderItems.ProductGUID),
-                new SqlParameter("@suborderno", orderItems.SubOrderNo),
-                new SqlParameter("@isDeleted", orderItems.IsDeleted),
-                new SqlParameter("@sellerProductID", orderItems.SellerProductID),
-                new SqlParameter("@productId", orderItems.ProductID),
-                new SqlParameter("@catId", orderItems.CategoryId),
-                new SqlParameter("@status", orderItems.Status),
-                new SqlParameter("@notInstatus", orderItems.NotInStatus),
-                new SqlParameter("@fromdate", orderItems.FromDate),
-                new SqlParameter("@todate", orderItems.ToDate),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderItems.Id),
+                new MySqlParameter("@orderid", orderItems.OrderID),
+                new MySqlParameter("@sellerid", orderItems.SellerID),
+                new MySqlParameter("@guid", orderItems.Guid),
+                new MySqlParameter("@productGuid", orderItems.ProductGUID),
+                new MySqlParameter("@suborderno", orderItems.SubOrderNo),
+                new MySqlParameter("@isDeleted", orderItems.IsDeleted),
+                new MySqlParameter("@sellerProductID", orderItems.SellerProductID),
+                new MySqlParameter("@productId", orderItems.ProductID),
+                new MySqlParameter("@catId", orderItems.CategoryId),
+                new MySqlParameter("@status", orderItems.Status),
+                new MySqlParameter("@notInstatus", orderItems.NotInStatus),
+                new MySqlParameter("@fromdate", orderItems.FromDate),
+                new MySqlParameter("@todate", orderItems.ToDate),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderItems, orderItemsParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -309,36 +309,36 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@orderid", orderItemDetails.OrderId),
-                new SqlParameter("@orderItemId", orderItemDetails.OrderItemId),
-                new SqlParameter("@sellerid", orderItemDetails.SellerID),
-                new SqlParameter("@guid", orderItemDetails.Guid),
-                new SqlParameter("@productGuid", orderItemDetails.ProductGUID),
-                new SqlParameter("@orderNo", orderItemDetails.OrderNo),
-                new SqlParameter("@suborderno", orderItemDetails.SubOrderNo),
-                new SqlParameter("@productId", orderItemDetails.ProductID),
-                new SqlParameter("@itemStatus", orderItemDetails.ItemStatus),
-                new SqlParameter("@orderStatus", orderItemDetails.OrderStatus),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@orderid", orderItemDetails.OrderId),
+                new MySqlParameter("@orderItemId", orderItemDetails.OrderItemId),
+                new MySqlParameter("@sellerid", orderItemDetails.SellerID),
+                new MySqlParameter("@guid", orderItemDetails.Guid),
+                new MySqlParameter("@productGuid", orderItemDetails.ProductGUID),
+                new MySqlParameter("@orderNo", orderItemDetails.OrderNo),
+                new MySqlParameter("@suborderno", orderItemDetails.SubOrderNo),
+                new MySqlParameter("@productId", orderItemDetails.ProductID),
+                new MySqlParameter("@itemStatus", orderItemDetails.ItemStatus),
+                new MySqlParameter("@orderStatus", orderItemDetails.OrderStatus),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderDetails, orderItemsDetailsParserAsync, output, newid: null, message, sqlParams.ToArray());

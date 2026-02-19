@@ -25,7 +25,7 @@ namespace IDServer.Domain.Entity
         public DateTime? ModifiedAt { get; set; }
         public string? DeletedBy { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public byte[]? timestamp { get; set; }
+        public DateTime? timestamp { get; set; }
         public string? AccountType { get; set; }
 
         public ICollection<UserSessions> userSessions { get; set; }

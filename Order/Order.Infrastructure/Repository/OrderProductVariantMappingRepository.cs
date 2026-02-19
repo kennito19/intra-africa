@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -29,34 +29,34 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderid", orderProductVariantMapping.OrderID),
-                new SqlParameter("@orderitemid", orderProductVariantMapping.OrderItemID),
-                new SqlParameter("@varianttype", orderProductVariantMapping.VariantType),
-                new SqlParameter("@typeid", orderProductVariantMapping.TypeID),
-                new SqlParameter("@typename", orderProductVariantMapping.TypeName),
-                new SqlParameter("@valueid", orderProductVariantMapping.ValueID),
-                new SqlParameter("@value", orderProductVariantMapping.Value),
-                new SqlParameter("@createdBy", orderProductVariantMapping.CreatedBy),
-                new SqlParameter("@createdAt", orderProductVariantMapping.CreatedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderid", orderProductVariantMapping.OrderID),
+                new MySqlParameter("@orderitemid", orderProductVariantMapping.OrderItemID),
+                new MySqlParameter("@varianttype", orderProductVariantMapping.VariantType),
+                new MySqlParameter("@typeid", orderProductVariantMapping.TypeID),
+                new MySqlParameter("@typename", orderProductVariantMapping.TypeName),
+                new MySqlParameter("@valueid", orderProductVariantMapping.ValueID),
+                new MySqlParameter("@value", orderProductVariantMapping.Value),
+                new MySqlParameter("@createdBy", orderProductVariantMapping.CreatedBy),
+                new MySqlParameter("@createdAt", orderProductVariantMapping.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderProductVariantMapping, output, newid, message, sqlParams.ToArray());
@@ -70,37 +70,37 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
 
 
 
-                new SqlParameter("@id", orderProductVariantMapping.Id),
-                new SqlParameter("@varianttype", orderProductVariantMapping.VariantType),
-                new SqlParameter("@typeid", orderProductVariantMapping.TypeID),
-                new SqlParameter("@typename", orderProductVariantMapping.TypeName),
-                new SqlParameter("@valueid", orderProductVariantMapping.ValueID),
-                new SqlParameter("@value", orderProductVariantMapping.Value),
+                new MySqlParameter("@id", orderProductVariantMapping.Id),
+                new MySqlParameter("@varianttype", orderProductVariantMapping.VariantType),
+                new MySqlParameter("@typeid", orderProductVariantMapping.TypeID),
+                new MySqlParameter("@typename", orderProductVariantMapping.TypeName),
+                new MySqlParameter("@valueid", orderProductVariantMapping.ValueID),
+                new MySqlParameter("@value", orderProductVariantMapping.Value),
 
-                new SqlParameter("modifiedBy", orderProductVariantMapping.ModifiedBy),
-                new SqlParameter("modifiedAt", orderProductVariantMapping.ModifiedAt)
+                new MySqlParameter("modifiedBy", orderProductVariantMapping.ModifiedBy),
+                new MySqlParameter("modifiedAt", orderProductVariantMapping.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderProductVariantMapping, output, newid, message, sqlParams.ToArray());
@@ -115,29 +115,29 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderProductVariantMapping.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderProductVariantMapping.Id),
 
-                new SqlParameter("@deletedby", orderProductVariantMapping.DeletedBy),
-                new SqlParameter("@deletedat", orderProductVariantMapping.DeletedAt)
+                new MySqlParameter("@deletedby", orderProductVariantMapping.DeletedBy),
+                new MySqlParameter("@deletedat", orderProductVariantMapping.DeletedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderProductVariantMapping, output, newid, message, sqlParams.ToArray());
@@ -152,31 +152,31 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderProductVariantMapping.Id),
-                new SqlParameter("@orderid", orderProductVariantMapping.OrderID),
-                new SqlParameter("@orderitemid", orderProductVariantMapping.OrderItemID),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderProductVariantMapping.Id),
+                new MySqlParameter("@orderid", orderProductVariantMapping.OrderID),
+                new MySqlParameter("@orderitemid", orderProductVariantMapping.OrderItemID),
 
-                new SqlParameter("@isDeleted", orderProductVariantMapping.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@isDeleted", orderProductVariantMapping.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderProductVariantMapping, orderProductVariantMappingParserAsync, output, newid: null, message, sqlParams.ToArray());

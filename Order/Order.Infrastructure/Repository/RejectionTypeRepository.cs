@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,28 +27,28 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@type", rejectionType.Type),
-                new SqlParameter("@createdAt", rejectionType.CreatedAt),
-                new SqlParameter("@createdBy", rejectionType.CreatedBy),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@type", rejectionType.Type),
+                new MySqlParameter("@createdAt", rejectionType.CreatedAt),
+                new MySqlParameter("@createdBy", rejectionType.CreatedBy),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.RejectionType, output, newid, message, sqlParams.ToArray());
@@ -62,28 +62,28 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", rejectionType.Id),
-                new SqlParameter("@type", rejectionType.Type),
-                new SqlParameter("@modifiedby", rejectionType.ModifiedBy),
-                new SqlParameter("@modifiedat", rejectionType.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", rejectionType.Id),
+                new MySqlParameter("@type", rejectionType.Type),
+                new MySqlParameter("@modifiedby", rejectionType.ModifiedBy),
+                new MySqlParameter("@modifiedat", rejectionType.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.RejectionType, output, newid, message, sqlParams.ToArray());
@@ -98,27 +98,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", rejectionType.Id),
-                new SqlParameter("@deletedby", rejectionType.DeletedBy),
-                new SqlParameter("@deletedat", rejectionType.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", rejectionType.Id),
+                new MySqlParameter("@deletedby", rejectionType.DeletedBy),
+                new MySqlParameter("@deletedat", rejectionType.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.RejectionType, output, newid, message, sqlParams.ToArray());
@@ -133,30 +133,30 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", rejectionType.Id),
-                new SqlParameter("@type", rejectionType.Type),
-                new SqlParameter("@isDeleted", rejectionType.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", rejectionType.Id),
+                new MySqlParameter("@type", rejectionType.Type),
+                new MySqlParameter("@isDeleted", rejectionType.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetRejectionType, rejectionTypeParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.DTO;
 using Catalogue.Domain.Entity;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -35,23 +35,23 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "ProductReport"),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@fromdate", fromDate),
-                    new SqlParameter("@todate",toDate),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "ProductReport"),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@fromdate", fromDate),
+                    new MySqlParameter("@todate",toDate),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetProductReportParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -67,21 +67,21 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "productDetails"),
-                    new SqlParameter("@productids", productIds),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "productDetails"),
+                    new MySqlParameter("@productids", productIds),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetProductDetailsReportParserAsync, output, newid: null, message, sqlParams.ToArray());

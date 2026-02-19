@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,32 +32,32 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@id",assignBrandToSeller.Id),
-                    new SqlParameter("@sellerid",assignBrandToSeller.SellerID),
-                    new SqlParameter("@brandid",assignBrandToSeller.BrandId),
-                    new SqlParameter("@status",assignBrandToSeller.Status),
-                    new SqlParameter("@createdBy", assignBrandToSeller.CreatedBy),
-                    new SqlParameter("@createdAt", assignBrandToSeller.CreatedAt),
-                    new SqlParameter("@brandcerti",assignBrandToSeller.BrandCertificate)
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@id",assignBrandToSeller.Id),
+                    new MySqlParameter("@sellerid",assignBrandToSeller.SellerID),
+                    new MySqlParameter("@brandid",assignBrandToSeller.BrandId),
+                    new MySqlParameter("@status",assignBrandToSeller.Status),
+                    new MySqlParameter("@createdBy", assignBrandToSeller.CreatedBy),
+                    new MySqlParameter("@createdAt", assignBrandToSeller.CreatedAt),
+                    new MySqlParameter("@brandcerti",assignBrandToSeller.BrandCertificate)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignBrandToSeller, output, newid, message, sqlParams.ToArray());
@@ -71,32 +71,32 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id",assignBrandToSeller.Id),
-                    new SqlParameter("@sellerid",assignBrandToSeller.SellerID),
-                    new SqlParameter("@brandid",assignBrandToSeller.BrandId),
-                    new SqlParameter("@status",assignBrandToSeller.Status),
-                    new SqlParameter("@createdBy", assignBrandToSeller.CreatedBy),
-                    new SqlParameter("@createdAt", assignBrandToSeller.CreatedAt),
-                    new SqlParameter("@modifiedBy", assignBrandToSeller.ModifiedBy),
-                    new SqlParameter("@modifiedAt", assignBrandToSeller.ModifiedAt),
-                    new SqlParameter("@brandcerti",assignBrandToSeller.BrandCertificate),
-                    new SqlParameter("@isDeleted", assignBrandToSeller.IsDeleted),
-                    new SqlParameter("@deletedBy", assignBrandToSeller.DeletedBy),
-                    new SqlParameter("@deletedAt", assignBrandToSeller.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id",assignBrandToSeller.Id),
+                    new MySqlParameter("@sellerid",assignBrandToSeller.SellerID),
+                    new MySqlParameter("@brandid",assignBrandToSeller.BrandId),
+                    new MySqlParameter("@status",assignBrandToSeller.Status),
+                    new MySqlParameter("@createdBy", assignBrandToSeller.CreatedBy),
+                    new MySqlParameter("@createdAt", assignBrandToSeller.CreatedAt),
+                    new MySqlParameter("@modifiedBy", assignBrandToSeller.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", assignBrandToSeller.ModifiedAt),
+                    new MySqlParameter("@brandcerti",assignBrandToSeller.BrandCertificate),
+                    new MySqlParameter("@isDeleted", assignBrandToSeller.IsDeleted),
+                    new MySqlParameter("@deletedBy", assignBrandToSeller.DeletedBy),
+                    new MySqlParameter("@deletedAt", assignBrandToSeller.DeletedAt)
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignBrandToSeller, output, newid: null, message, sqlParams.ToArray());
@@ -112,22 +112,22 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", assignBrandToSeller.Id),
-                    new SqlParameter("@deletedBy", assignBrandToSeller.DeletedBy),
-                    new SqlParameter("@deletedAt", assignBrandToSeller.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", assignBrandToSeller.Id),
+                    new MySqlParameter("@deletedBy", assignBrandToSeller.DeletedBy),
+                    new MySqlParameter("@deletedAt", assignBrandToSeller.DeletedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignBrandToSeller, output, newid: null, message, sqlParams.ToArray());
@@ -143,31 +143,31 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", assignBrandToSeller.Id),
-                    new SqlParameter("@sellerid", assignBrandToSeller.SellerID),
-                    new SqlParameter("@brandid", assignBrandToSeller.BrandId),
-                    new SqlParameter("@sellername", assignBrandToSeller.SellerName),
-                    new SqlParameter("@brandname", assignBrandToSeller.BrandName),
-                    new SqlParameter("@status", assignBrandToSeller.Status),
-                    new SqlParameter("@Brandstatus", assignBrandToSeller.BrandStatus),
-                    new SqlParameter("@isDeleted", assignBrandToSeller.IsDeleted),
-                    new SqlParameter("@isBrandDeleted", assignBrandToSeller.IsBrandDeleted),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@pageSize", PageSize),
-                    new SqlParameter("@searchtext", assignBrandToSeller.Searchtext),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", assignBrandToSeller.Id),
+                    new MySqlParameter("@sellerid", assignBrandToSeller.SellerID),
+                    new MySqlParameter("@brandid", assignBrandToSeller.BrandId),
+                    new MySqlParameter("@sellername", assignBrandToSeller.SellerName),
+                    new MySqlParameter("@brandname", assignBrandToSeller.BrandName),
+                    new MySqlParameter("@status", assignBrandToSeller.Status),
+                    new MySqlParameter("@Brandstatus", assignBrandToSeller.BrandStatus),
+                    new MySqlParameter("@isDeleted", assignBrandToSeller.IsDeleted),
+                    new MySqlParameter("@isBrandDeleted", assignBrandToSeller.IsBrandDeleted),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@pageSize", PageSize),
+                    new MySqlParameter("@searchtext", assignBrandToSeller.Searchtext),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAssignBrandToSeller, AssignBrandToSellerParserAsync, output, newid: null, message, sqlParams.ToArray());

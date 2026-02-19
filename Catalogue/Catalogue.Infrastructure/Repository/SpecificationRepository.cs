@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Application.IServices;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,32 +33,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@name", specification.Name),
-                new SqlParameter("@fieldType", specification.FieldType),
-                new SqlParameter("@parentid", specification.ParentId),
-                new SqlParameter("@pathids", specification.PathIds),
-                new SqlParameter("@ischildparent", specification.IsChildParent),
-                new SqlParameter("@pathname", specification.PathName),
-                new SqlParameter("@createdby", specification.CreatedBy),
-                new SqlParameter("@createdat", specification.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@name", specification.Name),
+                new MySqlParameter("@fieldType", specification.FieldType),
+                new MySqlParameter("@parentid", specification.ParentId),
+                new MySqlParameter("@pathids", specification.PathIds),
+                new MySqlParameter("@ischildparent", specification.IsChildParent),
+                new MySqlParameter("@pathname", specification.PathName),
+                new MySqlParameter("@createdby", specification.CreatedBy),
+                new MySqlParameter("@createdat", specification.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Specification, output, newid, message, sqlParams.ToArray());
@@ -73,32 +73,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@guid", specification.Guid),
-                new SqlParameter("@name", specification.Name),
-                new SqlParameter("@fieldtype", specification.FieldType),
-                new SqlParameter("@parentid", specification.ParentId),
-                new SqlParameter("@pathids", specification.PathIds),
-                new SqlParameter("@pathname", specification.PathName),
-                new SqlParameter("@modifiedby", specification.ModifiedBy),
-                new SqlParameter("@modifiedat", specification.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@guid", specification.Guid),
+                new MySqlParameter("@name", specification.Name),
+                new MySqlParameter("@fieldtype", specification.FieldType),
+                new MySqlParameter("@parentid", specification.ParentId),
+                new MySqlParameter("@pathids", specification.PathIds),
+                new MySqlParameter("@pathname", specification.PathName),
+                new MySqlParameter("@modifiedby", specification.ModifiedBy),
+                new MySqlParameter("@modifiedat", specification.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Specification, output, newid, message, sqlParams.ToArray());
@@ -113,27 +113,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", specification.ID),
-                new SqlParameter("@deletedby", specification.DeletedBy),
-                new SqlParameter("@deletedat", specification.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", specification.ID),
+                new MySqlParameter("@deletedby", specification.DeletedBy),
+                new MySqlParameter("@deletedat", specification.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Specification, output, newid, message, sqlParams.ToArray());
@@ -148,37 +148,37 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", specification.ID),
-                new SqlParameter("@guid", specification.Guid),
-                new SqlParameter("@name", specification.Name),
-                new SqlParameter("@fieldtype", specification.FieldType),
-                new SqlParameter("@parentid", specification.ParentId),
-                new SqlParameter("@pathids", specification.PathIds),
-                new SqlParameter("@isdeleted", specification.isDeleted),
-                new SqlParameter("@ischildparent", specification.IsChildParent),
-                new SqlParameter("@searchtext", specification.Searchtext),
-                new SqlParameter("@getparent", Getparent),
-                new SqlParameter("@getchild", Getchild),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", specification.ID),
+                new MySqlParameter("@guid", specification.Guid),
+                new MySqlParameter("@name", specification.Name),
+                new MySqlParameter("@fieldtype", specification.FieldType),
+                new MySqlParameter("@parentid", specification.ParentId),
+                new MySqlParameter("@pathids", specification.PathIds),
+                new MySqlParameter("@isdeleted", specification.isDeleted),
+                new MySqlParameter("@ischildparent", specification.IsChildParent),
+                new MySqlParameter("@searchtext", specification.Searchtext),
+                new MySqlParameter("@getparent", Getparent),
+                new MySqlParameter("@getchild", Getchild),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetSpecification, specificationParserAsync, output, newid: null, message, sqlParams.ToArray());

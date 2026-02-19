@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,35 +32,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
-                new SqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
-                new SqlParameter("@collectionId", flashSalePrice.CollectionId),
-                new SqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
-                new SqlParameter("@mrp", flashSalePrice.MRP),
-                new SqlParameter("@sellingprice", flashSalePrice.SellingPrice),
-                new SqlParameter("@discount", flashSalePrice.Discount),
-                new SqlParameter("@status", flashSalePrice.Status),
-                new SqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
-                new SqlParameter("@createdby", flashSalePrice.CreatedBy),
-                new SqlParameter("@createdat", flashSalePrice.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
+                new MySqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
+                new MySqlParameter("@collectionId", flashSalePrice.CollectionId),
+                new MySqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
+                new MySqlParameter("@mrp", flashSalePrice.MRP),
+                new MySqlParameter("@sellingprice", flashSalePrice.SellingPrice),
+                new MySqlParameter("@discount", flashSalePrice.Discount),
+                new MySqlParameter("@status", flashSalePrice.Status),
+                new MySqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
+                new MySqlParameter("@createdby", flashSalePrice.CreatedBy),
+                new MySqlParameter("@createdat", flashSalePrice.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageFlashSalePriceMaster, output, newid, message, sqlParams.ToArray());
@@ -75,39 +75,39 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", flashSalePrice.Id),
-                new SqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
-                new SqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
-                new SqlParameter("@collectionId", flashSalePrice.CollectionId),
-                new SqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
-                new SqlParameter("@mrp", flashSalePrice.MRP),
-                new SqlParameter("@sellingprice", flashSalePrice.SellingPrice),
-                new SqlParameter("@discount", flashSalePrice.Discount),
-                new SqlParameter("@status", flashSalePrice.Status),
-                new SqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
-                new SqlParameter("@modifiedby", flashSalePrice.ModifiedBy),
-                new SqlParameter("@modifiedat", flashSalePrice.ModifiedAt),
-                new SqlParameter("@isDeleted", flashSalePrice.IsDeleted),
-                new SqlParameter("@deletedby", flashSalePrice.DeletedBy),
-                new SqlParameter("@deletedat", flashSalePrice.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", flashSalePrice.Id),
+                new MySqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
+                new MySqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
+                new MySqlParameter("@collectionId", flashSalePrice.CollectionId),
+                new MySqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
+                new MySqlParameter("@mrp", flashSalePrice.MRP),
+                new MySqlParameter("@sellingprice", flashSalePrice.SellingPrice),
+                new MySqlParameter("@discount", flashSalePrice.Discount),
+                new MySqlParameter("@status", flashSalePrice.Status),
+                new MySqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
+                new MySqlParameter("@modifiedby", flashSalePrice.ModifiedBy),
+                new MySqlParameter("@modifiedat", flashSalePrice.ModifiedAt),
+                new MySqlParameter("@isDeleted", flashSalePrice.IsDeleted),
+                new MySqlParameter("@deletedby", flashSalePrice.DeletedBy),
+                new MySqlParameter("@deletedat", flashSalePrice.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageFlashSalePriceMaster, output, newid, message, sqlParams.ToArray());
@@ -122,27 +122,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", flashSalePrice.Id),
-                new SqlParameter("@deletedby", flashSalePrice.DeletedBy),
-                new SqlParameter("@deletedat", flashSalePrice.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", flashSalePrice.Id),
+                new MySqlParameter("@deletedby", flashSalePrice.DeletedBy),
+                new MySqlParameter("@deletedat", flashSalePrice.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageFlashSalePriceMaster, output, newid, message, sqlParams.ToArray());
@@ -157,30 +157,30 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", flashSalePrice.Id),
-                new SqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
-                new SqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
-                new SqlParameter("@collectionId", flashSalePrice.CollectionId),
-                new SqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
-                new SqlParameter("@collectionName", flashSalePrice.CollectionName),
-                new SqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
-                new SqlParameter("@isdeleted", flashSalePrice.IsDeleted),
-                new SqlParameter("@status", flashSalePrice.Status),
-                new SqlParameter("@searchtext", flashSalePrice.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", flashSalePrice.Id),
+                new MySqlParameter("@sellerProductId", flashSalePrice.SellerProductId),
+                new MySqlParameter("@sellerWiseProductPriceMasterId", flashSalePrice.SellerWiseProductPriceMasterId),
+                new MySqlParameter("@collectionId", flashSalePrice.CollectionId),
+                new MySqlParameter("@collectionMappingId", flashSalePrice.CollectionMappingId),
+                new MySqlParameter("@collectionName", flashSalePrice.CollectionName),
+                new MySqlParameter("@isselleroptin", flashSalePrice.IsSellerOptIn),
+                new MySqlParameter("@isdeleted", flashSalePrice.IsDeleted),
+                new MySqlParameter("@status", flashSalePrice.Status),
+                new MySqlParameter("@searchtext", flashSalePrice.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageFlashSalePriceMaster, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,23 +32,23 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "Warehouse"),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@fromdate", fromDate),
-                    new SqlParameter("@todate",toDate),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "Warehouse"),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@fromdate", fromDate),
+                    new MySqlParameter("@todate",toDate),
                     
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetWarehouseReportParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -106,23 +106,23 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "GSTReport"),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@fromdate", fromDate),
-                    new SqlParameter("@todate",toDate),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "GSTReport"),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@fromdate", fromDate),
+                    new MySqlParameter("@todate",toDate),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetGSTReportParserAsync, output, newid: null, message, sqlParams.ToArray());

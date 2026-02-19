@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -33,34 +33,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new SqlParameter("@description",hSNCodeLibrary.Description),
-                    new SqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
-                    new SqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
-                    new SqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
-                    new SqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
-                    new SqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new SqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
-                    new SqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
+                    new MySqlParameter("@description",hSNCodeLibrary.Description),
+                    new MySqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
+                    new MySqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
+                    new MySqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
+                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
+                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
+                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid, message, sqlParams.ToArray());
@@ -75,29 +75,29 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", hSNCodeLibrary.Id),
-                    new SqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new SqlParameter("@description",hSNCodeLibrary.Description),
-                    new SqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
-                    new SqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
-                    new SqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
-                    new SqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
-                    new SqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new SqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
-                    new SqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", hSNCodeLibrary.Id),
+                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
+                    new MySqlParameter("@description",hSNCodeLibrary.Description),
+                    new MySqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
+                    new MySqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
+                    new MySqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
+                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
+                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
+                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid: null, message, sqlParams.ToArray());
@@ -113,22 +113,22 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", hSNCodeLibrary.Id),
-                    new SqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new SqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", hSNCodeLibrary.Id),
+                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
+                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid: null, message, sqlParams.ToArray());
@@ -144,26 +144,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", hSNCodeLibrary.Id),
-                    new SqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new SqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted),
-                    new SqlParameter("@searchtext", hSNCodeLibrary.Searchtext),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", hSNCodeLibrary.Id),
+                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
+                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted),
+                    new MySqlParameter("@searchtext", hSNCodeLibrary.Searchtext),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetHSNCode, HSNCodeParserAsync, output, newid: null, message, sqlParams.ToArray());

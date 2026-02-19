@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -32,34 +32,34 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@countryid", deliveryLibrary.CountryID),
-                new SqlParameter("@stateid", deliveryLibrary.StateID),
-                new SqlParameter("@cityid", deliveryLibrary.CityID),
-                new SqlParameter("@locality", deliveryLibrary.Locality),
-                new SqlParameter("@pincode", deliveryLibrary.Pincode),
-                new SqlParameter("@deliveryDays", deliveryLibrary.DeliveryDays),
-                new SqlParameter("@status", deliveryLibrary.Status),
-                new SqlParameter("@isCODActive", deliveryLibrary.IsCODActive),
-                new SqlParameter("@createdby", deliveryLibrary.CreatedBy),
-                new SqlParameter("@createdat", deliveryLibrary.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@countryid", deliveryLibrary.CountryID),
+                new MySqlParameter("@stateid", deliveryLibrary.StateID),
+                new MySqlParameter("@cityid", deliveryLibrary.CityID),
+                new MySqlParameter("@locality", deliveryLibrary.Locality),
+                new MySqlParameter("@pincode", deliveryLibrary.Pincode),
+                new MySqlParameter("@deliveryDays", deliveryLibrary.DeliveryDays),
+                new MySqlParameter("@status", deliveryLibrary.Status),
+                new MySqlParameter("@isCODActive", deliveryLibrary.IsCODActive),
+                new MySqlParameter("@createdby", deliveryLibrary.CreatedBy),
+                new MySqlParameter("@createdat", deliveryLibrary.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Delivery, output, newid, message, sqlParams.ToArray());
@@ -74,35 +74,35 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", deliveryLibrary.Id),
-                new SqlParameter("@countryid", deliveryLibrary.CountryID),
-                new SqlParameter("@stateid", deliveryLibrary.StateID),
-                new SqlParameter("@cityid", deliveryLibrary.CityID),
-                new SqlParameter("@locality", deliveryLibrary.Locality),
-                new SqlParameter("@pincode", deliveryLibrary.Pincode),
-                new SqlParameter("@deliveryDays", deliveryLibrary.DeliveryDays),
-                new SqlParameter("@status", deliveryLibrary.Status),
-                new SqlParameter("@isCODActive", deliveryLibrary.IsCODActive),
-                new SqlParameter("@modifiedby", deliveryLibrary.ModifiedBy),
-                new SqlParameter("@modifiedat", deliveryLibrary.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", deliveryLibrary.Id),
+                new MySqlParameter("@countryid", deliveryLibrary.CountryID),
+                new MySqlParameter("@stateid", deliveryLibrary.StateID),
+                new MySqlParameter("@cityid", deliveryLibrary.CityID),
+                new MySqlParameter("@locality", deliveryLibrary.Locality),
+                new MySqlParameter("@pincode", deliveryLibrary.Pincode),
+                new MySqlParameter("@deliveryDays", deliveryLibrary.DeliveryDays),
+                new MySqlParameter("@status", deliveryLibrary.Status),
+                new MySqlParameter("@isCODActive", deliveryLibrary.IsCODActive),
+                new MySqlParameter("@modifiedby", deliveryLibrary.ModifiedBy),
+                new MySqlParameter("@modifiedat", deliveryLibrary.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Delivery, output, newid, message, sqlParams.ToArray());
@@ -117,27 +117,27 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", deliveryLibrary.Id),
-                new SqlParameter("@deletedby", deliveryLibrary.DeletedBy),
-                new SqlParameter("@deletedat", deliveryLibrary.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", deliveryLibrary.Id),
+                new MySqlParameter("@deletedby", deliveryLibrary.DeletedBy),
+                new MySqlParameter("@deletedat", deliveryLibrary.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Delivery, output, newid, message, sqlParams.ToArray());
@@ -152,33 +152,33 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", deliveryLibrary.Id),
-                new SqlParameter("@countryid", deliveryLibrary.CountryID),
-                new SqlParameter("@stateid", deliveryLibrary.StateID),
-                new SqlParameter("@cityid", deliveryLibrary.CityID),
-                new SqlParameter("@searchtext", deliveryLibrary.searchText),
-                new SqlParameter("@locality", deliveryLibrary.Locality),
-                new SqlParameter("@pincode", deliveryLibrary.Pincode),
-                new SqlParameter("@countryname", deliveryLibrary.CountryName),
-                new SqlParameter("@statename", deliveryLibrary.StateName),
-                new SqlParameter("@cityname", deliveryLibrary.CityName),
-                new SqlParameter("@status", deliveryLibrary.Status),
-                new SqlParameter("@isdeleted", deliveryLibrary.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", deliveryLibrary.Id),
+                new MySqlParameter("@countryid", deliveryLibrary.CountryID),
+                new MySqlParameter("@stateid", deliveryLibrary.StateID),
+                new MySqlParameter("@cityid", deliveryLibrary.CityID),
+                new MySqlParameter("@searchtext", deliveryLibrary.searchText),
+                new MySqlParameter("@locality", deliveryLibrary.Locality),
+                new MySqlParameter("@pincode", deliveryLibrary.Pincode),
+                new MySqlParameter("@countryname", deliveryLibrary.CountryName),
+                new MySqlParameter("@statename", deliveryLibrary.StateName),
+                new MySqlParameter("@cityname", deliveryLibrary.CityName),
+                new MySqlParameter("@status", deliveryLibrary.Status),
+                new MySqlParameter("@isdeleted", deliveryLibrary.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetDelivery, DeliveryParserAsync, output, newid: null, message, sqlParams.ToArray());

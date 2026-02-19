@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,59 +32,59 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@userid",kYCDetails.UserID),
-                    new SqlParameter("@kycfor",kYCDetails.KYCFor),
-                    new SqlParameter("@displayname",kYCDetails.DisplayName),
-                    new SqlParameter("@ownername",kYCDetails.OwnerName),
-                    new SqlParameter("@contactpersonname",kYCDetails.ContactPersonName),
-                    new SqlParameter("@contactpersonmobileno",kYCDetails.ContactPersonMobileNo),
-                    new SqlParameter("@pancardno",kYCDetails.PanCardNo),
-                    new SqlParameter("@nameonpancard",kYCDetails.NameOnPanCard),
-                    new SqlParameter("@dateofbirth",kYCDetails.DateOfBirth),
-                    new SqlParameter("@aadharcardno",kYCDetails.AadharCardNo),
-                    new SqlParameter("@isuserwithgst",kYCDetails.IsUserWithGST),
-                    new SqlParameter("@typeofcompany",kYCDetails.TypeOfCompany),
-                    new SqlParameter("@companyregno",kYCDetails.CompanyRegistrationNo),
-                    new SqlParameter("@bussinesstype",kYCDetails.BussinessType),
-                    new SqlParameter("@msmeno",kYCDetails.MSMENo),
-                    new SqlParameter("@accountno",kYCDetails.AccountNo),
-                    new SqlParameter("@accountholdername",kYCDetails.AccountHolderName),
-                    new SqlParameter("@bankname",kYCDetails.BankName),
-                    new SqlParameter("@accounttype",kYCDetails.AccountType),
-                    new SqlParameter("@ifsccode",kYCDetails.IFSCCode),
-                    new SqlParameter("@logo",kYCDetails.Logo),
-                    new SqlParameter("@digitalsign",kYCDetails.DigitalSign),
-                    new SqlParameter("@cancelcheque",kYCDetails.CancelCheque),
-                    new SqlParameter("@pandoc",kYCDetails.PanCardDoc),
-                    new SqlParameter("@msmedoc",kYCDetails.MSMEDoc),
-                    new SqlParameter("@aadharcardfrontdoc",kYCDetails.AadharCardFrontDoc),
-                    new SqlParameter("@aadharcardbackdoc",kYCDetails.AadharCardBackDoc),
-                    new SqlParameter("@shipmentby",kYCDetails.ShipmentBy),
-                    new SqlParameter("@shipmentchargespaidby",kYCDetails.ShipmentChargesPaidBy),
-                    new SqlParameter("@note",kYCDetails.Note),
-                    new SqlParameter("@status",kYCDetails.Status),
-                    new SqlParameter("@createdBy",kYCDetails.CreatedBy),
-                    new SqlParameter("@createdAt",kYCDetails.CreatedAt)
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@userid",kYCDetails.UserID),
+                    new MySqlParameter("@kycfor",kYCDetails.KYCFor),
+                    new MySqlParameter("@displayname",kYCDetails.DisplayName),
+                    new MySqlParameter("@ownername",kYCDetails.OwnerName),
+                    new MySqlParameter("@contactpersonname",kYCDetails.ContactPersonName),
+                    new MySqlParameter("@contactpersonmobileno",kYCDetails.ContactPersonMobileNo),
+                    new MySqlParameter("@pancardno",kYCDetails.PanCardNo),
+                    new MySqlParameter("@nameonpancard",kYCDetails.NameOnPanCard),
+                    new MySqlParameter("@dateofbirth",kYCDetails.DateOfBirth),
+                    new MySqlParameter("@aadharcardno",kYCDetails.AadharCardNo),
+                    new MySqlParameter("@isuserwithgst",kYCDetails.IsUserWithGST),
+                    new MySqlParameter("@typeofcompany",kYCDetails.TypeOfCompany),
+                    new MySqlParameter("@companyregno",kYCDetails.CompanyRegistrationNo),
+                    new MySqlParameter("@bussinesstype",kYCDetails.BussinessType),
+                    new MySqlParameter("@msmeno",kYCDetails.MSMENo),
+                    new MySqlParameter("@accountno",kYCDetails.AccountNo),
+                    new MySqlParameter("@accountholdername",kYCDetails.AccountHolderName),
+                    new MySqlParameter("@bankname",kYCDetails.BankName),
+                    new MySqlParameter("@accounttype",kYCDetails.AccountType),
+                    new MySqlParameter("@ifsccode",kYCDetails.IFSCCode),
+                    new MySqlParameter("@logo",kYCDetails.Logo),
+                    new MySqlParameter("@digitalsign",kYCDetails.DigitalSign),
+                    new MySqlParameter("@cancelcheque",kYCDetails.CancelCheque),
+                    new MySqlParameter("@pandoc",kYCDetails.PanCardDoc),
+                    new MySqlParameter("@msmedoc",kYCDetails.MSMEDoc),
+                    new MySqlParameter("@aadharcardfrontdoc",kYCDetails.AadharCardFrontDoc),
+                    new MySqlParameter("@aadharcardbackdoc",kYCDetails.AadharCardBackDoc),
+                    new MySqlParameter("@shipmentby",kYCDetails.ShipmentBy),
+                    new MySqlParameter("@shipmentchargespaidby",kYCDetails.ShipmentChargesPaidBy),
+                    new MySqlParameter("@note",kYCDetails.Note),
+                    new MySqlParameter("@status",kYCDetails.Status),
+                    new MySqlParameter("@createdBy",kYCDetails.CreatedBy),
+                    new MySqlParameter("@createdAt",kYCDetails.CreatedAt)
                     
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.KYCDetails, output, newid, message, sqlParams.ToArray());
@@ -98,51 +98,51 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@userid", kYCDetails.UserID),
-                     new SqlParameter("@displayname",kYCDetails.DisplayName),
-                    new SqlParameter("@ownername",kYCDetails.OwnerName),
-                    new SqlParameter("@contactpersonname",kYCDetails.ContactPersonName),
-                    new SqlParameter("@contactpersonmobileno",kYCDetails.ContactPersonMobileNo),
-                    new SqlParameter("@pancardno",kYCDetails.PanCardNo),
-                    new SqlParameter("@nameonpancard",kYCDetails.NameOnPanCard),
-                    new SqlParameter("@dateofbirth",kYCDetails.DateOfBirth),
-                    new SqlParameter("@aadharcardno",kYCDetails.AadharCardNo),
-                    new SqlParameter("@isuserwithgst",kYCDetails.IsUserWithGST),
-                    new SqlParameter("@typeofcompany",kYCDetails.TypeOfCompany),
-                    new SqlParameter("@companyregno",kYCDetails.CompanyRegistrationNo),
-                    new SqlParameter("@bussinesstype",kYCDetails.BussinessType),
-                    new SqlParameter("@msmeno",kYCDetails.MSMENo),
-                    new SqlParameter("@accountno",kYCDetails.AccountNo),
-                    new SqlParameter("@accountholdername",kYCDetails.AccountHolderName),
-                    new SqlParameter("@bankname",kYCDetails.BankName),
-                    new SqlParameter("@accounttype",kYCDetails.AccountType),
-                    new SqlParameter("@ifsccode",kYCDetails.IFSCCode),
-                    new SqlParameter("@logo",kYCDetails.Logo),
-                    new SqlParameter("@digitalsign",kYCDetails.DigitalSign),
-                    new SqlParameter("@cancelcheque",kYCDetails.CancelCheque),
-                    new SqlParameter("@pandoc",kYCDetails.PanCardDoc),
-                    new SqlParameter("@msmedoc",kYCDetails.MSMEDoc),
-                    new SqlParameter("@aadharcardfrontdoc",kYCDetails.AadharCardFrontDoc),
-                    new SqlParameter("@aadharcardbackdoc",kYCDetails.AadharCardBackDoc),
-                    new SqlParameter("@shipmentby",kYCDetails.ShipmentBy),
-                    new SqlParameter("@shipmentchargespaidby",kYCDetails.ShipmentChargesPaidBy),
-                    new SqlParameter("@note",kYCDetails.Note),
-                    new SqlParameter("@status",kYCDetails.Status),
-                    new SqlParameter("@modifiedBy", kYCDetails.ModifiedBy),
-                    new SqlParameter("@modifiedAt", kYCDetails.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@userid", kYCDetails.UserID),
+                     new MySqlParameter("@displayname",kYCDetails.DisplayName),
+                    new MySqlParameter("@ownername",kYCDetails.OwnerName),
+                    new MySqlParameter("@contactpersonname",kYCDetails.ContactPersonName),
+                    new MySqlParameter("@contactpersonmobileno",kYCDetails.ContactPersonMobileNo),
+                    new MySqlParameter("@pancardno",kYCDetails.PanCardNo),
+                    new MySqlParameter("@nameonpancard",kYCDetails.NameOnPanCard),
+                    new MySqlParameter("@dateofbirth",kYCDetails.DateOfBirth),
+                    new MySqlParameter("@aadharcardno",kYCDetails.AadharCardNo),
+                    new MySqlParameter("@isuserwithgst",kYCDetails.IsUserWithGST),
+                    new MySqlParameter("@typeofcompany",kYCDetails.TypeOfCompany),
+                    new MySqlParameter("@companyregno",kYCDetails.CompanyRegistrationNo),
+                    new MySqlParameter("@bussinesstype",kYCDetails.BussinessType),
+                    new MySqlParameter("@msmeno",kYCDetails.MSMENo),
+                    new MySqlParameter("@accountno",kYCDetails.AccountNo),
+                    new MySqlParameter("@accountholdername",kYCDetails.AccountHolderName),
+                    new MySqlParameter("@bankname",kYCDetails.BankName),
+                    new MySqlParameter("@accounttype",kYCDetails.AccountType),
+                    new MySqlParameter("@ifsccode",kYCDetails.IFSCCode),
+                    new MySqlParameter("@logo",kYCDetails.Logo),
+                    new MySqlParameter("@digitalsign",kYCDetails.DigitalSign),
+                    new MySqlParameter("@cancelcheque",kYCDetails.CancelCheque),
+                    new MySqlParameter("@pandoc",kYCDetails.PanCardDoc),
+                    new MySqlParameter("@msmedoc",kYCDetails.MSMEDoc),
+                    new MySqlParameter("@aadharcardfrontdoc",kYCDetails.AadharCardFrontDoc),
+                    new MySqlParameter("@aadharcardbackdoc",kYCDetails.AadharCardBackDoc),
+                    new MySqlParameter("@shipmentby",kYCDetails.ShipmentBy),
+                    new MySqlParameter("@shipmentchargespaidby",kYCDetails.ShipmentChargesPaidBy),
+                    new MySqlParameter("@note",kYCDetails.Note),
+                    new MySqlParameter("@status",kYCDetails.Status),
+                    new MySqlParameter("@modifiedBy", kYCDetails.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", kYCDetails.ModifiedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.KYCDetails, output, newid: null, message, sqlParams.ToArray());
@@ -158,23 +158,23 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", kYCDetails.Id),
-                    new SqlParameter("@userid", kYCDetails.UserID),
-                    new SqlParameter("@deletedBy", kYCDetails.DeletedBy),
-                    new SqlParameter("@deletedAt", kYCDetails.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", kYCDetails.Id),
+                    new MySqlParameter("@userid", kYCDetails.UserID),
+                    new MySqlParameter("@deletedBy", kYCDetails.DeletedBy),
+                    new MySqlParameter("@deletedAt", kYCDetails.DeletedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.KYCDetails, output, newid: null, message, sqlParams.ToArray());
@@ -190,25 +190,25 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", kYCDetails.Id),
-                    new SqlParameter("@userid", kYCDetails.UserID),
-                    new SqlParameter("@status", kYCDetails.Status),
-                    new SqlParameter("@isDeleted", kYCDetails.IsDeleted),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", kYCDetails.Id),
+                    new MySqlParameter("@userid", kYCDetails.UserID),
+                    new MySqlParameter("@status", kYCDetails.Status),
+                    new MySqlParameter("@isDeleted", kYCDetails.IsDeleted),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetKYCDetails, KYCDetailsParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -288,26 +288,26 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", kYCDetails.Id),
-                    new SqlParameter("@userid", kYCDetails.UserID),
-                    new SqlParameter("@status", kYCDetails.Status),
-                    new SqlParameter("@kycfor", kYCDetails.KYCFor),
-                    new SqlParameter("@isDeleted", IsDeleted),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", kYCDetails.Id),
+                    new MySqlParameter("@userid", kYCDetails.UserID),
+                    new MySqlParameter("@status", kYCDetails.Status),
+                    new MySqlParameter("@kycfor", kYCDetails.KYCFor),
+                    new MySqlParameter("@isDeleted", IsDeleted),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetBasicKYCDetails, BaicKYCDetailsParserAsync, output, newid: null, message, sqlParams.ToArray());

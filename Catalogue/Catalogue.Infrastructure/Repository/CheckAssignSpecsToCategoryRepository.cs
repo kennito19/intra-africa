@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,21 +32,21 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode", "1"),
-                    new SqlParameter("@assignSpecId", assignSpecId),
-                    new SqlParameter("@multiSeller", multiSeller),
+                    new MySqlParameter("@mode", "1"),
+                    new MySqlParameter("@assignSpecId", assignSpecId),
+                    new MySqlParameter("@multiSeller", multiSeller),
                 };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.CheckAssignSpecsToCategory, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -61,22 +61,22 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode", "2"),
-                    new SqlParameter("@assignSpecId", assignSpecId),
-                    new SqlParameter("@sizeTypeId", sizeTypeId),
-                    new SqlParameter("@multiSeller", multiSeller),
+                    new MySqlParameter("@mode", "2"),
+                    new MySqlParameter("@assignSpecId", assignSpecId),
+                    new MySqlParameter("@sizeTypeId", sizeTypeId),
+                    new MySqlParameter("@multiSeller", multiSeller),
                 };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.CheckAssignSpecsToCategory, sizeLayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -91,22 +91,22 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode", "3"),
-                    new SqlParameter("@assignSpecId", assignSpecId),
-                    new SqlParameter("@specTypeId", specTypeId),
-                    new SqlParameter("@multiSeller", multiSeller),
+                    new MySqlParameter("@mode", "3"),
+                    new MySqlParameter("@assignSpecId", assignSpecId),
+                    new MySqlParameter("@specTypeId", specTypeId),
+                    new MySqlParameter("@multiSeller", multiSeller),
                 };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.CheckAssignSpecsToCategory, specLayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -121,21 +121,21 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode", "4"),
-                    new SqlParameter("@assignSpecId", assignSpecId),
-                    new SqlParameter("@sizeTypeId", sizeTypeId),
+                    new MySqlParameter("@mode", "4"),
+                    new MySqlParameter("@assignSpecId", assignSpecId),
+                    new MySqlParameter("@sizeTypeId", sizeTypeId),
                 };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.CheckAssignSpecsToCategory, sizeTypeLayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -150,21 +150,21 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode", "5"),
-                    new SqlParameter("@assignSpecId", assignSpecId),
-                    new SqlParameter("@specTypeId", specTypeId),
+                    new MySqlParameter("@mode", "5"),
+                    new MySqlParameter("@assignSpecId", assignSpecId),
+                    new MySqlParameter("@specTypeId", specTypeId),
                 };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.CheckAssignSpecsToCategory, specTypeLayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

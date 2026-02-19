@@ -1,9 +1,9 @@
-﻿using Catalogue.Domain.Entity;
+using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using Catalogue.Application.IRepositories;
 
@@ -30,35 +30,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
+                var sqlParams = new List<MySqlParameter>() {
                 
-                new SqlParameter("@categoryid", productList.CategoryId),
-                new SqlParameter("@sellerids", productList.SellerIds),
-                new SqlParameter("@brandids", productList.BrandIds),
-                new SqlParameter("@searchtext", productList.searchTexts),
-                new SqlParameter("@sizeids", productList.SizeIds),
-                new SqlParameter("@colorids", productList.ColorIds),
-                new SqlParameter("@productcollectionid", productList.productCollectionId),
-                new SqlParameter("@guids",productList.guIds ),
-                new SqlParameter("@minprice", productList.MinPrice),
-                new SqlParameter("@maxprice", productList.MaxPrice),
-                new SqlParameter("@mindiscount", productList.MinDiscount),
-                new SqlParameter("@AvailableProductsOnly", productList.AvailableProductsOnly),
-                new SqlParameter("@PriceSort", productList.PriceSort),
-                new SqlParameter("@SpecTypeIds", productList.SpecTypeIds),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
-                new SqlParameter("@date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
+                new MySqlParameter("@categoryid", productList.CategoryId),
+                new MySqlParameter("@sellerids", productList.SellerIds),
+                new MySqlParameter("@brandids", productList.BrandIds),
+                new MySqlParameter("@searchtext", productList.searchTexts),
+                new MySqlParameter("@sizeids", productList.SizeIds),
+                new MySqlParameter("@colorids", productList.ColorIds),
+                new MySqlParameter("@productcollectionid", productList.productCollectionId),
+                new MySqlParameter("@guids",productList.guIds ),
+                new MySqlParameter("@minprice", productList.MinPrice),
+                new MySqlParameter("@maxprice", productList.MaxPrice),
+                new MySqlParameter("@mindiscount", productList.MinDiscount),
+                new MySqlParameter("@AvailableProductsOnly", productList.AvailableProductsOnly),
+                new MySqlParameter("@PriceSort", productList.PriceSort),
+                new MySqlParameter("@SpecTypeIds", productList.SpecTypeIds),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetUserProducts, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

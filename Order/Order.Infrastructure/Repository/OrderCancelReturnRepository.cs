@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -31,67 +31,67 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
 
-                new SqlParameter("@orderid", orderCancelReturn.OrderID),
-                new SqlParameter("@orderitemid", orderCancelReturn.OrderItemID),
-                new SqlParameter("@neworderno", orderCancelReturn.NewOrderNo),
-                new SqlParameter("@qty", orderCancelReturn.Qty),
-                new SqlParameter("@actionid", orderCancelReturn.ActionID),
-                new SqlParameter("@exchangeproductid", orderCancelReturn.ExchangeProductID),
-                new SqlParameter("@exchangesizeId", orderCancelReturn.ExchangeSizeId),
-                new SqlParameter("@exchangesize", orderCancelReturn.ExchangeSize),
-                new SqlParameter("@exchangepricediff", orderCancelReturn.ExchangePriceDiff),
-                new SqlParameter("@userid", orderCancelReturn.UserId),
-                new SqlParameter("@username", orderCancelReturn.UserName ),
-                new SqlParameter("@userphoneno", orderCancelReturn.UserPhoneNo),
-                new SqlParameter("@useremail", orderCancelReturn.UserEmail),
-                new SqlParameter("@usergstno", orderCancelReturn.UserGSTNo),
-                new SqlParameter("@addressline1", orderCancelReturn.AddressLine1),
-                new SqlParameter("@addressline2", orderCancelReturn.AddressLine2),
-                new SqlParameter("@landmark", orderCancelReturn.Landmark),
-                new SqlParameter("@pincode", orderCancelReturn.Pincode),
-                new SqlParameter("@city", orderCancelReturn.City),
-                new SqlParameter("@state", orderCancelReturn.State),
-                new SqlParameter("@country", orderCancelReturn.Country),
-                new SqlParameter("@issue", orderCancelReturn.Issue ),
-                new SqlParameter("@reason", orderCancelReturn.Reason ),
-                new SqlParameter("@comment", orderCancelReturn.Comment ),
-                new SqlParameter("@paymentmode", orderCancelReturn.PaymentMode),
-                new SqlParameter("@attachment", orderCancelReturn.Attachment),
-                new SqlParameter("@refundamount", orderCancelReturn.RefundAmount),
-                new SqlParameter("@refundtype", orderCancelReturn.RefundType),
-                new SqlParameter("@bankname", orderCancelReturn.BankName),
-                new SqlParameter("@bankbranch", orderCancelReturn.BankBranch),
-                new SqlParameter("@bankifsccode", orderCancelReturn.BankIFSCCode),
-                new SqlParameter("@bankaccountno", orderCancelReturn.BankAccountNo),
-                new SqlParameter("@accounttype", orderCancelReturn.AccountType),
-                new SqlParameter("@accountholdername", orderCancelReturn.AccountHolderName),
-                new SqlParameter("@approvedbyid", orderCancelReturn.ApprovedByID),
-                new SqlParameter("@approvedbyname", orderCancelReturn.ApprovedByName),
-                new SqlParameter("@status", orderCancelReturn.Status),
-                new SqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
+                new MySqlParameter("@orderid", orderCancelReturn.OrderID),
+                new MySqlParameter("@orderitemid", orderCancelReturn.OrderItemID),
+                new MySqlParameter("@neworderno", orderCancelReturn.NewOrderNo),
+                new MySqlParameter("@qty", orderCancelReturn.Qty),
+                new MySqlParameter("@actionid", orderCancelReturn.ActionID),
+                new MySqlParameter("@exchangeproductid", orderCancelReturn.ExchangeProductID),
+                new MySqlParameter("@exchangesizeId", orderCancelReturn.ExchangeSizeId),
+                new MySqlParameter("@exchangesize", orderCancelReturn.ExchangeSize),
+                new MySqlParameter("@exchangepricediff", orderCancelReturn.ExchangePriceDiff),
+                new MySqlParameter("@userid", orderCancelReturn.UserId),
+                new MySqlParameter("@username", orderCancelReturn.UserName ),
+                new MySqlParameter("@userphoneno", orderCancelReturn.UserPhoneNo),
+                new MySqlParameter("@useremail", orderCancelReturn.UserEmail),
+                new MySqlParameter("@usergstno", orderCancelReturn.UserGSTNo),
+                new MySqlParameter("@addressline1", orderCancelReturn.AddressLine1),
+                new MySqlParameter("@addressline2", orderCancelReturn.AddressLine2),
+                new MySqlParameter("@landmark", orderCancelReturn.Landmark),
+                new MySqlParameter("@pincode", orderCancelReturn.Pincode),
+                new MySqlParameter("@city", orderCancelReturn.City),
+                new MySqlParameter("@state", orderCancelReturn.State),
+                new MySqlParameter("@country", orderCancelReturn.Country),
+                new MySqlParameter("@issue", orderCancelReturn.Issue ),
+                new MySqlParameter("@reason", orderCancelReturn.Reason ),
+                new MySqlParameter("@comment", orderCancelReturn.Comment ),
+                new MySqlParameter("@paymentmode", orderCancelReturn.PaymentMode),
+                new MySqlParameter("@attachment", orderCancelReturn.Attachment),
+                new MySqlParameter("@refundamount", orderCancelReturn.RefundAmount),
+                new MySqlParameter("@refundtype", orderCancelReturn.RefundType),
+                new MySqlParameter("@bankname", orderCancelReturn.BankName),
+                new MySqlParameter("@bankbranch", orderCancelReturn.BankBranch),
+                new MySqlParameter("@bankifsccode", orderCancelReturn.BankIFSCCode),
+                new MySqlParameter("@bankaccountno", orderCancelReturn.BankAccountNo),
+                new MySqlParameter("@accounttype", orderCancelReturn.AccountType),
+                new MySqlParameter("@accountholdername", orderCancelReturn.AccountHolderName),
+                new MySqlParameter("@approvedbyid", orderCancelReturn.ApprovedByID),
+                new MySqlParameter("@approvedbyname", orderCancelReturn.ApprovedByName),
+                new MySqlParameter("@status", orderCancelReturn.Status),
+                new MySqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
 
-                new SqlParameter("@createdAt", orderCancelReturn.CreatedAt),
-                new SqlParameter("@createdBy", orderCancelReturn.CreatedBy)
+                new MySqlParameter("@createdAt", orderCancelReturn.CreatedAt),
+                new MySqlParameter("@createdBy", orderCancelReturn.CreatedBy)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderCancelReturn, output, newid, message, sqlParams.ToArray());
@@ -105,65 +105,65 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
 
-                new SqlParameter("@id", orderCancelReturn.Id),
-                new SqlParameter("@qty", orderCancelReturn.Qty),
-                new SqlParameter("@actionid", orderCancelReturn.ActionID),
-                new SqlParameter("@exchangeproductid", orderCancelReturn.ExchangeProductID),
-                new SqlParameter("@exchangesizeId", orderCancelReturn.ExchangeSizeId),
-                new SqlParameter("@exchangesize", orderCancelReturn.ExchangeSize),
-                new SqlParameter("@exchangepricediff", orderCancelReturn.ExchangePriceDiff),
-                new SqlParameter("@userid", orderCancelReturn.UserId),
-                new SqlParameter("@username", orderCancelReturn.UserName ),
-                new SqlParameter("@userphoneno", orderCancelReturn.UserPhoneNo),
-                new SqlParameter("@useremail", orderCancelReturn.UserEmail),
-                new SqlParameter("@usergstno", orderCancelReturn.UserGSTNo),
-                new SqlParameter("@addressline1", orderCancelReturn.AddressLine1),
-                new SqlParameter("@addressline2", orderCancelReturn.AddressLine2),
-                new SqlParameter("@landmark", orderCancelReturn.Landmark),
-                new SqlParameter("@pincode", orderCancelReturn.Pincode),
-                new SqlParameter("@city", orderCancelReturn.City),
-                new SqlParameter("@state", orderCancelReturn.State),
-                new SqlParameter("@country", orderCancelReturn.Country),
-                new SqlParameter("@issue", orderCancelReturn.Issue ),
-                new SqlParameter("@reason", orderCancelReturn.Reason ),
-                new SqlParameter("@comment", orderCancelReturn.Comment ),
-                new SqlParameter("@paymentmode", orderCancelReturn.PaymentMode),
-                new SqlParameter("@attachment", orderCancelReturn.Attachment),
-                new SqlParameter("@refundamount", orderCancelReturn.RefundAmount),
-                new SqlParameter("@refundtype", orderCancelReturn.RefundType),
-                new SqlParameter("@bankname", orderCancelReturn.BankName),
-                new SqlParameter("@bankbranch", orderCancelReturn.BankBranch),
-                new SqlParameter("@bankifsccode", orderCancelReturn.BankIFSCCode),
-                new SqlParameter("@bankaccountno", orderCancelReturn.BankAccountNo),
-                new SqlParameter("@accounttype", orderCancelReturn.AccountType),
-                new SqlParameter("@accountholdername", orderCancelReturn.AccountHolderName),
-                new SqlParameter("@approvedbyid", orderCancelReturn.ApprovedByID),
-                new SqlParameter("@approvedbyname", orderCancelReturn.ApprovedByName),
-                new SqlParameter("@status", orderCancelReturn.Status),
-                new SqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
+                new MySqlParameter("@id", orderCancelReturn.Id),
+                new MySqlParameter("@qty", orderCancelReturn.Qty),
+                new MySqlParameter("@actionid", orderCancelReturn.ActionID),
+                new MySqlParameter("@exchangeproductid", orderCancelReturn.ExchangeProductID),
+                new MySqlParameter("@exchangesizeId", orderCancelReturn.ExchangeSizeId),
+                new MySqlParameter("@exchangesize", orderCancelReturn.ExchangeSize),
+                new MySqlParameter("@exchangepricediff", orderCancelReturn.ExchangePriceDiff),
+                new MySqlParameter("@userid", orderCancelReturn.UserId),
+                new MySqlParameter("@username", orderCancelReturn.UserName ),
+                new MySqlParameter("@userphoneno", orderCancelReturn.UserPhoneNo),
+                new MySqlParameter("@useremail", orderCancelReturn.UserEmail),
+                new MySqlParameter("@usergstno", orderCancelReturn.UserGSTNo),
+                new MySqlParameter("@addressline1", orderCancelReturn.AddressLine1),
+                new MySqlParameter("@addressline2", orderCancelReturn.AddressLine2),
+                new MySqlParameter("@landmark", orderCancelReturn.Landmark),
+                new MySqlParameter("@pincode", orderCancelReturn.Pincode),
+                new MySqlParameter("@city", orderCancelReturn.City),
+                new MySqlParameter("@state", orderCancelReturn.State),
+                new MySqlParameter("@country", orderCancelReturn.Country),
+                new MySqlParameter("@issue", orderCancelReturn.Issue ),
+                new MySqlParameter("@reason", orderCancelReturn.Reason ),
+                new MySqlParameter("@comment", orderCancelReturn.Comment ),
+                new MySqlParameter("@paymentmode", orderCancelReturn.PaymentMode),
+                new MySqlParameter("@attachment", orderCancelReturn.Attachment),
+                new MySqlParameter("@refundamount", orderCancelReturn.RefundAmount),
+                new MySqlParameter("@refundtype", orderCancelReturn.RefundType),
+                new MySqlParameter("@bankname", orderCancelReturn.BankName),
+                new MySqlParameter("@bankbranch", orderCancelReturn.BankBranch),
+                new MySqlParameter("@bankifsccode", orderCancelReturn.BankIFSCCode),
+                new MySqlParameter("@bankaccountno", orderCancelReturn.BankAccountNo),
+                new MySqlParameter("@accounttype", orderCancelReturn.AccountType),
+                new MySqlParameter("@accountholdername", orderCancelReturn.AccountHolderName),
+                new MySqlParameter("@approvedbyid", orderCancelReturn.ApprovedByID),
+                new MySqlParameter("@approvedbyname", orderCancelReturn.ApprovedByName),
+                new MySqlParameter("@status", orderCancelReturn.Status),
+                new MySqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
 
-                new SqlParameter("@modifiedby", orderCancelReturn.ModifiedBy),
-                new SqlParameter("@modifiedat", orderCancelReturn.ModifiedAt)
+                new MySqlParameter("@modifiedby", orderCancelReturn.ModifiedBy),
+                new MySqlParameter("@modifiedat", orderCancelReturn.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderCancelReturn, output, newid, message, sqlParams.ToArray());
@@ -178,29 +178,29 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderCancelReturn.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderCancelReturn.Id),
 
-                new SqlParameter("@deletedby", orderCancelReturn.DeletedBy),
-                new SqlParameter("@deletedat", orderCancelReturn.DeletedAt)
+                new MySqlParameter("@deletedby", orderCancelReturn.DeletedBy),
+                new MySqlParameter("@deletedat", orderCancelReturn.DeletedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderCancelReturn, output, newid, message, sqlParams.ToArray());
@@ -215,42 +215,42 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderCancelReturn.Id),
-                new SqlParameter("@orderid", orderCancelReturn.OrderID),
-                new SqlParameter("@orderitemid", orderCancelReturn.OrderItemID),
-                new SqlParameter("@neworderno", orderCancelReturn.NewOrderNo),
-                new SqlParameter("@orderno", orderCancelReturn.OrderNo),
-                new SqlParameter("@selelrId", orderCancelReturn.SellerID),
-                new SqlParameter("@brandId", orderCancelReturn.BrandID),
-                new SqlParameter("@actionid", orderCancelReturn.ActionID),
-                new SqlParameter("@userid", orderCancelReturn.UserId),
-                new SqlParameter("@status", orderCancelReturn.Status),
-                new SqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
-                new SqlParameter("@searchtext", orderCancelReturn.searchText),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderCancelReturn.Id),
+                new MySqlParameter("@orderid", orderCancelReturn.OrderID),
+                new MySqlParameter("@orderitemid", orderCancelReturn.OrderItemID),
+                new MySqlParameter("@neworderno", orderCancelReturn.NewOrderNo),
+                new MySqlParameter("@orderno", orderCancelReturn.OrderNo),
+                new MySqlParameter("@selelrId", orderCancelReturn.SellerID),
+                new MySqlParameter("@brandId", orderCancelReturn.BrandID),
+                new MySqlParameter("@actionid", orderCancelReturn.ActionID),
+                new MySqlParameter("@userid", orderCancelReturn.UserId),
+                new MySqlParameter("@status", orderCancelReturn.Status),
+                new MySqlParameter("@refundstatus", orderCancelReturn.RefundStatus),
+                new MySqlParameter("@searchtext", orderCancelReturn.searchText),
 
-                new SqlParameter("@isDeleted", orderCancelReturn.IsDeleted),
-                new SqlParameter("@withCancel", orderCancelReturn.WithCancel),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@isDeleted", orderCancelReturn.IsDeleted),
+                new MySqlParameter("@withCancel", orderCancelReturn.WithCancel),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderCancelReturn, orderCancelReturnParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.DTO;
 using Catalogue.Domain.Entity;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,32 +32,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@sellerproductid", productWarehouse.SellerProductID),
-                    new SqlParameter("@productid", productWarehouse.ProductID),
-                    new SqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
-                    new SqlParameter("@warehouseid", productWarehouse.WarehouseID),
-                    new SqlParameter("@warehousename", productWarehouse.WarehouseName),
-                    new SqlParameter("@productquantity", productWarehouse.ProductQuantity),
-                    new SqlParameter("@createdby", productWarehouse.CreatedBy),
-                    new SqlParameter("@createdat", productWarehouse.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@sellerproductid", productWarehouse.SellerProductID),
+                    new MySqlParameter("@productid", productWarehouse.ProductID),
+                    new MySqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
+                    new MySqlParameter("@warehouseid", productWarehouse.WarehouseID),
+                    new MySqlParameter("@warehousename", productWarehouse.WarehouseName),
+                    new MySqlParameter("@productquantity", productWarehouse.ProductQuantity),
+                    new MySqlParameter("@createdby", productWarehouse.CreatedBy),
+                    new MySqlParameter("@createdat", productWarehouse.CreatedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductWareHouse, output, newid, message, sqlParams.ToArray());
@@ -72,31 +72,31 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", productWarehouse.Id),
-                    new SqlParameter("@sellerproductid", productWarehouse.SellerProductID),
-                    new SqlParameter("@productid", productWarehouse.ProductID),
-                    new SqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
-                    new SqlParameter("@warehouseid", productWarehouse.WarehouseID),
-                    new SqlParameter("@warehousename", productWarehouse.WarehouseName),
-                    new SqlParameter("@productquantity", productWarehouse.ProductQuantity),
-                    new SqlParameter("@modifiedBy", productWarehouse.ModifiedBy),
-                    new SqlParameter("@modifiedAt", productWarehouse.ModifiedAt),
-                    new SqlParameter("@deletedby", productWarehouse.DeletedBy),
-                    new SqlParameter("@deletedat", productWarehouse.DeletedAt),
-                    new SqlParameter("@isdeleted", productWarehouse.IsDeleted),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", productWarehouse.Id),
+                    new MySqlParameter("@sellerproductid", productWarehouse.SellerProductID),
+                    new MySqlParameter("@productid", productWarehouse.ProductID),
+                    new MySqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
+                    new MySqlParameter("@warehouseid", productWarehouse.WarehouseID),
+                    new MySqlParameter("@warehousename", productWarehouse.WarehouseName),
+                    new MySqlParameter("@productquantity", productWarehouse.ProductQuantity),
+                    new MySqlParameter("@modifiedBy", productWarehouse.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", productWarehouse.ModifiedAt),
+                    new MySqlParameter("@deletedby", productWarehouse.DeletedBy),
+                    new MySqlParameter("@deletedat", productWarehouse.DeletedAt),
+                    new MySqlParameter("@isdeleted", productWarehouse.IsDeleted),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductWareHouse, output, newid: null, message, sqlParams.ToArray());
@@ -112,27 +112,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", productWarehouse.Id),
-                    new SqlParameter("@deletedby", productWarehouse.DeletedBy),
-                    new SqlParameter("@deletedat", productWarehouse.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", productWarehouse.Id),
+                    new MySqlParameter("@deletedby", productWarehouse.DeletedBy),
+                    new MySqlParameter("@deletedat", productWarehouse.DeletedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductWareHouse, output, newid, message, sqlParams.ToArray());
@@ -145,28 +145,28 @@ namespace Catalogue.Infrastructure.Repository
 
         public async Task<BaseResponse<List<ProductWarehouse>>> GetProductWarehouse(ProductWarehouse productWarehouse, int PageIndex, int PageSize, string Mode)
         {
-            var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", productWarehouse.Id),
-                new SqlParameter("@sellerproductid", productWarehouse.SellerProductID),
-                new SqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
-                new SqlParameter("@productid", productWarehouse.ProductID),
-                new SqlParameter("@warehouseid", productWarehouse.WarehouseID),
-                new SqlParameter("@warehousename", productWarehouse.WarehouseName),
-                new SqlParameter("@isdeleted", productWarehouse.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+            var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", productWarehouse.Id),
+                new MySqlParameter("@sellerproductid", productWarehouse.SellerProductID),
+                new MySqlParameter("@sellerwiseproductpricemasterid", productWarehouse.SellerWiseProductPriceMasterID),
+                new MySqlParameter("@productid", productWarehouse.ProductID),
+                new MySqlParameter("@warehouseid", productWarehouse.WarehouseID),
+                new MySqlParameter("@warehousename", productWarehouse.WarehouseName),
+                new MySqlParameter("@isdeleted", productWarehouse.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-            SqlParameter output = new SqlParameter();
+            MySqlParameter output = new MySqlParameter();
             output.ParameterName = "@output";
             output.Direction = ParameterDirection.Output;
-            output.SqlDbType = SqlDbType.Int;
+            output.MySqlDbType = MySqlDbType.Int32;
 
-            SqlParameter message = new SqlParameter();
+            MySqlParameter message = new MySqlParameter();
             message.ParameterName = "@message";
             message.Direction = ParameterDirection.Output;
-            message.SqlDbType = SqlDbType.NVarChar;
+            message.MySqlDbType = MySqlDbType.VarChar;
             message.Size = 50;
 
             return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetProductWareHouse, ProductWarehouseParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -203,20 +203,20 @@ namespace Catalogue.Infrastructure.Repository
 
         public async Task<BaseResponse<List<SizeWiseWarehouse>>> GetSizeWiseWarehouse(SizeWiseWarehouse productWarehouse)
         {
-            var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@sellerProductId", productWarehouse.SellerProductId),
-                new SqlParameter("@productid", productWarehouse.ProductId),
-                new SqlParameter("@sizeid", productWarehouse.SizeId)
+            var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@sellerProductId", productWarehouse.SellerProductId),
+                new MySqlParameter("@productid", productWarehouse.ProductId),
+                new MySqlParameter("@sizeid", productWarehouse.SizeId)
             };
-            SqlParameter output = new SqlParameter();
+            MySqlParameter output = new MySqlParameter();
             output.ParameterName = "@output";
             output.Direction = ParameterDirection.Output;
-            output.SqlDbType = SqlDbType.Int;
+            output.MySqlDbType = MySqlDbType.Int32;
 
-            SqlParameter message = new SqlParameter();
+            MySqlParameter message = new MySqlParameter();
             message.ParameterName = "@message";
             message.Direction = ParameterDirection.Output;
-            message.SqlDbType = SqlDbType.NVarChar;
+            message.MySqlDbType = MySqlDbType.VarChar;
             message.Size = 50;
 
             return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetSizeWiseWarehouse, GetSizeWiseWarehouseParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -243,19 +243,19 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@warehouseid", warehouseid)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@warehouseid", warehouseid)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.UpdateWarehouseStock, output, newid: null, message, sqlParams.ToArray());

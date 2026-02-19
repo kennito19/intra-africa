@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,33 +32,33 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@catid", commissionCharges.CatID),
-                new SqlParameter("@sellerid", commissionCharges.SellerID),
-                new SqlParameter("@brandid", commissionCharges.BrandID),
-                new SqlParameter("@chargeson", commissionCharges.ChargesOn),
-                new SqlParameter("@chargesin", commissionCharges.ChargesIn),
-                new SqlParameter("@amountvalue", commissionCharges.AmountValue),
-                new SqlParameter("@iscompulsary", commissionCharges.IsCompulsary),
-                new SqlParameter("@createdby", commissionCharges.CreatedBy),
-                new SqlParameter("@createdat", commissionCharges.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@catid", commissionCharges.CatID),
+                new MySqlParameter("@sellerid", commissionCharges.SellerID),
+                new MySqlParameter("@brandid", commissionCharges.BrandID),
+                new MySqlParameter("@chargeson", commissionCharges.ChargesOn),
+                new MySqlParameter("@chargesin", commissionCharges.ChargesIn),
+                new MySqlParameter("@amountvalue", commissionCharges.AmountValue),
+                new MySqlParameter("@iscompulsary", commissionCharges.IsCompulsary),
+                new MySqlParameter("@createdby", commissionCharges.CreatedBy),
+                new MySqlParameter("@createdat", commissionCharges.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Commission, output, newid, message, sqlParams.ToArray());
@@ -72,34 +72,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", commissionCharges.ID),
-                new SqlParameter("@catid", commissionCharges.CatID),
-                new SqlParameter("@sellerid", commissionCharges.SellerID),
-                new SqlParameter("@brandid", commissionCharges.BrandID),
-                new SqlParameter("@chargeson", commissionCharges.ChargesOn),
-                new SqlParameter("@chargesin", commissionCharges.ChargesIn),
-                new SqlParameter("@amountvalue", commissionCharges.AmountValue),
-                new SqlParameter("@iscompulsary", commissionCharges.IsCompulsary),
-                new SqlParameter("@modifiedby", commissionCharges.ModifiedBy),
-                new SqlParameter("@modifiedat", commissionCharges.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", commissionCharges.ID),
+                new MySqlParameter("@catid", commissionCharges.CatID),
+                new MySqlParameter("@sellerid", commissionCharges.SellerID),
+                new MySqlParameter("@brandid", commissionCharges.BrandID),
+                new MySqlParameter("@chargeson", commissionCharges.ChargesOn),
+                new MySqlParameter("@chargesin", commissionCharges.ChargesIn),
+                new MySqlParameter("@amountvalue", commissionCharges.AmountValue),
+                new MySqlParameter("@iscompulsary", commissionCharges.IsCompulsary),
+                new MySqlParameter("@modifiedby", commissionCharges.ModifiedBy),
+                new MySqlParameter("@modifiedat", commissionCharges.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Commission, output, newid, message, sqlParams.ToArray());
@@ -114,27 +114,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", commissionCharges.ID),
-                new SqlParameter("@deletedby", commissionCharges.DeletedBy),
-                new SqlParameter("@deletedat", commissionCharges.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", commissionCharges.ID),
+                new MySqlParameter("@deletedby", commissionCharges.DeletedBy),
+                new MySqlParameter("@deletedat", commissionCharges.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Commission, output, newid, message, sqlParams.ToArray());
@@ -149,38 +149,38 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", commissionCharges.ID),
-                new SqlParameter("@catid", commissionCharges.CatID),
-                new SqlParameter("@sellerid", commissionCharges.SellerID),
-                new SqlParameter("@brandid", commissionCharges.BrandID),
-                new SqlParameter("@chargeson", commissionCharges.ChargesOn),
-                new SqlParameter("@isdeleted", commissionCharges.IsDeleted),
-                new SqlParameter("@isCompulsary", commissionCharges.IsCompulsary),
-                new SqlParameter("@getOnlyCategoryRecord", commissionCharges.OnlyCategories),
-                new SqlParameter("@getOnlySellerRecord", commissionCharges.OnlySellers),
-                new SqlParameter("@getOnlyBrandRecord", commissionCharges.OnlyBrands),
-                new SqlParameter("@searchtext", commissionCharges.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", commissionCharges.ID),
+                new MySqlParameter("@catid", commissionCharges.CatID),
+                new MySqlParameter("@sellerid", commissionCharges.SellerID),
+                new MySqlParameter("@brandid", commissionCharges.BrandID),
+                new MySqlParameter("@chargeson", commissionCharges.ChargesOn),
+                new MySqlParameter("@isdeleted", commissionCharges.IsDeleted),
+                new MySqlParameter("@isCompulsary", commissionCharges.IsCompulsary),
+                new MySqlParameter("@getOnlyCategoryRecord", commissionCharges.OnlyCategories),
+                new MySqlParameter("@getOnlySellerRecord", commissionCharges.OnlySellers),
+                new MySqlParameter("@getOnlyBrandRecord", commissionCharges.OnlyBrands),
+                new MySqlParameter("@searchtext", commissionCharges.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetCommission, commissionChargesParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -228,26 +228,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@catid", commissionCharges.CatID),
-                new SqlParameter("@sellerid", commissionCharges.SellerID),
-                new SqlParameter("@brandid", commissionCharges.BrandID)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@catid", commissionCharges.CatID),
+                new MySqlParameter("@sellerid", commissionCharges.SellerID),
+                new MySqlParameter("@brandid", commissionCharges.BrandID)
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetCommissionByCategoryId, commissionChargesByCategoryIdParserAsync, output, newid: null, message, sqlParams.ToArray());

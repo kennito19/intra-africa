@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,34 +31,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@assignspecid", assignSize.AssignSpecID),
-                new SqlParameter("@sizetypeid", assignSize.SizeTypeID),
-                new SqlParameter("@sizeid", assignSize.SizeId),
-                new SqlParameter("@isallowsizeinfilter", assignSize.IsAllowSizeInFilter),
-                new SqlParameter("@isallowsizeinvariant", assignSize.IsAllowSizeInVariant),
-                new SqlParameter("@isallowsizeincomparision", assignSize.IsAllowSizeInComparision),
-                new SqlParameter("@isallowsizeintitle", assignSize.IsAllowSizeInTitle),
-                new SqlParameter("@titlesequenceofsize", assignSize.TitleSequenceOfSize),
-                new SqlParameter("@createdby", assignSize.CreatedBy),
-                new SqlParameter("@createdat", assignSize.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@assignspecid", assignSize.AssignSpecID),
+                new MySqlParameter("@sizetypeid", assignSize.SizeTypeID),
+                new MySqlParameter("@sizeid", assignSize.SizeId),
+                new MySqlParameter("@isallowsizeinfilter", assignSize.IsAllowSizeInFilter),
+                new MySqlParameter("@isallowsizeinvariant", assignSize.IsAllowSizeInVariant),
+                new MySqlParameter("@isallowsizeincomparision", assignSize.IsAllowSizeInComparision),
+                new MySqlParameter("@isallowsizeintitle", assignSize.IsAllowSizeInTitle),
+                new MySqlParameter("@titlesequenceofsize", assignSize.TitleSequenceOfSize),
+                new MySqlParameter("@createdby", assignSize.CreatedBy),
+                new MySqlParameter("@createdat", assignSize.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSizeValueToCategory, output, newid, message, sqlParams.ToArray());
@@ -73,34 +73,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@assiid", assignSize.AssignSpecID),
-               new SqlParameter("@sizetypeid", assignSize.SizeTypeID),
-               new SqlParameter("@sizeid", assignSize.SizeId),
-                new SqlParameter("@isallowsizeinfilter", assignSize.IsAllowSizeInFilter),
-                new SqlParameter("@isallowsizeinvariant", assignSize.IsAllowSizeInVariant),
-                new SqlParameter("@isallowsizeincomparision", assignSize.IsAllowSizeInComparision),
-                new SqlParameter("@isallowsizeintitle", assignSize.IsAllowSizeInTitle),
-                new SqlParameter("@titlesequenceofsize", assignSize.TitleSequenceOfSize),
-                new SqlParameter("@modifiedby", assignSize.ModifiedBy),
-                new SqlParameter("@modifiedat", assignSize.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@assiid", assignSize.AssignSpecID),
+               new MySqlParameter("@sizetypeid", assignSize.SizeTypeID),
+               new MySqlParameter("@sizeid", assignSize.SizeId),
+                new MySqlParameter("@isallowsizeinfilter", assignSize.IsAllowSizeInFilter),
+                new MySqlParameter("@isallowsizeinvariant", assignSize.IsAllowSizeInVariant),
+                new MySqlParameter("@isallowsizeincomparision", assignSize.IsAllowSizeInComparision),
+                new MySqlParameter("@isallowsizeintitle", assignSize.IsAllowSizeInTitle),
+                new MySqlParameter("@titlesequenceofsize", assignSize.TitleSequenceOfSize),
+                new MySqlParameter("@modifiedby", assignSize.ModifiedBy),
+                new MySqlParameter("@modifiedat", assignSize.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSizeValueToCategory, output, newid, message, sqlParams.ToArray());
@@ -115,26 +115,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@assignspecid", assignSize.AssignSpecID),
-                new SqlParameter("@sizetypeid", assignSize.SizeTypeID)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@assignspecid", assignSize.AssignSpecID),
+                new MySqlParameter("@sizetypeid", assignSize.SizeTypeID)
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSizeValueToCategory, output, newid, message, sqlParams.ToArray());
@@ -149,37 +149,37 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", assignSize.Id),
-                new SqlParameter("@assiid", assignSize.AssignSpecID),
-                new SqlParameter("@sizeid", assignSize.SizeId),
-                new SqlParameter("@sizetypeid", assignSize.SizeTypeID),
-                new SqlParameter("@sizename", assignSize.SizeName),
-                new SqlParameter("@sizetypename", assignSize.SizeTypeName),
-                new SqlParameter("@categoryId", assignSize.CategoryId),
-                new SqlParameter("@isAllowSizeInFilter", assignSize.IsAllowSizeInFilter),
-                new SqlParameter("@isDeleted", assignSize.IsDeleted),
-                new SqlParameter("@searchtext", assignSize.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", assignSize.Id),
+                new MySqlParameter("@assiid", assignSize.AssignSpecID),
+                new MySqlParameter("@sizeid", assignSize.SizeId),
+                new MySqlParameter("@sizetypeid", assignSize.SizeTypeID),
+                new MySqlParameter("@sizename", assignSize.SizeName),
+                new MySqlParameter("@sizetypename", assignSize.SizeTypeName),
+                new MySqlParameter("@categoryId", assignSize.CategoryId),
+                new MySqlParameter("@isAllowSizeInFilter", assignSize.IsAllowSizeInFilter),
+                new MySqlParameter("@isDeleted", assignSize.IsDeleted),
+                new MySqlParameter("@searchtext", assignSize.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAssignSizeValueToCategory, assignSizeValueToCategoryParserAsync, output, newid: null, message, sqlParams.ToArray());

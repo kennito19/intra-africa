@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,63 +33,63 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@sectionId", pageDetails.SectionId),
-                    new SqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                    new SqlParameter("@optionId", pageDetails.OptionId),
-                    new SqlParameter("@image", pageDetails.Image),
-                    new SqlParameter("@ImageAlt", pageDetails.ImageAlt),
-                    new SqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
-                    new SqlParameter("@title", pageDetails.Title),
-                    new SqlParameter("@subTitle", pageDetails.SubTitle),
-                    new SqlParameter("@titlePosition", pageDetails.TitlePosition),
-                    new SqlParameter("@sequence", pageDetails.Sequence),
-                    new SqlParameter("@columns", pageDetails.Columns),
-                    new SqlParameter("@redirectTo", pageDetails.RedirectTo),
-                    new SqlParameter("@categoryId", pageDetails.CategoryId),
-                    new SqlParameter("@brandIds", pageDetails.BrandIds),
-                    new SqlParameter("@sizeIds", pageDetails.SizeIds),
-                    new SqlParameter("@specificationIds", pageDetails.SpecificationIds),
-                    new SqlParameter("@colorids", pageDetails.ColorIds),
-                    new SqlParameter("@collectionId", pageDetails.CollectionId),
-                    new SqlParameter("@productId", pageDetails.ProductId),
-                    new SqlParameter("@staticPageId", pageDetails.StaticPageId),
-                    new SqlParameter("@lendingPageId", pageDetails.LendingPageId),
-                    new SqlParameter("@customLink", pageDetails.CustomLinks),
-                    new SqlParameter("@titleColor", pageDetails.TitleColor),
-                    new SqlParameter("@subTitleColor", pageDetails.SubTitleColor),
-                    new SqlParameter("@titleSize", pageDetails.TitleSize),
-                    new SqlParameter("@subTitleSize", pageDetails.SubTitleSize),
-                    new SqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
-                    new SqlParameter("@italicTitle", pageDetails.ItalicTitle),
-                    new SqlParameter("@description", pageDetails.Description),
-                    new SqlParameter("@sliderType", pageDetails.SliderType),
-                    new SqlParameter("@videoLinkType", pageDetails.VideoLinkType),
-                    new SqlParameter("@videoId", pageDetails.VideoId),
-                    new SqlParameter("@name", pageDetails.Name),
-                    new SqlParameter("@assignCity", pageDetails.AssignCity),
-                    new SqlParameter("@assignState", pageDetails.AssignState),
-                    new SqlParameter("@assignCountry", pageDetails.AssignCountry),
-                    new SqlParameter("@status", pageDetails.Status),
-                    new SqlParameter("@createdby", pageDetails.CreatedBy),
-                new SqlParameter("@createdat", pageDetails.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@sectionId", pageDetails.SectionId),
+                    new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
+                    new MySqlParameter("@optionId", pageDetails.OptionId),
+                    new MySqlParameter("@image", pageDetails.Image),
+                    new MySqlParameter("@ImageAlt", pageDetails.ImageAlt),
+                    new MySqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
+                    new MySqlParameter("@title", pageDetails.Title),
+                    new MySqlParameter("@subTitle", pageDetails.SubTitle),
+                    new MySqlParameter("@titlePosition", pageDetails.TitlePosition),
+                    new MySqlParameter("@sequence", pageDetails.Sequence),
+                    new MySqlParameter("@columns", pageDetails.Columns),
+                    new MySqlParameter("@redirectTo", pageDetails.RedirectTo),
+                    new MySqlParameter("@categoryId", pageDetails.CategoryId),
+                    new MySqlParameter("@brandIds", pageDetails.BrandIds),
+                    new MySqlParameter("@sizeIds", pageDetails.SizeIds),
+                    new MySqlParameter("@specificationIds", pageDetails.SpecificationIds),
+                    new MySqlParameter("@colorids", pageDetails.ColorIds),
+                    new MySqlParameter("@collectionId", pageDetails.CollectionId),
+                    new MySqlParameter("@productId", pageDetails.ProductId),
+                    new MySqlParameter("@staticPageId", pageDetails.StaticPageId),
+                    new MySqlParameter("@lendingPageId", pageDetails.LendingPageId),
+                    new MySqlParameter("@customLink", pageDetails.CustomLinks),
+                    new MySqlParameter("@titleColor", pageDetails.TitleColor),
+                    new MySqlParameter("@subTitleColor", pageDetails.SubTitleColor),
+                    new MySqlParameter("@titleSize", pageDetails.TitleSize),
+                    new MySqlParameter("@subTitleSize", pageDetails.SubTitleSize),
+                    new MySqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
+                    new MySqlParameter("@italicTitle", pageDetails.ItalicTitle),
+                    new MySqlParameter("@description", pageDetails.Description),
+                    new MySqlParameter("@sliderType", pageDetails.SliderType),
+                    new MySqlParameter("@videoLinkType", pageDetails.VideoLinkType),
+                    new MySqlParameter("@videoId", pageDetails.VideoId),
+                    new MySqlParameter("@name", pageDetails.Name),
+                    new MySqlParameter("@assignCity", pageDetails.AssignCity),
+                    new MySqlParameter("@assignState", pageDetails.AssignState),
+                    new MySqlParameter("@assignCountry", pageDetails.AssignCountry),
+                    new MySqlParameter("@status", pageDetails.Status),
+                    new MySqlParameter("@createdby", pageDetails.CreatedBy),
+                new MySqlParameter("@createdat", pageDetails.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
@@ -104,64 +104,64 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", pageDetails.Id),
-                new SqlParameter("@sectionId", pageDetails.SectionId),
-                new SqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                new SqlParameter("@optionId", pageDetails.OptionId),
-                new SqlParameter("@image", pageDetails.Image),
-                new SqlParameter("@ImageAlt", pageDetails.ImageAlt),
-                new SqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
-                new SqlParameter("@title", pageDetails.Title),
-                new SqlParameter("@subTitle", pageDetails.SubTitle),
-                new SqlParameter("@titlePosition", pageDetails.TitlePosition),
-                new SqlParameter("@sequence", pageDetails.Sequence),
-                new SqlParameter("@columns", pageDetails.Columns),
-                new SqlParameter("@redirectTo", pageDetails.RedirectTo),
-                new SqlParameter("@categoryId", pageDetails.CategoryId),
-                new SqlParameter("@brandIds", pageDetails.BrandIds),
-                new SqlParameter("@sizeIds", pageDetails.SizeIds),
-                new SqlParameter("@specificationIds", pageDetails.SpecificationIds),
-                new SqlParameter("@colorids", pageDetails.ColorIds),
-                new SqlParameter("@collectionId", pageDetails.CollectionId),
-                new SqlParameter("@productId", pageDetails.ProductId),
-                new SqlParameter("@staticPageId", pageDetails.StaticPageId),
-                new SqlParameter("@lendingPageId", pageDetails.LendingPageId),
-                new SqlParameter("@customLink", pageDetails.CustomLinks),
-                new SqlParameter("@titleColor", pageDetails.TitleColor),
-                new SqlParameter("@subTitleColor", pageDetails.SubTitleColor),
-                new SqlParameter("@titleSize", pageDetails.TitleSize),
-                new SqlParameter("@subTitleSize", pageDetails.SubTitleSize),
-                new SqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
-                new SqlParameter("@italicTitle", pageDetails.ItalicTitle),
-                new SqlParameter("@description", pageDetails.Description),
-                new SqlParameter("@sliderType", pageDetails.SliderType),
-                new SqlParameter("@videoLinkType", pageDetails.VideoLinkType),
-                new SqlParameter("@videoId", pageDetails.VideoId),
-                new SqlParameter("@name", pageDetails.Name),
-                new SqlParameter("@assignCity", pageDetails.AssignCity),
-                new SqlParameter("@assignState", pageDetails.AssignState),
-                new SqlParameter("@assignCountry", pageDetails.AssignCountry),
-                new SqlParameter("@status", pageDetails.Status),
-                new SqlParameter("@modifiedby", pageDetails.ModifiedBy),
-                new SqlParameter("@modifiedat", pageDetails.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", pageDetails.Id),
+                new MySqlParameter("@sectionId", pageDetails.SectionId),
+                new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
+                new MySqlParameter("@optionId", pageDetails.OptionId),
+                new MySqlParameter("@image", pageDetails.Image),
+                new MySqlParameter("@ImageAlt", pageDetails.ImageAlt),
+                new MySqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
+                new MySqlParameter("@title", pageDetails.Title),
+                new MySqlParameter("@subTitle", pageDetails.SubTitle),
+                new MySqlParameter("@titlePosition", pageDetails.TitlePosition),
+                new MySqlParameter("@sequence", pageDetails.Sequence),
+                new MySqlParameter("@columns", pageDetails.Columns),
+                new MySqlParameter("@redirectTo", pageDetails.RedirectTo),
+                new MySqlParameter("@categoryId", pageDetails.CategoryId),
+                new MySqlParameter("@brandIds", pageDetails.BrandIds),
+                new MySqlParameter("@sizeIds", pageDetails.SizeIds),
+                new MySqlParameter("@specificationIds", pageDetails.SpecificationIds),
+                new MySqlParameter("@colorids", pageDetails.ColorIds),
+                new MySqlParameter("@collectionId", pageDetails.CollectionId),
+                new MySqlParameter("@productId", pageDetails.ProductId),
+                new MySqlParameter("@staticPageId", pageDetails.StaticPageId),
+                new MySqlParameter("@lendingPageId", pageDetails.LendingPageId),
+                new MySqlParameter("@customLink", pageDetails.CustomLinks),
+                new MySqlParameter("@titleColor", pageDetails.TitleColor),
+                new MySqlParameter("@subTitleColor", pageDetails.SubTitleColor),
+                new MySqlParameter("@titleSize", pageDetails.TitleSize),
+                new MySqlParameter("@subTitleSize", pageDetails.SubTitleSize),
+                new MySqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
+                new MySqlParameter("@italicTitle", pageDetails.ItalicTitle),
+                new MySqlParameter("@description", pageDetails.Description),
+                new MySqlParameter("@sliderType", pageDetails.SliderType),
+                new MySqlParameter("@videoLinkType", pageDetails.VideoLinkType),
+                new MySqlParameter("@videoId", pageDetails.VideoId),
+                new MySqlParameter("@name", pageDetails.Name),
+                new MySqlParameter("@assignCity", pageDetails.AssignCity),
+                new MySqlParameter("@assignState", pageDetails.AssignState),
+                new MySqlParameter("@assignCountry", pageDetails.AssignCountry),
+                new MySqlParameter("@status", pageDetails.Status),
+                new MySqlParameter("@modifiedby", pageDetails.ModifiedBy),
+                new MySqlParameter("@modifiedat", pageDetails.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
@@ -176,26 +176,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", pageDetails.Id),
-                new SqlParameter("@sectionId", pageDetails.SectionId),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", pageDetails.Id),
+                new MySqlParameter("@sectionId", pageDetails.SectionId),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
@@ -210,27 +210,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", pageDetails.Id),
-                new SqlParameter("@sectionId", pageDetails.SectionId),
-                new SqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                new SqlParameter("@optionId", pageDetails.OptionId),
-                new SqlParameter("@sectionname", pageDetails.SectionName),
-                new SqlParameter("@status", pageDetails.Status),
-                new SqlParameter("@searchtext", pageDetails.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", pageDetails.Id),
+                new MySqlParameter("@sectionId", pageDetails.SectionId),
+                new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
+                new MySqlParameter("@optionId", pageDetails.OptionId),
+                new MySqlParameter("@sectionname", pageDetails.SectionName),
+                new MySqlParameter("@status", pageDetails.Status),
+                new MySqlParameter("@searchtext", pageDetails.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageHomePageDetails, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -304,19 +304,19 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@status", Status),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@status", Status),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetFrontHomepageDetails, FrontHomepageDetailsAsync, output, newid: null, message, sqlParams.ToArray());

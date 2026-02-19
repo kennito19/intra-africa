@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,45 +31,45 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>()
+				var sqlParams = new List<MySqlParameter>()
 				{
-					new SqlParameter("@mode","add"),
-					new SqlParameter("@menuType",model.MenuType),
-					new SqlParameter("@headerId",model.HeaderId),
-					new SqlParameter("@parentId",model.ParentId),
-					new SqlParameter("@name",model.Name),
-					new SqlParameter("@image",model.Image),
-					new SqlParameter("@imageAlt", model.ImageAlt),
-					new SqlParameter("@haslink", model.HasLink),
-					new SqlParameter("@redirectTo", model.RedirectTo),
-					new SqlParameter("@lendingPageId", model.LendingPageId),
-					new SqlParameter("@categoryId", model.CategoryId),
-					new SqlParameter("@staticPageId", model.StaticPageId),
-					new SqlParameter("@collectionId", model.CollectionId),
-					new SqlParameter("@customLink", model.CustomLink),
-					new SqlParameter("@sizes", model.Sizes),
-					new SqlParameter("@specifications", model.Specifications),
-					new SqlParameter("@colors", model.Colors),
-					new SqlParameter("@brands", model.Brands),
-					new SqlParameter("@sequence", model.Sequence),
-					new SqlParameter("@createdBy", model.CreatedBy),
-					new SqlParameter("@createdAt", model.CreatedAt)
+					new MySqlParameter("@mode","add"),
+					new MySqlParameter("@menuType",model.MenuType),
+					new MySqlParameter("@headerId",model.HeaderId),
+					new MySqlParameter("@parentId",model.ParentId),
+					new MySqlParameter("@name",model.Name),
+					new MySqlParameter("@image",model.Image),
+					new MySqlParameter("@imageAlt", model.ImageAlt),
+					new MySqlParameter("@haslink", model.HasLink),
+					new MySqlParameter("@redirectTo", model.RedirectTo),
+					new MySqlParameter("@lendingPageId", model.LendingPageId),
+					new MySqlParameter("@categoryId", model.CategoryId),
+					new MySqlParameter("@staticPageId", model.StaticPageId),
+					new MySqlParameter("@collectionId", model.CollectionId),
+					new MySqlParameter("@customLink", model.CustomLink),
+					new MySqlParameter("@sizes", model.Sizes),
+					new MySqlParameter("@specifications", model.Specifications),
+					new MySqlParameter("@colors", model.Colors),
+					new MySqlParameter("@brands", model.Brands),
+					new MySqlParameter("@sequence", model.Sequence),
+					new MySqlParameter("@createdBy", model.CreatedBy),
+					new MySqlParameter("@createdAt", model.CreatedAt)
 				};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageSubmenu, output, newid, message, sqlParams.ToArray());
@@ -84,25 +84,25 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-					new SqlParameter("@mode", "delete"),
-					new SqlParameter("@id", model.Id)
+				var sqlParams = new List<MySqlParameter>() {
+					new MySqlParameter("@mode", "delete"),
+					new MySqlParameter("@id", model.Id)
 				};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageSubmenu, output, newid, message, sqlParams.ToArray());
@@ -118,33 +118,33 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-					new SqlParameter("@mode", Mode),
-					new SqlParameter("@id", model.Id),
-					new SqlParameter("@parentId", model.ParentId),
-					new SqlParameter("@headerId", model.HeaderId),
-					new SqlParameter("@CategoryId", model.CategoryId),
-					new SqlParameter("@menutype", model.MenuType),
-					new SqlParameter("@name",model.Name),
-					new SqlParameter("@headerName",HeaderName),
-					new SqlParameter("@parentName",ParentName),
-					new SqlParameter("@getParent",getParent),
-					new SqlParameter("@getChild",getChild),
-					new SqlParameter("@searchtext", model.Searchtext),
-					new SqlParameter("@pageIndex", PageIndex),
-					new SqlParameter("@PageSize", PageSize)
+				var sqlParams = new List<MySqlParameter>() {
+					new MySqlParameter("@mode", Mode),
+					new MySqlParameter("@id", model.Id),
+					new MySqlParameter("@parentId", model.ParentId),
+					new MySqlParameter("@headerId", model.HeaderId),
+					new MySqlParameter("@CategoryId", model.CategoryId),
+					new MySqlParameter("@menutype", model.MenuType),
+					new MySqlParameter("@name",model.Name),
+					new MySqlParameter("@headerName",HeaderName),
+					new MySqlParameter("@parentName",ParentName),
+					new MySqlParameter("@getParent",getParent),
+					new MySqlParameter("@getChild",getChild),
+					new MySqlParameter("@searchtext", model.Searchtext),
+					new MySqlParameter("@pageIndex", PageIndex),
+					new MySqlParameter("@PageSize", PageSize)
 
 				};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageSubmenu, ManageSubMenuAsync, output, newid: null, message, sqlParams.ToArray());
@@ -160,45 +160,45 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-					new SqlParameter("@mode", "update"),
-					new SqlParameter("@id",model.Id),
-					new SqlParameter("@menuType",model.MenuType),
-					new SqlParameter("@headerId",model.HeaderId),
-					new SqlParameter("@parentId",model.ParentId),
-					new SqlParameter("@name",model.Name),
-					new SqlParameter("@image",model.Image),
-					new SqlParameter("@imageAlt", model.ImageAlt),
-					new SqlParameter("@haslink", model.HasLink),
-					new SqlParameter("@redirectTo", model.RedirectTo),
-					new SqlParameter("@lendingPageId", model.LendingPageId),
-					new SqlParameter("@categoryId", model.CategoryId),
-					new SqlParameter("@staticPageId", model.StaticPageId),
-					new SqlParameter("@collectionId", model.CollectionId),
-					new SqlParameter("@customLink", model.CustomLink),
-					new SqlParameter("@sizes", model.Sizes),
-					new SqlParameter("@specifications", model.Specifications),
-					new SqlParameter("@colors", model.Colors),
-					new SqlParameter("@brands", model.Brands),
-					new SqlParameter("@sequence", model.Sequence),
-					new SqlParameter("@modifiedBy", model.ModifiedBy),
-					new SqlParameter("@modifiedAt", model.ModifiedAt)
+				var sqlParams = new List<MySqlParameter>() {
+					new MySqlParameter("@mode", "update"),
+					new MySqlParameter("@id",model.Id),
+					new MySqlParameter("@menuType",model.MenuType),
+					new MySqlParameter("@headerId",model.HeaderId),
+					new MySqlParameter("@parentId",model.ParentId),
+					new MySqlParameter("@name",model.Name),
+					new MySqlParameter("@image",model.Image),
+					new MySqlParameter("@imageAlt", model.ImageAlt),
+					new MySqlParameter("@haslink", model.HasLink),
+					new MySqlParameter("@redirectTo", model.RedirectTo),
+					new MySqlParameter("@lendingPageId", model.LendingPageId),
+					new MySqlParameter("@categoryId", model.CategoryId),
+					new MySqlParameter("@staticPageId", model.StaticPageId),
+					new MySqlParameter("@collectionId", model.CollectionId),
+					new MySqlParameter("@customLink", model.CustomLink),
+					new MySqlParameter("@sizes", model.Sizes),
+					new MySqlParameter("@specifications", model.Specifications),
+					new MySqlParameter("@colors", model.Colors),
+					new MySqlParameter("@brands", model.Brands),
+					new MySqlParameter("@sequence", model.Sequence),
+					new MySqlParameter("@modifiedBy", model.ModifiedBy),
+					new MySqlParameter("@modifiedAt", model.ModifiedAt)
 				};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageSubmenu, output, newid, message, sqlParams.ToArray());

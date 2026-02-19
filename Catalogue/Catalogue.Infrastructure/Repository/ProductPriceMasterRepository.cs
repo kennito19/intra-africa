@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,35 +32,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
-                new SqlParameter("@mrp", productPriceMaster.MRP),
-                new SqlParameter("@sellingprice", productPriceMaster.SellingPrice),
-                new SqlParameter("@discount", productPriceMaster.Discount),
-                new SqlParameter("@quantity", productPriceMaster.Quantity),
-                new SqlParameter("@marginIn", productPriceMaster.MarginIn),
-                new SqlParameter("@marginCost", productPriceMaster.MarginCost),
-                new SqlParameter("@marginPercentage", productPriceMaster.MarginPercentage),
-                new SqlParameter("@sizeid", productPriceMaster.SizeID),
-                new SqlParameter("@createdby", productPriceMaster.CreatedBy),
-                new SqlParameter("@createdat", productPriceMaster.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
+                new MySqlParameter("@mrp", productPriceMaster.MRP),
+                new MySqlParameter("@sellingprice", productPriceMaster.SellingPrice),
+                new MySqlParameter("@discount", productPriceMaster.Discount),
+                new MySqlParameter("@quantity", productPriceMaster.Quantity),
+                new MySqlParameter("@marginIn", productPriceMaster.MarginIn),
+                new MySqlParameter("@marginCost", productPriceMaster.MarginCost),
+                new MySqlParameter("@marginPercentage", productPriceMaster.MarginPercentage),
+                new MySqlParameter("@sizeid", productPriceMaster.SizeID),
+                new MySqlParameter("@createdby", productPriceMaster.CreatedBy),
+                new MySqlParameter("@createdat", productPriceMaster.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductPrice, output, newid, message, sqlParams.ToArray());
@@ -75,39 +75,39 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", productPriceMaster.Id),
-                new SqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
-                new SqlParameter("@mrp", productPriceMaster.MRP),
-                new SqlParameter("@sellingprice", productPriceMaster.SellingPrice),
-                new SqlParameter("@discount", productPriceMaster.Discount),
-                new SqlParameter("@quantity", productPriceMaster.Quantity),
-                new SqlParameter("@marginIn", productPriceMaster.MarginIn),
-                new SqlParameter("@marginCost", productPriceMaster.MarginCost),
-                new SqlParameter("@marginPercentage", productPriceMaster.MarginPercentage),
-                new SqlParameter("@sizeid", productPriceMaster.SizeID),
-                new SqlParameter("@modifiedby", productPriceMaster.ModifiedBy),
-                new SqlParameter("@modifiedat", productPriceMaster.ModifiedAt),
-                new SqlParameter("@deletedby", productPriceMaster.DeletedBy),
-                new SqlParameter("@deletedat", productPriceMaster.DeletedAt),
-                new SqlParameter("@isdeleted", productPriceMaster.IsDeleted),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", productPriceMaster.Id),
+                new MySqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
+                new MySqlParameter("@mrp", productPriceMaster.MRP),
+                new MySqlParameter("@sellingprice", productPriceMaster.SellingPrice),
+                new MySqlParameter("@discount", productPriceMaster.Discount),
+                new MySqlParameter("@quantity", productPriceMaster.Quantity),
+                new MySqlParameter("@marginIn", productPriceMaster.MarginIn),
+                new MySqlParameter("@marginCost", productPriceMaster.MarginCost),
+                new MySqlParameter("@marginPercentage", productPriceMaster.MarginPercentage),
+                new MySqlParameter("@sizeid", productPriceMaster.SizeID),
+                new MySqlParameter("@modifiedby", productPriceMaster.ModifiedBy),
+                new MySqlParameter("@modifiedat", productPriceMaster.ModifiedAt),
+                new MySqlParameter("@deletedby", productPriceMaster.DeletedBy),
+                new MySqlParameter("@deletedat", productPriceMaster.DeletedAt),
+                new MySqlParameter("@isdeleted", productPriceMaster.IsDeleted),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductPrice, output, newid, message, sqlParams.ToArray());
@@ -122,28 +122,28 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
-                new SqlParameter("@id", productPriceMaster.Id),
-                new SqlParameter("@deletedby", productPriceMaster.DeletedBy),
-                new SqlParameter("@deletedat", productPriceMaster.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
+                new MySqlParameter("@id", productPriceMaster.Id),
+                new MySqlParameter("@deletedby", productPriceMaster.DeletedBy),
+                new MySqlParameter("@deletedat", productPriceMaster.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductPrice, output, newid, message, sqlParams.ToArray());
@@ -158,33 +158,33 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", productPriceMaster.Id),
-                new SqlParameter("@productid", productPriceMaster.ProductID),
-                new SqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
-                new SqlParameter("@sizeid", productPriceMaster.SizeID),
-                new SqlParameter("@sizename", productPriceMaster.SizeName),
-                new SqlParameter("@isdeleted", productPriceMaster.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", productPriceMaster.Id),
+                new MySqlParameter("@productid", productPriceMaster.ProductID),
+                new MySqlParameter("@sellerproductid", productPriceMaster.SellerProductID),
+                new MySqlParameter("@sizeid", productPriceMaster.SizeID),
+                new MySqlParameter("@sizename", productPriceMaster.SizeName),
+                new MySqlParameter("@isdeleted", productPriceMaster.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetProductPrice, sellerWisePriceMasterParserAsync, output, newid: null, message, sqlParams.ToArray());

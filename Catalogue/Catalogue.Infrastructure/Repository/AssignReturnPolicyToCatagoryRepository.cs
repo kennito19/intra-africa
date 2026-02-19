@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,28 +31,28 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
-                new SqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
-                new SqlParameter("@createdby", assignReturnPolicyToCatagory.CreatedBy),
-                new SqlParameter("@createdat", assignReturnPolicyToCatagory.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
+                new MySqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
+                new MySqlParameter("@createdby", assignReturnPolicyToCatagory.CreatedBy),
+                new MySqlParameter("@createdat", assignReturnPolicyToCatagory.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignReturnPolicyToCategory, output, newid, message, sqlParams.ToArray());
@@ -66,29 +66,29 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", assignReturnPolicyToCatagory.Id),
-                new SqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
-                new SqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
-                new SqlParameter("@modifiedby", assignReturnPolicyToCatagory.ModifiedBy),
-                new SqlParameter("@modifiedat", assignReturnPolicyToCatagory.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", assignReturnPolicyToCatagory.Id),
+                new MySqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
+                new MySqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
+                new MySqlParameter("@modifiedby", assignReturnPolicyToCatagory.ModifiedBy),
+                new MySqlParameter("@modifiedat", assignReturnPolicyToCatagory.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignReturnPolicyToCategory, output, newid, message, sqlParams.ToArray());
@@ -102,27 +102,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", assignReturnPolicyToCatagory.Id),
-                new SqlParameter("@deletedby", assignReturnPolicyToCatagory.DeletedBy),
-                new SqlParameter("@deletedat", assignReturnPolicyToCatagory.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", assignReturnPolicyToCatagory.Id),
+                new MySqlParameter("@deletedby", assignReturnPolicyToCatagory.DeletedBy),
+                new MySqlParameter("@deletedat", assignReturnPolicyToCatagory.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignReturnPolicyToCategory, output, newid, message, sqlParams.ToArray());
@@ -137,34 +137,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", assignReturnPolicyToCatagory.Id),
-                new SqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
-                new SqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
-                new SqlParameter("@returnpolicyid", assignReturnPolicyToCatagory.ReturnPolicyID),
-                new SqlParameter("@policyname", assignReturnPolicyToCatagory.ReturnPolicy),
-                new SqlParameter("@isdeleted", assignReturnPolicyToCatagory.IsDeleted),
-                new SqlParameter("@searchtext", assignReturnPolicyToCatagory.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize)
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", assignReturnPolicyToCatagory.Id),
+                new MySqlParameter("@catid", assignReturnPolicyToCatagory.CategoryID),
+                new MySqlParameter("@returnpolicydetailid", assignReturnPolicyToCatagory.ReturnPolicyDetailID),
+                new MySqlParameter("@returnpolicyid", assignReturnPolicyToCatagory.ReturnPolicyID),
+                new MySqlParameter("@policyname", assignReturnPolicyToCatagory.ReturnPolicy),
+                new MySqlParameter("@isdeleted", assignReturnPolicyToCatagory.IsDeleted),
+                new MySqlParameter("@searchtext", assignReturnPolicyToCatagory.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize)
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAssignReturnPolicyToCategory, assignReturnPolicyToCatagoryParserAsync, output, newid: null, message, sqlParams.ToArray());

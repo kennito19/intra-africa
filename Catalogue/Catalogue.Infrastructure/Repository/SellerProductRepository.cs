@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.DTO;
 using Catalogue.Domain.Entity;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -33,43 +33,43 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@productid", sellerProduct.ProductID),
-                    new SqlParameter("@sellerid", sellerProduct.SellerID),
-                    new SqlParameter("@brandid", sellerProduct.BrandID),
-                    new SqlParameter("@skucode", sellerProduct.SKUCode),
-                    new SqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
-                    new SqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
-                    new SqlParameter("@live", sellerProduct.Live),
-                    new SqlParameter("@status", sellerProduct.Status),
-                    new SqlParameter("@manufactureddate", sellerProduct.ManufacturedDate),
-                    new SqlParameter("@expirydate", sellerProduct.ExpiryDate),
-                    new SqlParameter("@extradetails", sellerProduct.ExtraDetails),
-                    new SqlParameter("@moq", sellerProduct.MOQ),
-                    new SqlParameter("@packinglength", sellerProduct.PackingLength),
-                    new SqlParameter("@packingbreadth", sellerProduct.PackingBreadth),
-                    new SqlParameter("@packingheight", sellerProduct.PackingHeight),
-                    new SqlParameter("@packingweight", sellerProduct.PackingWeight),
-                    new SqlParameter("@weightslabid", sellerProduct.WeightSlabId),
-                    new SqlParameter("@createdby", sellerProduct.CreatedBy),
-                    new SqlParameter("@createdat", sellerProduct.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@productid", sellerProduct.ProductID),
+                    new MySqlParameter("@sellerid", sellerProduct.SellerID),
+                    new MySqlParameter("@brandid", sellerProduct.BrandID),
+                    new MySqlParameter("@skucode", sellerProduct.SKUCode),
+                    new MySqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
+                    new MySqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
+                    new MySqlParameter("@live", sellerProduct.Live),
+                    new MySqlParameter("@status", sellerProduct.Status),
+                    new MySqlParameter("@manufactureddate", sellerProduct.ManufacturedDate),
+                    new MySqlParameter("@expirydate", sellerProduct.ExpiryDate),
+                    new MySqlParameter("@extradetails", sellerProduct.ExtraDetails),
+                    new MySqlParameter("@moq", sellerProduct.MOQ),
+                    new MySqlParameter("@packinglength", sellerProduct.PackingLength),
+                    new MySqlParameter("@packingbreadth", sellerProduct.PackingBreadth),
+                    new MySqlParameter("@packingheight", sellerProduct.PackingHeight),
+                    new MySqlParameter("@packingweight", sellerProduct.PackingWeight),
+                    new MySqlParameter("@weightslabid", sellerProduct.WeightSlabId),
+                    new MySqlParameter("@createdby", sellerProduct.CreatedBy),
+                    new MySqlParameter("@createdat", sellerProduct.CreatedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.SellerProducts, output, newid, message, sqlParams.ToArray());
@@ -84,39 +84,39 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", sellerProduct.Id),
-                    new SqlParameter("@productid", sellerProduct.ProductID),
-                    new SqlParameter("@sellerid", sellerProduct.SellerID),
-                    new SqlParameter("@brandid", sellerProduct.BrandID),
-                    new SqlParameter("@skucode", sellerProduct.SKUCode),
-                    new SqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
-                    new SqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
-                    new SqlParameter("@live", sellerProduct.Live),
-                    new SqlParameter("@status", sellerProduct.Status),
-                    new SqlParameter("@manufactureddate", sellerProduct.ManufacturedDate),
-                    new SqlParameter("@expirydate", sellerProduct.ExpiryDate),
-                    new SqlParameter("@extradetails", sellerProduct.ExtraDetails),
-                    new SqlParameter("@moq", sellerProduct.MOQ),
-                    new SqlParameter("@packinglength", sellerProduct.PackingLength),
-                    new SqlParameter("@packingbreadth", sellerProduct.PackingBreadth),
-                    new SqlParameter("@packingheight", sellerProduct.PackingHeight),
-                    new SqlParameter("@packingweight", sellerProduct.PackingWeight),
-                    new SqlParameter("@weightslabid", sellerProduct.WeightSlabId),
-                    new SqlParameter("@modifiedBy", sellerProduct.ModifiedBy),
-                    new SqlParameter("@modifiedAt", sellerProduct.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", sellerProduct.Id),
+                    new MySqlParameter("@productid", sellerProduct.ProductID),
+                    new MySqlParameter("@sellerid", sellerProduct.SellerID),
+                    new MySqlParameter("@brandid", sellerProduct.BrandID),
+                    new MySqlParameter("@skucode", sellerProduct.SKUCode),
+                    new MySqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
+                    new MySqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
+                    new MySqlParameter("@live", sellerProduct.Live),
+                    new MySqlParameter("@status", sellerProduct.Status),
+                    new MySqlParameter("@manufactureddate", sellerProduct.ManufacturedDate),
+                    new MySqlParameter("@expirydate", sellerProduct.ExpiryDate),
+                    new MySqlParameter("@extradetails", sellerProduct.ExtraDetails),
+                    new MySqlParameter("@moq", sellerProduct.MOQ),
+                    new MySqlParameter("@packinglength", sellerProduct.PackingLength),
+                    new MySqlParameter("@packingbreadth", sellerProduct.PackingBreadth),
+                    new MySqlParameter("@packingheight", sellerProduct.PackingHeight),
+                    new MySqlParameter("@packingweight", sellerProduct.PackingWeight),
+                    new MySqlParameter("@weightslabid", sellerProduct.WeightSlabId),
+                    new MySqlParameter("@modifiedBy", sellerProduct.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", sellerProduct.ModifiedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.SellerProducts, output, newid: null, message, sqlParams.ToArray());
@@ -132,27 +132,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", sellerProduct.Id),
-                    new SqlParameter("@deletedby", sellerProduct.DeletedBy),
-                    new SqlParameter("@deletedat", sellerProduct.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", sellerProduct.Id),
+                    new MySqlParameter("@deletedby", sellerProduct.DeletedBy),
+                    new MySqlParameter("@deletedat", sellerProduct.DeletedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.SellerProducts, output, newid, message, sqlParams.ToArray());
@@ -167,27 +167,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "archived"),
-                    new SqlParameter("@sellerid", sellerProduct.SellerID),
-                    new SqlParameter("@modifiedby", sellerProduct.ModifiedBy),
-                    new SqlParameter("@modifiedat", sellerProduct.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "archived"),
+                    new MySqlParameter("@sellerid", sellerProduct.SellerID),
+                    new MySqlParameter("@modifiedby", sellerProduct.ModifiedBy),
+                    new MySqlParameter("@modifiedat", sellerProduct.ModifiedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.SellerProducts, output, newid, message, sqlParams.ToArray());
@@ -200,38 +200,38 @@ namespace Catalogue.Infrastructure.Repository
 
         public async Task<BaseResponse<List<SellerProduct>>> GetSellerProduct(SellerProduct sellerProduct, int PageIndex, int PageSize, string Mode, bool? isArchive = null)
         {
-            var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", sellerProduct.Id),
-                new SqlParameter("@productid", sellerProduct.ProductID),
-                new SqlParameter("@productMasterid", sellerProduct.ProductMasterId),
-                new SqlParameter("@sellerid", sellerProduct.SellerID),
-                new SqlParameter("@brandid", sellerProduct.BrandID),
-                new SqlParameter("@categoryid", sellerProduct.CategoryId),
-                new SqlParameter("@weightSlabId", sellerProduct.WeightSlabId),
-                new SqlParameter("@skucode", sellerProduct.SKUCode),
-                new SqlParameter("@companyskucode", sellerProduct.CompanySKUCode),
-                new SqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
-                new SqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
-                new SqlParameter("@live", sellerProduct.Live),
-                new SqlParameter("@status", sellerProduct.Status),
-                new SqlParameter("@fromdate", sellerProduct.FromDate),
-                new SqlParameter("@todate", sellerProduct.ToDate),
-                new SqlParameter("@isdeleted", sellerProduct.IsDeleted),
-                new SqlParameter("@isarchive", isArchive),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+            var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", sellerProduct.Id),
+                new MySqlParameter("@productid", sellerProduct.ProductID),
+                new MySqlParameter("@productMasterid", sellerProduct.ProductMasterId),
+                new MySqlParameter("@sellerid", sellerProduct.SellerID),
+                new MySqlParameter("@brandid", sellerProduct.BrandID),
+                new MySqlParameter("@categoryid", sellerProduct.CategoryId),
+                new MySqlParameter("@weightSlabId", sellerProduct.WeightSlabId),
+                new MySqlParameter("@skucode", sellerProduct.SKUCode),
+                new MySqlParameter("@companyskucode", sellerProduct.CompanySKUCode),
+                new MySqlParameter("@issizewisepricevariant", sellerProduct.IsSizeWisePriceVariant),
+                new MySqlParameter("@isexistingproduct", sellerProduct.IsExistingProduct),
+                new MySqlParameter("@live", sellerProduct.Live),
+                new MySqlParameter("@status", sellerProduct.Status),
+                new MySqlParameter("@fromdate", sellerProduct.FromDate),
+                new MySqlParameter("@todate", sellerProduct.ToDate),
+                new MySqlParameter("@isdeleted", sellerProduct.IsDeleted),
+                new MySqlParameter("@isarchive", isArchive),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-            SqlParameter output = new SqlParameter();
+            MySqlParameter output = new MySqlParameter();
             output.ParameterName = "@output";
             output.Direction = ParameterDirection.Output;
-            output.SqlDbType = SqlDbType.Int;
+            output.MySqlDbType = MySqlDbType.Int32;
 
-            SqlParameter message = new SqlParameter();
+            MySqlParameter message = new MySqlParameter();
             message.ParameterName = "@message";
             message.Direction = ParameterDirection.Output;
-            message.SqlDbType = SqlDbType.NVarChar;
+            message.MySqlDbType = MySqlDbType.VarChar;
             message.Size = 50;
 
             return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetSellerProducts, SellerProductParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -283,28 +283,28 @@ namespace Catalogue.Infrastructure.Repository
 
         public async Task<BaseResponse<List<SellerProductDetails>>> GetSellerProductDetails(SellerProductDetails sellerProduct, int PageIndex, int PageSize, string Mode, bool? isDeleted = null, bool? isArchive = null)
         {
-            var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", sellerProduct.ProductId),
-                new SqlParameter("@sellerProductId", sellerProduct.SellerProductId),
-                new SqlParameter("@guid", sellerProduct.ProductGuid),
-                new SqlParameter("@isdeleted", isDeleted),
-                new SqlParameter("@status", sellerProduct.Status),
-                new SqlParameter("@live", sellerProduct.LiveStatus),
-                new SqlParameter("@archive", isArchive),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+            var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", sellerProduct.ProductId),
+                new MySqlParameter("@sellerProductId", sellerProduct.SellerProductId),
+                new MySqlParameter("@guid", sellerProduct.ProductGuid),
+                new MySqlParameter("@isdeleted", isDeleted),
+                new MySqlParameter("@status", sellerProduct.Status),
+                new MySqlParameter("@live", sellerProduct.LiveStatus),
+                new MySqlParameter("@archive", isArchive),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-            SqlParameter output = new SqlParameter();
+            MySqlParameter output = new MySqlParameter();
             output.ParameterName = "@output";
             output.Direction = ParameterDirection.Output;
-            output.SqlDbType = SqlDbType.Int;
+            output.MySqlDbType = MySqlDbType.Int32;
 
-            SqlParameter message = new SqlParameter();
+            MySqlParameter message = new MySqlParameter();
             message.ParameterName = "@message";
             message.Direction = ParameterDirection.Output;
-            message.SqlDbType = SqlDbType.NVarChar;
+            message.MySqlDbType = MySqlDbType.VarChar;
             message.Size = 50;
 
             return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetSellerProductDetails, SellerProductDetailsParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -370,68 +370,68 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>();
+                var sqlParams = new List<MySqlParameter>();
                 if (ExtraDetails.Mode == "updateSeller")
                 {
-                    sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", ExtraDetails.Mode),
-                    new SqlParameter("@FullName", ExtraDetails.FullName),
-                    new SqlParameter("@UserName", ExtraDetails.UserName),
-                    new SqlParameter("@PhoneNumber", ExtraDetails.PhoneNumber),
-                    new SqlParameter("@SellerStatus", ExtraDetails.SellerStatus),
-                    new SqlParameter("@sellerid", ExtraDetails.SellerId),
+                    sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", ExtraDetails.Mode),
+                    new MySqlParameter("@FullName", ExtraDetails.FullName),
+                    new MySqlParameter("@UserName", ExtraDetails.UserName),
+                    new MySqlParameter("@PhoneNumber", ExtraDetails.PhoneNumber),
+                    new MySqlParameter("@SellerStatus", ExtraDetails.SellerStatus),
+                    new MySqlParameter("@sellerid", ExtraDetails.SellerId),
                     };
                 }
                 else if(ExtraDetails.Mode == "updateSellerKyc")
                 {
-                    sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", ExtraDetails.Mode),
-                    new SqlParameter("@DisplayName", ExtraDetails.DisplayName),
-                    new SqlParameter("@DigitalSign", ExtraDetails.DigitalSign),
-                    new SqlParameter("@ShipmentBy", ExtraDetails.ShipmentBy),
-                    new SqlParameter("@ShipmentChargesPaidBy", ExtraDetails.ShipmentChargesPaidBy),
-                    new SqlParameter("@ShipmentChargesPaidByName", ExtraDetails.ShipmentChargesPaidByName),
-                    new SqlParameter("@sellerid", ExtraDetails.SellerId),
+                    sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", ExtraDetails.Mode),
+                    new MySqlParameter("@DisplayName", ExtraDetails.DisplayName),
+                    new MySqlParameter("@DigitalSign", ExtraDetails.DigitalSign),
+                    new MySqlParameter("@ShipmentBy", ExtraDetails.ShipmentBy),
+                    new MySqlParameter("@ShipmentChargesPaidBy", ExtraDetails.ShipmentChargesPaidBy),
+                    new MySqlParameter("@ShipmentChargesPaidByName", ExtraDetails.ShipmentChargesPaidByName),
+                    new MySqlParameter("@sellerid", ExtraDetails.SellerId),
                     };
                 }
                 else if (ExtraDetails.Mode == "updateSellerGST")
                 {
-                    sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", ExtraDetails.Mode),
-                    new SqlParameter("@TradeName", ExtraDetails.TradeName),
-                    new SqlParameter("@LegalName", ExtraDetails.LegalName),
-                    new SqlParameter("@sellerid", ExtraDetails.SellerId),
+                    sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", ExtraDetails.Mode),
+                    new MySqlParameter("@TradeName", ExtraDetails.TradeName),
+                    new MySqlParameter("@LegalName", ExtraDetails.LegalName),
+                    new MySqlParameter("@sellerid", ExtraDetails.SellerId),
                     };
                 }
                 else if (ExtraDetails.Mode == "updateBrands")
                 {
-                    sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", ExtraDetails.Mode),
-                    new SqlParameter("@BrandName", ExtraDetails.BrandName),
-                    new SqlParameter("@BrandStatus", ExtraDetails.BrandStatus),
-                    new SqlParameter("@Logo", ExtraDetails.BrandLogo),
-                    new SqlParameter("@brandid", ExtraDetails.BrandId)
+                    sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", ExtraDetails.Mode),
+                    new MySqlParameter("@BrandName", ExtraDetails.BrandName),
+                    new MySqlParameter("@BrandStatus", ExtraDetails.BrandStatus),
+                    new MySqlParameter("@Logo", ExtraDetails.BrandLogo),
+                    new MySqlParameter("@brandid", ExtraDetails.BrandId)
                     };
                 }
                 else if (ExtraDetails.Mode == "updateAssignBrands")
                 {
-                    sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", ExtraDetails.Mode),
-                    new SqlParameter("@AssignBrandStatus", ExtraDetails.AssignBrandStatus),
-                    new SqlParameter("@sellerid", ExtraDetails.SellerId),
-                    new SqlParameter("@brandid", ExtraDetails.BrandId)
+                    sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", ExtraDetails.Mode),
+                    new MySqlParameter("@AssignBrandStatus", ExtraDetails.AssignBrandStatus),
+                    new MySqlParameter("@sellerid", ExtraDetails.SellerId),
+                    new MySqlParameter("@brandid", ExtraDetails.BrandId)
                     };
                 }
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.SellerProducts, output, newid: null, message, sqlParams.ToArray());

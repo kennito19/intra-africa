@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -28,49 +28,49 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderid", orderTaxInfo.OrderID),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderid", orderTaxInfo.OrderID),
 
-                new SqlParameter("@orderitemid", orderTaxInfo.OrderItemID),
-                new SqlParameter("@productid", orderTaxInfo.ProductID),
-                new SqlParameter("@sellerproductid", orderTaxInfo.SellerProductID),
-                new SqlParameter("@shippingcharge", orderTaxInfo.ShippingCharge),
-                new SqlParameter("@shippingzone", orderTaxInfo.ShippingZone),
-                new SqlParameter("@taxonshipping", orderTaxInfo.TaxOnShipping),
-                new SqlParameter("@commissionin", orderTaxInfo.CommissionIn),
-                new SqlParameter("@commissionrate", orderTaxInfo.CommissionRate),
-                new SqlParameter("@commissionamount", orderTaxInfo.CommissionAmount),
-                new SqlParameter("@taxoncommission", orderTaxInfo.TaxOnCommission),
-                new SqlParameter("@netearn", orderTaxInfo.NetEarn),
-                new SqlParameter("@ordertaxrateid", orderTaxInfo.OrderTaxRateId),
-                new SqlParameter("@ordertaxrate", orderTaxInfo.OrderTaxRate),
-                new SqlParameter("@hsncode", orderTaxInfo.HSNCode),
-                new SqlParameter("@shipmentby", orderTaxInfo.ShipmentBy),
-                new SqlParameter("@shipmentpaidby", orderTaxInfo.ShipmentPaidBy),
-                new SqlParameter("@issellerwithgstatordertime", orderTaxInfo.IsSellerWithGSTAtOrderTime),
-                new SqlParameter("@weightslab", orderTaxInfo.WeightSlab),
+                new MySqlParameter("@orderitemid", orderTaxInfo.OrderItemID),
+                new MySqlParameter("@productid", orderTaxInfo.ProductID),
+                new MySqlParameter("@sellerproductid", orderTaxInfo.SellerProductID),
+                new MySqlParameter("@shippingcharge", orderTaxInfo.ShippingCharge),
+                new MySqlParameter("@shippingzone", orderTaxInfo.ShippingZone),
+                new MySqlParameter("@taxonshipping", orderTaxInfo.TaxOnShipping),
+                new MySqlParameter("@commissionin", orderTaxInfo.CommissionIn),
+                new MySqlParameter("@commissionrate", orderTaxInfo.CommissionRate),
+                new MySqlParameter("@commissionamount", orderTaxInfo.CommissionAmount),
+                new MySqlParameter("@taxoncommission", orderTaxInfo.TaxOnCommission),
+                new MySqlParameter("@netearn", orderTaxInfo.NetEarn),
+                new MySqlParameter("@ordertaxrateid", orderTaxInfo.OrderTaxRateId),
+                new MySqlParameter("@ordertaxrate", orderTaxInfo.OrderTaxRate),
+                new MySqlParameter("@hsncode", orderTaxInfo.HSNCode),
+                new MySqlParameter("@shipmentby", orderTaxInfo.ShipmentBy),
+                new MySqlParameter("@shipmentpaidby", orderTaxInfo.ShipmentPaidBy),
+                new MySqlParameter("@issellerwithgstatordertime", orderTaxInfo.IsSellerWithGSTAtOrderTime),
+                new MySqlParameter("@weightslab", orderTaxInfo.WeightSlab),
 
 
-                new SqlParameter("@createdBy", orderTaxInfo.CreatedBy),
-                new SqlParameter("@createdAt", orderTaxInfo.CreatedAt)
+                new MySqlParameter("@createdBy", orderTaxInfo.CreatedBy),
+                new MySqlParameter("@createdAt", orderTaxInfo.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTaxInfo, output, newid, message, sqlParams.ToArray());
@@ -84,45 +84,45 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", orderTaxInfo.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", orderTaxInfo.Id),
 
-                new SqlParameter("@shippingcharge", orderTaxInfo.ShippingCharge),
-                new SqlParameter("@shippingzone", orderTaxInfo.ShippingZone),
-                new SqlParameter("@taxonshipping", orderTaxInfo.TaxOnShipping),
-                new SqlParameter("@commissionin", orderTaxInfo.CommissionIn),
-                new SqlParameter("@commissionrate", orderTaxInfo.CommissionRate),
-                new SqlParameter("@commissionamount", orderTaxInfo.CommissionAmount),
-                new SqlParameter("@taxoncommission", orderTaxInfo.TaxOnCommission),
-                new SqlParameter("@netearn", orderTaxInfo.NetEarn),
-                new SqlParameter("@ordertaxrateid", orderTaxInfo.OrderTaxRateId),
-                new SqlParameter("@ordertaxrate", orderTaxInfo.OrderTaxRate),
-                new SqlParameter("@hsncode", orderTaxInfo.HSNCode),
-                new SqlParameter("@shipmentby", orderTaxInfo.ShipmentBy),
-                new SqlParameter("@shipmentpaidby", orderTaxInfo.ShipmentPaidBy),
-                new SqlParameter("@issellerwithgstatordertime", orderTaxInfo.IsSellerWithGSTAtOrderTime),
-                new SqlParameter("@weightslab", orderTaxInfo.WeightSlab),
+                new MySqlParameter("@shippingcharge", orderTaxInfo.ShippingCharge),
+                new MySqlParameter("@shippingzone", orderTaxInfo.ShippingZone),
+                new MySqlParameter("@taxonshipping", orderTaxInfo.TaxOnShipping),
+                new MySqlParameter("@commissionin", orderTaxInfo.CommissionIn),
+                new MySqlParameter("@commissionrate", orderTaxInfo.CommissionRate),
+                new MySqlParameter("@commissionamount", orderTaxInfo.CommissionAmount),
+                new MySqlParameter("@taxoncommission", orderTaxInfo.TaxOnCommission),
+                new MySqlParameter("@netearn", orderTaxInfo.NetEarn),
+                new MySqlParameter("@ordertaxrateid", orderTaxInfo.OrderTaxRateId),
+                new MySqlParameter("@ordertaxrate", orderTaxInfo.OrderTaxRate),
+                new MySqlParameter("@hsncode", orderTaxInfo.HSNCode),
+                new MySqlParameter("@shipmentby", orderTaxInfo.ShipmentBy),
+                new MySqlParameter("@shipmentpaidby", orderTaxInfo.ShipmentPaidBy),
+                new MySqlParameter("@issellerwithgstatordertime", orderTaxInfo.IsSellerWithGSTAtOrderTime),
+                new MySqlParameter("@weightslab", orderTaxInfo.WeightSlab),
 
-                new SqlParameter("@modifiedBy", orderTaxInfo.ModifiedBy),
-                new SqlParameter("@modifiedAt", orderTaxInfo.ModifiedAt)
+                new MySqlParameter("@modifiedBy", orderTaxInfo.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orderTaxInfo.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTaxInfo, output, newid, message, sqlParams.ToArray());
@@ -137,27 +137,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderTaxInfo.Id),
-                new SqlParameter("@deletedBy", orderTaxInfo.DeletedBy),
-                new SqlParameter("@deletedAt", orderTaxInfo.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderTaxInfo.Id),
+                new MySqlParameter("@deletedBy", orderTaxInfo.DeletedBy),
+                new MySqlParameter("@deletedAt", orderTaxInfo.DeletedAt)
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTaxInfo, output, newid, message, sqlParams.ToArray());
@@ -172,32 +172,32 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderTaxInfo.Id),
-                new SqlParameter("@orderid", orderTaxInfo.OrderID),
-                new SqlParameter("@orderitemid", orderTaxInfo.OrderItemID),
-                new SqlParameter("@productid", orderTaxInfo.ProductID),
-                new SqlParameter("@sellerproductid", orderTaxInfo.SellerProductID),
-                new SqlParameter("@isDeleted", orderTaxInfo.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderTaxInfo.Id),
+                new MySqlParameter("@orderid", orderTaxInfo.OrderID),
+                new MySqlParameter("@orderitemid", orderTaxInfo.OrderItemID),
+                new MySqlParameter("@productid", orderTaxInfo.ProductID),
+                new MySqlParameter("@sellerproductid", orderTaxInfo.SellerProductID),
+                new MySqlParameter("@isDeleted", orderTaxInfo.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderTaxInfo, orderTaxParserAsync, output, newid: null, message, sqlParams.ToArray());

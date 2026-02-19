@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,62 +32,62 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
-                    new SqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
-                    new SqlParameter("@optionId", lendingPageSectionDetail.OptionId),
-                    new SqlParameter("@image", lendingPageSectionDetail.Image),
-                    new SqlParameter("@ImageAlt", lendingPageSectionDetail.ImageAlt),
-                    new SqlParameter("@isTitleVisible", lendingPageSectionDetail.IsTitleVisible),
-                    new SqlParameter("@title", lendingPageSectionDetail.Title),
-                    new SqlParameter("@subTitle", lendingPageSectionDetail.SubTitle),
-                    new SqlParameter("@titlePosition", lendingPageSectionDetail.TitlePosition),
-                    new SqlParameter("@sequence", lendingPageSectionDetail.Sequence),
-                    new SqlParameter("@columns", lendingPageSectionDetail.Columns),
-                    new SqlParameter("@redirectTo", lendingPageSectionDetail.RedirectTo),
-                    new SqlParameter("@categoryId", lendingPageSectionDetail.CategoryId),
-                    new SqlParameter("@brandIds", lendingPageSectionDetail.BrandIds),
-                    new SqlParameter("@sizeIds", lendingPageSectionDetail.SizeIds),
-                    new SqlParameter("@specificationIds", lendingPageSectionDetail.SpecificationIds),
-                    new SqlParameter("@colorids", lendingPageSectionDetail.ColorIds),
-                    new SqlParameter("@collectionId", lendingPageSectionDetail.CollectionId),
-                    new SqlParameter("@productId", lendingPageSectionDetail.ProductId),
-                    new SqlParameter("@staticPageId", lendingPageSectionDetail.StaticPageId),
-                    new SqlParameter("@customLink", lendingPageSectionDetail.CustomLinks),
-                    new SqlParameter("@titleColor", lendingPageSectionDetail.TitleColor),
-                    new SqlParameter("@subTitleColor", lendingPageSectionDetail.SubTitleColor),
-                    new SqlParameter("@titleSize", lendingPageSectionDetail.TitleSize),
-                    new SqlParameter("@subTitleSize", lendingPageSectionDetail.SubTitleSize),
-                    new SqlParameter("@italicSubTitle", lendingPageSectionDetail.ItalicSubTitle),
-                    new SqlParameter("@italicTitle", lendingPageSectionDetail.ItalicTitle),
-                    new SqlParameter("@description", lendingPageSectionDetail.Description),
-                    new SqlParameter("@sliderType", lendingPageSectionDetail.SliderType),
-                    new SqlParameter("@videoLinkType", lendingPageSectionDetail.VideoLinkType),
-                    new SqlParameter("@videoId", lendingPageSectionDetail.VideoId),
-                    new SqlParameter("@name", lendingPageSectionDetail.Name),
-                    new SqlParameter("@assignCity", lendingPageSectionDetail.AssignCity),
-                    new SqlParameter("@assignState", lendingPageSectionDetail.AssignState),
-                    new SqlParameter("@assignCountry", lendingPageSectionDetail.AssignCountry),
-                    new SqlParameter("@status", lendingPageSectionDetail.Status),
-                    new SqlParameter("@createdby", lendingPageSectionDetail.CreatedBy),
-                    new SqlParameter("@createdat", lendingPageSectionDetail.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
+                    new MySqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
+                    new MySqlParameter("@optionId", lendingPageSectionDetail.OptionId),
+                    new MySqlParameter("@image", lendingPageSectionDetail.Image),
+                    new MySqlParameter("@ImageAlt", lendingPageSectionDetail.ImageAlt),
+                    new MySqlParameter("@isTitleVisible", lendingPageSectionDetail.IsTitleVisible),
+                    new MySqlParameter("@title", lendingPageSectionDetail.Title),
+                    new MySqlParameter("@subTitle", lendingPageSectionDetail.SubTitle),
+                    new MySqlParameter("@titlePosition", lendingPageSectionDetail.TitlePosition),
+                    new MySqlParameter("@sequence", lendingPageSectionDetail.Sequence),
+                    new MySqlParameter("@columns", lendingPageSectionDetail.Columns),
+                    new MySqlParameter("@redirectTo", lendingPageSectionDetail.RedirectTo),
+                    new MySqlParameter("@categoryId", lendingPageSectionDetail.CategoryId),
+                    new MySqlParameter("@brandIds", lendingPageSectionDetail.BrandIds),
+                    new MySqlParameter("@sizeIds", lendingPageSectionDetail.SizeIds),
+                    new MySqlParameter("@specificationIds", lendingPageSectionDetail.SpecificationIds),
+                    new MySqlParameter("@colorids", lendingPageSectionDetail.ColorIds),
+                    new MySqlParameter("@collectionId", lendingPageSectionDetail.CollectionId),
+                    new MySqlParameter("@productId", lendingPageSectionDetail.ProductId),
+                    new MySqlParameter("@staticPageId", lendingPageSectionDetail.StaticPageId),
+                    new MySqlParameter("@customLink", lendingPageSectionDetail.CustomLinks),
+                    new MySqlParameter("@titleColor", lendingPageSectionDetail.TitleColor),
+                    new MySqlParameter("@subTitleColor", lendingPageSectionDetail.SubTitleColor),
+                    new MySqlParameter("@titleSize", lendingPageSectionDetail.TitleSize),
+                    new MySqlParameter("@subTitleSize", lendingPageSectionDetail.SubTitleSize),
+                    new MySqlParameter("@italicSubTitle", lendingPageSectionDetail.ItalicSubTitle),
+                    new MySqlParameter("@italicTitle", lendingPageSectionDetail.ItalicTitle),
+                    new MySqlParameter("@description", lendingPageSectionDetail.Description),
+                    new MySqlParameter("@sliderType", lendingPageSectionDetail.SliderType),
+                    new MySqlParameter("@videoLinkType", lendingPageSectionDetail.VideoLinkType),
+                    new MySqlParameter("@videoId", lendingPageSectionDetail.VideoId),
+                    new MySqlParameter("@name", lendingPageSectionDetail.Name),
+                    new MySqlParameter("@assignCity", lendingPageSectionDetail.AssignCity),
+                    new MySqlParameter("@assignState", lendingPageSectionDetail.AssignState),
+                    new MySqlParameter("@assignCountry", lendingPageSectionDetail.AssignCountry),
+                    new MySqlParameter("@status", lendingPageSectionDetail.Status),
+                    new MySqlParameter("@createdby", lendingPageSectionDetail.CreatedBy),
+                    new MySqlParameter("@createdat", lendingPageSectionDetail.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.LendingPageSectionDetails, output, newid, message, sqlParams.ToArray());
@@ -102,63 +102,63 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", lendingPageSectionDetail.Id),
-                new SqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
-                new SqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
-                new SqlParameter("@optionId", lendingPageSectionDetail.OptionId),
-                new SqlParameter("@image", lendingPageSectionDetail.Image),
-                new SqlParameter("@ImageAlt", lendingPageSectionDetail.ImageAlt),
-                new SqlParameter("@isTitleVisible", lendingPageSectionDetail.IsTitleVisible),
-                new SqlParameter("@title", lendingPageSectionDetail.Title),
-                new SqlParameter("@subTitle", lendingPageSectionDetail.SubTitle),
-                new SqlParameter("@titlePosition", lendingPageSectionDetail.TitlePosition),
-                new SqlParameter("@sequence", lendingPageSectionDetail.Sequence),
-                new SqlParameter("@columns", lendingPageSectionDetail.Columns),
-                new SqlParameter("@redirectTo", lendingPageSectionDetail.RedirectTo),
-                new SqlParameter("@categoryId", lendingPageSectionDetail.CategoryId),
-                new SqlParameter("@brandIds", lendingPageSectionDetail.BrandIds),
-                new SqlParameter("@sizeIds", lendingPageSectionDetail.SizeIds),
-                new SqlParameter("@specificationIds", lendingPageSectionDetail.SpecificationIds),
-                new SqlParameter("@colorids", lendingPageSectionDetail.ColorIds),
-                new SqlParameter("@collectionId", lendingPageSectionDetail.CollectionId),
-                new SqlParameter("@productId", lendingPageSectionDetail.ProductId),
-                new SqlParameter("@staticPageId", lendingPageSectionDetail.StaticPageId),
-                new SqlParameter("@customLink", lendingPageSectionDetail.CustomLinks),
-                new SqlParameter("@titleColor", lendingPageSectionDetail.TitleColor),
-                new SqlParameter("@subTitleColor", lendingPageSectionDetail.SubTitleColor),
-                new SqlParameter("@titleSize", lendingPageSectionDetail.TitleSize),
-                new SqlParameter("@subTitleSize", lendingPageSectionDetail.SubTitleSize),
-                new SqlParameter("@italicSubTitle", lendingPageSectionDetail.ItalicSubTitle),
-                new SqlParameter("@italicTitle", lendingPageSectionDetail.ItalicTitle),
-                new SqlParameter("@description", lendingPageSectionDetail.Description),
-                new SqlParameter("@sliderType", lendingPageSectionDetail.SliderType),
-                new SqlParameter("@videoLinkType", lendingPageSectionDetail.VideoLinkType),
-                new SqlParameter("@videoId", lendingPageSectionDetail.VideoId),
-                new SqlParameter("@name", lendingPageSectionDetail.Name),
-                new SqlParameter("@assignCity", lendingPageSectionDetail.AssignCity),
-                new SqlParameter("@assignState", lendingPageSectionDetail.AssignState),
-                new SqlParameter("@assignCountry", lendingPageSectionDetail.AssignCountry),
-                new SqlParameter("@status", lendingPageSectionDetail.Status),
-                new SqlParameter("@modifiedby", lendingPageSectionDetail.ModifiedBy),
-                new SqlParameter("@modifiedat", lendingPageSectionDetail.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", lendingPageSectionDetail.Id),
+                new MySqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
+                new MySqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
+                new MySqlParameter("@optionId", lendingPageSectionDetail.OptionId),
+                new MySqlParameter("@image", lendingPageSectionDetail.Image),
+                new MySqlParameter("@ImageAlt", lendingPageSectionDetail.ImageAlt),
+                new MySqlParameter("@isTitleVisible", lendingPageSectionDetail.IsTitleVisible),
+                new MySqlParameter("@title", lendingPageSectionDetail.Title),
+                new MySqlParameter("@subTitle", lendingPageSectionDetail.SubTitle),
+                new MySqlParameter("@titlePosition", lendingPageSectionDetail.TitlePosition),
+                new MySqlParameter("@sequence", lendingPageSectionDetail.Sequence),
+                new MySqlParameter("@columns", lendingPageSectionDetail.Columns),
+                new MySqlParameter("@redirectTo", lendingPageSectionDetail.RedirectTo),
+                new MySqlParameter("@categoryId", lendingPageSectionDetail.CategoryId),
+                new MySqlParameter("@brandIds", lendingPageSectionDetail.BrandIds),
+                new MySqlParameter("@sizeIds", lendingPageSectionDetail.SizeIds),
+                new MySqlParameter("@specificationIds", lendingPageSectionDetail.SpecificationIds),
+                new MySqlParameter("@colorids", lendingPageSectionDetail.ColorIds),
+                new MySqlParameter("@collectionId", lendingPageSectionDetail.CollectionId),
+                new MySqlParameter("@productId", lendingPageSectionDetail.ProductId),
+                new MySqlParameter("@staticPageId", lendingPageSectionDetail.StaticPageId),
+                new MySqlParameter("@customLink", lendingPageSectionDetail.CustomLinks),
+                new MySqlParameter("@titleColor", lendingPageSectionDetail.TitleColor),
+                new MySqlParameter("@subTitleColor", lendingPageSectionDetail.SubTitleColor),
+                new MySqlParameter("@titleSize", lendingPageSectionDetail.TitleSize),
+                new MySqlParameter("@subTitleSize", lendingPageSectionDetail.SubTitleSize),
+                new MySqlParameter("@italicSubTitle", lendingPageSectionDetail.ItalicSubTitle),
+                new MySqlParameter("@italicTitle", lendingPageSectionDetail.ItalicTitle),
+                new MySqlParameter("@description", lendingPageSectionDetail.Description),
+                new MySqlParameter("@sliderType", lendingPageSectionDetail.SliderType),
+                new MySqlParameter("@videoLinkType", lendingPageSectionDetail.VideoLinkType),
+                new MySqlParameter("@videoId", lendingPageSectionDetail.VideoId),
+                new MySqlParameter("@name", lendingPageSectionDetail.Name),
+                new MySqlParameter("@assignCity", lendingPageSectionDetail.AssignCity),
+                new MySqlParameter("@assignState", lendingPageSectionDetail.AssignState),
+                new MySqlParameter("@assignCountry", lendingPageSectionDetail.AssignCountry),
+                new MySqlParameter("@status", lendingPageSectionDetail.Status),
+                new MySqlParameter("@modifiedby", lendingPageSectionDetail.ModifiedBy),
+                new MySqlParameter("@modifiedat", lendingPageSectionDetail.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.LendingPageSectionDetails, output, newid, message, sqlParams.ToArray());
@@ -173,26 +173,26 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", lendingPageSectionDetail.Id),
-                new SqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", lendingPageSectionDetail.Id),
+                new MySqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.LendingPageSectionDetails, output, newid, message, sqlParams.ToArray());
@@ -207,27 +207,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", lendingPageSectionDetail.Id),
-                new SqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
-                new SqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
-                new SqlParameter("@lendingPageSectionname", lendingPageSectionDetail.LendingPageSectionName),
-                new SqlParameter("@optionId", lendingPageSectionDetail.OptionId),
-                new SqlParameter("@status", lendingPageSectionDetail.Status),
-                new SqlParameter("@searchtext", lendingPageSectionDetail.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", lendingPageSectionDetail.Id),
+                new MySqlParameter("@lendingPageSectionId", lendingPageSectionDetail.LendingPageSectionId),
+                new MySqlParameter("@layoutTypeDetailsId", lendingPageSectionDetail.LayoutTypeDetailsId),
+                new MySqlParameter("@lendingPageSectionname", lendingPageSectionDetail.LendingPageSectionName),
+                new MySqlParameter("@optionId", lendingPageSectionDetail.OptionId),
+                new MySqlParameter("@status", lendingPageSectionDetail.Status),
+                new MySqlParameter("@searchtext", lendingPageSectionDetail.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetLendingPageSectionDetails, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

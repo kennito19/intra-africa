@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,37 +31,37 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sessionid",cart.SessionId),
-                    new SqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
-                    new SqlParameter("@sizeid",cart.SizeId),
-                    new SqlParameter("@quantity",cart.Quantity),
-                    new SqlParameter("@mrp",cart.TempMRP),
-                    new SqlParameter("@sellingprice",cart.TempSellingPrice),
-                    new SqlParameter("@discount",cart.TempDiscount),
-                    new SqlParameter("@subtotal",cart.SubTotal),
-                    new SqlParameter("@warrantyId",cart.WarrantyId),
-                    new SqlParameter("@createdBy", cart.CreatedBy),
-                    new SqlParameter("@createdAt", cart.CreatedAt),
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sessionid",cart.SessionId),
+                    new MySqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
+                    new MySqlParameter("@sizeid",cart.SizeId),
+                    new MySqlParameter("@quantity",cart.Quantity),
+                    new MySqlParameter("@mrp",cart.TempMRP),
+                    new MySqlParameter("@sellingprice",cart.TempSellingPrice),
+                    new MySqlParameter("@discount",cart.TempDiscount),
+                    new MySqlParameter("@subtotal",cart.SubTotal),
+                    new MySqlParameter("@warrantyId",cart.WarrantyId),
+                    new MySqlParameter("@createdBy", cart.CreatedBy),
+                    new MySqlParameter("@createdAt", cart.CreatedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Cart, output, newid, message, sqlParams.ToArray());
@@ -76,32 +76,32 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", cart.Id),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sessionid",cart.SessionId),
-                    new SqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
-                    new SqlParameter("@sizeid",cart.SizeId),
-                    new SqlParameter("@quantity",cart.Quantity),
-                    new SqlParameter("@mrp",cart.TempMRP),
-                    new SqlParameter("@sellingprice",cart.TempSellingPrice),
-                    new SqlParameter("@discount",cart.TempDiscount),
-                    new SqlParameter("@subtotal",cart.SubTotal),
-                    new SqlParameter("@warrantyId",cart.WarrantyId),
-                    new SqlParameter("@modifiedBy", cart.ModifiedBy),
-                    new SqlParameter("@modifiedAt", cart.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", cart.Id),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sessionid",cart.SessionId),
+                    new MySqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
+                    new MySqlParameter("@sizeid",cart.SizeId),
+                    new MySqlParameter("@quantity",cart.Quantity),
+                    new MySqlParameter("@mrp",cart.TempMRP),
+                    new MySqlParameter("@sellingprice",cart.TempSellingPrice),
+                    new MySqlParameter("@discount",cart.TempDiscount),
+                    new MySqlParameter("@subtotal",cart.SubTotal),
+                    new MySqlParameter("@warrantyId",cart.WarrantyId),
+                    new MySqlParameter("@modifiedBy", cart.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", cart.ModifiedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Cart, output, newid: null, message, sqlParams.ToArray());
@@ -117,21 +117,21 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "updateUserId"),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sessionid",cart.SessionId)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "updateUserId"),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sessionid",cart.SessionId)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Cart, output, newid: null, message, sqlParams.ToArray());
@@ -147,24 +147,24 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id",cart.Id),
-                    new SqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
-                    new SqlParameter("@sessionid",cart.SessionId),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sellerproductIds",sellerProductIds),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id",cart.Id),
+                    new MySqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
+                    new MySqlParameter("@sessionid",cart.SessionId),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sellerproductIds",sellerProductIds),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Cart, output, newid: null, message, sqlParams.ToArray());
@@ -180,29 +180,29 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", cart.Id),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sessionid",cart.SessionId),
-                    new SqlParameter("@WarrantyId",cart.WarrantyId),
-                    new SqlParameter("@searchtext",cart.searchText),
-                    new SqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
-                    new SqlParameter("@sellerproductIds",sellerProductIds),
-                    new SqlParameter("@sizeid",cart.SizeId),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", cart.Id),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sessionid",cart.SessionId),
+                    new MySqlParameter("@WarrantyId",cart.WarrantyId),
+                    new MySqlParameter("@searchtext",cart.searchText),
+                    new MySqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
+                    new MySqlParameter("@sellerproductIds",sellerProductIds),
+                    new MySqlParameter("@sizeid",cart.SizeId),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetCart, CartParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -253,29 +253,29 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", cart.Id),
-                    new SqlParameter("@userid",cart.UserId),
-                    new SqlParameter("@sessionid",cart.SessionId),
-                    new SqlParameter("@WarrantyId",cart.WarrantyId),
-                    new SqlParameter("@searchtext",cart.searchText),
-                    new SqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
-                    new SqlParameter("@sellerproductIds",sellerProductIds),
-                    new SqlParameter("@sizeid",cart.SizeId),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", cart.Id),
+                    new MySqlParameter("@userid",cart.UserId),
+                    new MySqlParameter("@sessionid",cart.SessionId),
+                    new MySqlParameter("@WarrantyId",cart.WarrantyId),
+                    new MySqlParameter("@searchtext",cart.searchText),
+                    new MySqlParameter("@sellerproductmasterid",cart.SellerProductMasterId),
+                    new MySqlParameter("@sellerproductIds",sellerProductIds),
+                    new MySqlParameter("@sizeid",cart.SizeId),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAbandonedCart, AbundantCartParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -31,31 +31,31 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@taxId", taxmap.TaxId),
-                new SqlParameter("@taxTypeId", taxmap.TaxTypeId),
-                new SqlParameter("@taxMapBy", taxmap.TaxMapBy),
-                new SqlParameter("@SpecificState", taxmap.SpecificState),
-                new SqlParameter("@SpecifictaxTypeId", taxmap.SpecificTaxTypeId),
-                new SqlParameter("@createdBy", taxmap.CreatedBy),
-                new SqlParameter("@createdAt", taxmap.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@taxId", taxmap.TaxId),
+                new MySqlParameter("@taxTypeId", taxmap.TaxTypeId),
+                new MySqlParameter("@taxMapBy", taxmap.TaxMapBy),
+                new MySqlParameter("@SpecificState", taxmap.SpecificState),
+                new MySqlParameter("@SpecifictaxTypeId", taxmap.SpecificTaxTypeId),
+                new MySqlParameter("@createdBy", taxmap.CreatedBy),
+                new MySqlParameter("@createdAt", taxmap.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxMapping, output, newid, message, sqlParams.ToArray());
@@ -69,32 +69,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", taxmap.Id),
-                    new SqlParameter("@taxId", taxmap.TaxId),
-                    new SqlParameter("@taxTypeId", taxmap.TaxTypeId),
-                    new SqlParameter("@taxMapBy", taxmap.TaxMapBy),
-                    new SqlParameter("@SpecificState", taxmap.SpecificState),
-                    new SqlParameter("@SpecifictaxTypeId", taxmap.SpecificTaxTypeId),
-                    new SqlParameter("@createdby", taxmap.CreatedBy),
-                    new SqlParameter("@createdat", taxmap.CreatedAt),
-                    new SqlParameter("@modifiedBy", taxmap.ModifiedBy),
-                    new SqlParameter("@modifiedAt", taxmap.ModifiedAt),
-                    new SqlParameter("@isDeleted", taxmap.IsDeleted),
-                    new SqlParameter("@deletedby", taxmap.DeletedBy),
-                    new SqlParameter("@deletedat", taxmap.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", taxmap.Id),
+                    new MySqlParameter("@taxId", taxmap.TaxId),
+                    new MySqlParameter("@taxTypeId", taxmap.TaxTypeId),
+                    new MySqlParameter("@taxMapBy", taxmap.TaxMapBy),
+                    new MySqlParameter("@SpecificState", taxmap.SpecificState),
+                    new MySqlParameter("@SpecifictaxTypeId", taxmap.SpecificTaxTypeId),
+                    new MySqlParameter("@createdby", taxmap.CreatedBy),
+                    new MySqlParameter("@createdat", taxmap.CreatedAt),
+                    new MySqlParameter("@modifiedBy", taxmap.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", taxmap.ModifiedAt),
+                    new MySqlParameter("@isDeleted", taxmap.IsDeleted),
+                    new MySqlParameter("@deletedby", taxmap.DeletedBy),
+                    new MySqlParameter("@deletedat", taxmap.DeletedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxMapping, output, newid: null, message, sqlParams.ToArray());
@@ -110,27 +110,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", taxmap.Id),
-                    new SqlParameter("@deletedby", taxmap.DeletedBy),
-                    new SqlParameter("@deletedat", taxmap.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", taxmap.Id),
+                    new MySqlParameter("@deletedby", taxmap.DeletedBy),
+                    new MySqlParameter("@deletedat", taxmap.DeletedAt),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxMapping, output, newid, message, sqlParams.ToArray());
@@ -145,30 +145,30 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", taxmap.Id),
-                new SqlParameter("@taxId", taxmap.TaxId),
-                new SqlParameter("@taxValueId", taxmap.TaxValueId),
-                new SqlParameter("@tax", taxmap.Tax),
-                new SqlParameter("@taxTypeId", taxmap.TaxTypeId),
-                new SqlParameter("@taxType", taxmap.TaxType),
-                new SqlParameter("@taxMapBy", taxmap.TaxMapBy),
-                new SqlParameter("@isDeleted", taxmap.IsDeleted),
-                new SqlParameter("@searchtext", taxmap.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", taxmap.Id),
+                new MySqlParameter("@taxId", taxmap.TaxId),
+                new MySqlParameter("@taxValueId", taxmap.TaxValueId),
+                new MySqlParameter("@tax", taxmap.Tax),
+                new MySqlParameter("@taxTypeId", taxmap.TaxTypeId),
+                new MySqlParameter("@taxType", taxmap.TaxType),
+                new MySqlParameter("@taxMapBy", taxmap.TaxMapBy),
+                new MySqlParameter("@isDeleted", taxmap.IsDeleted),
+                new MySqlParameter("@searchtext", taxmap.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetTaxMapping, TaxMapParserAsync, output, newid: null, message, sqlParams.ToArray());

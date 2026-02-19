@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,37 +31,37 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@categoryid", assignSpec.CategoryID),
-                new SqlParameter("@isallowsize", assignSpec.IsAllowSize),
-                new SqlParameter("@isallowpricevariant", assignSpec.IsAllowPriceVariant),
-                new SqlParameter("@isallowspecifications", assignSpec.IsAllowSpecifications),
-                new SqlParameter("@isallowexpirydates", assignSpec.IsAllowExpiryDates),
-                new SqlParameter("@isallowcolors", assignSpec.IsAllowColors),
-                new SqlParameter("@isallowcolorsinfilter", assignSpec.IsAllowColorsInFilter),
-                new SqlParameter("@isallowcolorsinvariant", assignSpec.IsAllowColorsInVariant),
-                new SqlParameter("@isallowcolorsincomparision", assignSpec.IsAllowColorsInComparision),
-                new SqlParameter("@isallowcolorsintitle", assignSpec.IsAllowColorsInTitle),
-                new SqlParameter("@titlesequenceofcolor ", assignSpec.TitleSequenceOfColor),
-                new SqlParameter("@createdby", assignSpec.CreatedBy),
-                new SqlParameter("@createdat", assignSpec.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@categoryid", assignSpec.CategoryID),
+                new MySqlParameter("@isallowsize", assignSpec.IsAllowSize),
+                new MySqlParameter("@isallowpricevariant", assignSpec.IsAllowPriceVariant),
+                new MySqlParameter("@isallowspecifications", assignSpec.IsAllowSpecifications),
+                new MySqlParameter("@isallowexpirydates", assignSpec.IsAllowExpiryDates),
+                new MySqlParameter("@isallowcolors", assignSpec.IsAllowColors),
+                new MySqlParameter("@isallowcolorsinfilter", assignSpec.IsAllowColorsInFilter),
+                new MySqlParameter("@isallowcolorsinvariant", assignSpec.IsAllowColorsInVariant),
+                new MySqlParameter("@isallowcolorsincomparision", assignSpec.IsAllowColorsInComparision),
+                new MySqlParameter("@isallowcolorsintitle", assignSpec.IsAllowColorsInTitle),
+                new MySqlParameter("@titlesequenceofcolor ", assignSpec.TitleSequenceOfColor),
+                new MySqlParameter("@createdby", assignSpec.CreatedBy),
+                new MySqlParameter("@createdat", assignSpec.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSpecificationToCategory, output, newid, message, sqlParams.ToArray());
@@ -76,37 +76,37 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@guid", assignSpec.Guid),
-                new SqlParameter("@isallowsize", assignSpec.IsAllowSize),
-                new SqlParameter("@isallowpricevariant", assignSpec.IsAllowPriceVariant),
-                new SqlParameter("@isallowspecifications", assignSpec.IsAllowSpecifications),
-                new SqlParameter("@isallowexpirydates", assignSpec.IsAllowExpiryDates),
-                new SqlParameter("@isallowcolors", assignSpec.IsAllowColors),
-                new SqlParameter("@isallowcolorsinfilter", assignSpec.IsAllowColorsInFilter),
-                new SqlParameter("@isallowcolorsinvariant", assignSpec.IsAllowColorsInVariant),
-                new SqlParameter("@isallowcolorsincomparision", assignSpec.IsAllowColorsInComparision),
-                new SqlParameter("@isallowcolorsintitle", assignSpec.IsAllowColorsInTitle),
-                new SqlParameter("@titlesequenceofcolor", assignSpec.TitleSequenceOfColor),
-                new SqlParameter("@modifiedby", assignSpec.ModifiedBy),
-                new SqlParameter("@modifiedat", assignSpec.ModifiedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@guid", assignSpec.Guid),
+                new MySqlParameter("@isallowsize", assignSpec.IsAllowSize),
+                new MySqlParameter("@isallowpricevariant", assignSpec.IsAllowPriceVariant),
+                new MySqlParameter("@isallowspecifications", assignSpec.IsAllowSpecifications),
+                new MySqlParameter("@isallowexpirydates", assignSpec.IsAllowExpiryDates),
+                new MySqlParameter("@isallowcolors", assignSpec.IsAllowColors),
+                new MySqlParameter("@isallowcolorsinfilter", assignSpec.IsAllowColorsInFilter),
+                new MySqlParameter("@isallowcolorsinvariant", assignSpec.IsAllowColorsInVariant),
+                new MySqlParameter("@isallowcolorsincomparision", assignSpec.IsAllowColorsInComparision),
+                new MySqlParameter("@isallowcolorsintitle", assignSpec.IsAllowColorsInTitle),
+                new MySqlParameter("@titlesequenceofcolor", assignSpec.TitleSequenceOfColor),
+                new MySqlParameter("@modifiedby", assignSpec.ModifiedBy),
+                new MySqlParameter("@modifiedat", assignSpec.ModifiedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSpecificationToCategory, output, newid, message, sqlParams.ToArray());
@@ -121,27 +121,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", assignSpec.Id),
-                new SqlParameter("@deletedby", assignSpec.DeletedBy),
-                new SqlParameter("@deletedat", assignSpec.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", assignSpec.Id),
+                new MySqlParameter("@deletedby", assignSpec.DeletedBy),
+                new MySqlParameter("@deletedat", assignSpec.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.AssignSpecificationToCategory, output, newid, message, sqlParams.ToArray());
@@ -156,33 +156,33 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", assignSpec.Id),
-                new SqlParameter("@guid", assignSpec.Guid),
-                new SqlParameter("@catid", assignSpec.CategoryID),
-                new SqlParameter("@catname", assignSpec.CategoryName),
-                new SqlParameter("@isdeleted", assignSpec.IsDeleted),
-                new SqlParameter("@searchtext", assignSpec.Searchtext),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", assignSpec.Id),
+                new MySqlParameter("@guid", assignSpec.Guid),
+                new MySqlParameter("@catid", assignSpec.CategoryID),
+                new MySqlParameter("@catname", assignSpec.CategoryName),
+                new MySqlParameter("@isdeleted", assignSpec.IsDeleted),
+                new MySqlParameter("@searchtext", assignSpec.Searchtext),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAssignSpecificationToCategory, assignSpecToCategoryParserAsync, output, newid: null, message, sqlParams.ToArray());

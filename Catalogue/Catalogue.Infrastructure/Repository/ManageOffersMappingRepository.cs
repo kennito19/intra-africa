@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,44 +31,44 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-				new SqlParameter("@mode", "add"),
-				new SqlParameter("@offerId", model.offerId),
-				new SqlParameter("@categoryId", model.categoryId),
-				new SqlParameter("@sellerId", model.sellerId),
-				new SqlParameter("@brandId", model.brandId),
-				new SqlParameter("@productId", model.productId),
-				new SqlParameter("@getProductId", model.getProductId),
-				new SqlParameter("@userId", model.userId),
-				new SqlParameter("@getDiscountType", model.getDiscountType),
-				new SqlParameter("@getDiscountValue", model.getDiscountValue),
-				new SqlParameter("@getProductPrice", model.getProductPrice),
-				new SqlParameter("@sellerOptIn", model.sellerOptIn),
-				new SqlParameter("@optInSellerIds", model.optInSellerIds),
-				new SqlParameter("@status", model.status),
-                new SqlParameter("@categoryIds", model.CategoryIds),
-                new SqlParameter("@sellerIds", model.SellerIds),
-                new SqlParameter("@brandIds", model.Brandids),
-                new SqlParameter("@productIds", model.ProductIds),
-                new SqlParameter("@extraDetails", model.ExtraDetails),
-                new SqlParameter("@createdby", model.CreatedBy),
-				new SqlParameter("@createdat", model.CreatedAt),
+				var sqlParams = new List<MySqlParameter>() {
+				new MySqlParameter("@mode", "add"),
+				new MySqlParameter("@offerId", model.offerId),
+				new MySqlParameter("@categoryId", model.categoryId),
+				new MySqlParameter("@sellerId", model.sellerId),
+				new MySqlParameter("@brandId", model.brandId),
+				new MySqlParameter("@productId", model.productId),
+				new MySqlParameter("@getProductId", model.getProductId),
+				new MySqlParameter("@userId", model.userId),
+				new MySqlParameter("@getDiscountType", model.getDiscountType),
+				new MySqlParameter("@getDiscountValue", model.getDiscountValue),
+				new MySqlParameter("@getProductPrice", model.getProductPrice),
+				new MySqlParameter("@sellerOptIn", model.sellerOptIn),
+				new MySqlParameter("@optInSellerIds", model.optInSellerIds),
+				new MySqlParameter("@status", model.status),
+                new MySqlParameter("@categoryIds", model.CategoryIds),
+                new MySqlParameter("@sellerIds", model.SellerIds),
+                new MySqlParameter("@brandIds", model.Brandids),
+                new MySqlParameter("@productIds", model.ProductIds),
+                new MySqlParameter("@extraDetails", model.ExtraDetails),
+                new MySqlParameter("@createdby", model.CreatedBy),
+				new MySqlParameter("@createdat", model.CreatedAt),
 			};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageOffersMapping, output, newid, message, sqlParams.ToArray());
@@ -83,45 +83,45 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-				new SqlParameter("@mode", "update"),
-				new SqlParameter("@id", model.id),
-				new SqlParameter("@offerId", model.offerId),
-				new SqlParameter("@categoryId", model.categoryId),
-				new SqlParameter("@sellerId", model.sellerId),
-				new SqlParameter("@brandId", model.brandId),
-				new SqlParameter("@productId", model.productId),
-				new SqlParameter("@getProductId", model.getProductId),
-				new SqlParameter("@userId", model.userId),
-				new SqlParameter("@getDiscountType", model.getDiscountType),
-				new SqlParameter("@getDiscountValue", model.getDiscountValue),
-				new SqlParameter("@getProductPrice", model.getProductPrice),
-				new SqlParameter("@sellerOptIn", model.sellerOptIn),
-				new SqlParameter("@optInSellerIds", model.optInSellerIds),
-				new SqlParameter("@status", model.status),
-                new SqlParameter("@categoryIds", model.CategoryIds),
-                new SqlParameter("@sellerIds", model.SellerIds),
-                new SqlParameter("@brandIds", model.Brandids),
-                new SqlParameter("@productIds", model.ProductIds),
-                new SqlParameter("@extraDetails", model.ExtraDetails),
-                new SqlParameter("@modifiedby", model.ModifiedBy),
-				new SqlParameter("@modifiedat", model.ModifiedAt),
+				var sqlParams = new List<MySqlParameter>() {
+				new MySqlParameter("@mode", "update"),
+				new MySqlParameter("@id", model.id),
+				new MySqlParameter("@offerId", model.offerId),
+				new MySqlParameter("@categoryId", model.categoryId),
+				new MySqlParameter("@sellerId", model.sellerId),
+				new MySqlParameter("@brandId", model.brandId),
+				new MySqlParameter("@productId", model.productId),
+				new MySqlParameter("@getProductId", model.getProductId),
+				new MySqlParameter("@userId", model.userId),
+				new MySqlParameter("@getDiscountType", model.getDiscountType),
+				new MySqlParameter("@getDiscountValue", model.getDiscountValue),
+				new MySqlParameter("@getProductPrice", model.getProductPrice),
+				new MySqlParameter("@sellerOptIn", model.sellerOptIn),
+				new MySqlParameter("@optInSellerIds", model.optInSellerIds),
+				new MySqlParameter("@status", model.status),
+                new MySqlParameter("@categoryIds", model.CategoryIds),
+                new MySqlParameter("@sellerIds", model.SellerIds),
+                new MySqlParameter("@brandIds", model.Brandids),
+                new MySqlParameter("@productIds", model.ProductIds),
+                new MySqlParameter("@extraDetails", model.ExtraDetails),
+                new MySqlParameter("@modifiedby", model.ModifiedBy),
+				new MySqlParameter("@modifiedat", model.ModifiedAt),
 			};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageOffersMapping, output, newid, message, sqlParams.ToArray());
@@ -136,27 +136,27 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-				new SqlParameter("@mode", "delete"),
-				new SqlParameter("@id", model.id),
-				new SqlParameter("@deletedby", model.DeletedBy),
-				new SqlParameter("@deletedat", model.DeletedAt),
+				var sqlParams = new List<MySqlParameter>() {
+				new MySqlParameter("@mode", "delete"),
+				new MySqlParameter("@id", model.id),
+				new MySqlParameter("@deletedby", model.DeletedBy),
+				new MySqlParameter("@deletedat", model.DeletedAt),
 			};
 
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				SqlParameter newid = new SqlParameter();
+				MySqlParameter newid = new MySqlParameter();
 				newid.ParameterName = "@newid";
 				newid.Direction = ParameterDirection.Output;
-				newid.SqlDbType = SqlDbType.BigInt;
+				newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageOffersMapping, output, newid, message, sqlParams.ToArray());
@@ -171,41 +171,41 @@ namespace Catalogue.Infrastructure.Repository
 		{
 			try
 			{
-				var sqlParams = new List<SqlParameter>() {
-				new SqlParameter("@mode", Mode),
-				new SqlParameter("@id", model.id),
-				new SqlParameter("@offerId", model.offerIds),
-				new SqlParameter("@categoryId", model.categoryId),
-				new SqlParameter("@brandId", model.brandId),
-				new SqlParameter("@productId", model.productId),
-				new SqlParameter("@getProductId", model.getProductId),
-				new SqlParameter("@sellerId", model.sellerId),
-				new SqlParameter("@userId", model.userId),
-				new SqlParameter("@offerName", model.offerName),
-				new SqlParameter("@productName", model.productName),
-				new SqlParameter("@categoryName", model.categoryName),
-				new SqlParameter("@status", model.status),
-				new SqlParameter("@IsDeleted", model.IsDeleted),
-				new SqlParameter("@sellerOptIn", model.sellerOptIn),
-				new SqlParameter("@searchtext", model.Searchtext),
-                new SqlParameter("@applyOn", model.ApplyOn),
-                new SqlParameter("@pageIndex", PageIndex),
-				new SqlParameter("@PageSize", PageSize),
+				var sqlParams = new List<MySqlParameter>() {
+				new MySqlParameter("@mode", Mode),
+				new MySqlParameter("@id", model.id),
+				new MySqlParameter("@offerId", model.offerIds),
+				new MySqlParameter("@categoryId", model.categoryId),
+				new MySqlParameter("@brandId", model.brandId),
+				new MySqlParameter("@productId", model.productId),
+				new MySqlParameter("@getProductId", model.getProductId),
+				new MySqlParameter("@sellerId", model.sellerId),
+				new MySqlParameter("@userId", model.userId),
+				new MySqlParameter("@offerName", model.offerName),
+				new MySqlParameter("@productName", model.productName),
+				new MySqlParameter("@categoryName", model.categoryName),
+				new MySqlParameter("@status", model.status),
+				new MySqlParameter("@IsDeleted", model.IsDeleted),
+				new MySqlParameter("@sellerOptIn", model.sellerOptIn),
+				new MySqlParameter("@searchtext", model.Searchtext),
+                new MySqlParameter("@applyOn", model.ApplyOn),
+                new MySqlParameter("@pageIndex", PageIndex),
+				new MySqlParameter("@PageSize", PageSize),
 			};
-				SqlParameter output = new SqlParameter();
+				MySqlParameter output = new MySqlParameter();
 				output.ParameterName = "@output";
 				output.Direction = ParameterDirection.Output;
-				output.SqlDbType = SqlDbType.Int;
+				output.MySqlDbType = MySqlDbType.Int32;
 
-				//SqlParameter newid = new SqlParameter();
+				//MySqlParameter newid = new MySqlParameter();
 				//newid.ParameterName = "@newid";
 				//newid.Direction = ParameterDirection.Output;
-				//newid.SqlDbType = SqlDbType.BigInt;
+				//newid.MySqlDbType = MySqlDbType.Int64;
 
-				SqlParameter message = new SqlParameter();
+				MySqlParameter message = new MySqlParameter();
 				message.ParameterName = "@message";
 				message.Direction = ParameterDirection.Output;
-				message.SqlDbType = SqlDbType.NVarChar;
+				message.MySqlDbType = MySqlDbType.VarChar;
 				message.Size = 50;
 
 				return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageOffersMapping, ManageOfferMappingParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,38 +33,38 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
+                    new MySqlParameter("@mode","add"),
                      
-                    new SqlParameter("@CatID", productSpecificationMapping.CatId),
-                    new SqlParameter("@ProductID", productSpecificationMapping.ProductID),
-                    new SqlParameter("@SpecID", productSpecificationMapping.SpecId),
-                    new SqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
-                    new SqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
-                    new SqlParameter("@Value", productSpecificationMapping.Value),
-                    new SqlParameter("@fileName", productSpecificationMapping.FileName),
+                    new MySqlParameter("@CatID", productSpecificationMapping.CatId),
+                    new MySqlParameter("@ProductID", productSpecificationMapping.ProductID),
+                    new MySqlParameter("@SpecID", productSpecificationMapping.SpecId),
+                    new MySqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
+                    new MySqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
+                    new MySqlParameter("@Value", productSpecificationMapping.Value),
+                    new MySqlParameter("@fileName", productSpecificationMapping.FileName),
 
-                    new SqlParameter("@createdBy", productSpecificationMapping.CreatedBy),
-                    new SqlParameter("@createdAt", productSpecificationMapping.CreatedAt),
-                    new SqlParameter("@modifiedBy", productSpecificationMapping.ModifiedBy),
-                    new SqlParameter("@modifiedAt", productSpecificationMapping.ModifiedAt)
+                    new MySqlParameter("@createdBy", productSpecificationMapping.CreatedBy),
+                    new MySqlParameter("@createdAt", productSpecificationMapping.CreatedAt),
+                    new MySqlParameter("@modifiedBy", productSpecificationMapping.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", productSpecificationMapping.ModifiedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductSpecificationMapping, output, newid, message, sqlParams.ToArray());
@@ -80,26 +80,26 @@ namespace Catalogue.Infrastructure.Repository
 
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@ProductID", productSpecificationMapping.ProductID),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@ProductID", productSpecificationMapping.ProductID),
                  
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductSpecificationMapping, output, newid, message, sqlParams.ToArray());
@@ -114,34 +114,34 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", productSpecificationMapping.Id),
-                new SqlParameter("@CatID", productSpecificationMapping.CatId),
-                new SqlParameter("@ProductID", productSpecificationMapping.ProductID),
-                new SqlParameter("@SpeID", productSpecificationMapping.SpecId),
-                new SqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
-                new SqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
-                new SqlParameter("@Value", productSpecificationMapping.Value),
-                new SqlParameter("@fileName", productSpecificationMapping.FileName),
-                new SqlParameter("@modifiedBy", productSpecificationMapping.ModifiedBy),
-                new SqlParameter("@modifiedAt", productSpecificationMapping.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", productSpecificationMapping.Id),
+                new MySqlParameter("@CatID", productSpecificationMapping.CatId),
+                new MySqlParameter("@ProductID", productSpecificationMapping.ProductID),
+                new MySqlParameter("@SpeID", productSpecificationMapping.SpecId),
+                new MySqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
+                new MySqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
+                new MySqlParameter("@Value", productSpecificationMapping.Value),
+                new MySqlParameter("@fileName", productSpecificationMapping.FileName),
+                new MySqlParameter("@modifiedBy", productSpecificationMapping.ModifiedBy),
+                new MySqlParameter("@modifiedAt", productSpecificationMapping.ModifiedAt)
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductSpecificationMapping, output, newid, message, sqlParams.ToArray());
@@ -156,30 +156,30 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                 new SqlParameter("@mode", Mode),
+                var sqlParams = new List<MySqlParameter>() {
+                 new MySqlParameter("@mode", Mode),
                
-                new SqlParameter("@id", productSpecificationMapping.Id),
-                new SqlParameter("@CatId", productSpecificationMapping.CatId),
-                new SqlParameter("@ProductId", productSpecificationMapping.ProductID),
-                new SqlParameter("@SpecId", productSpecificationMapping.SpecId),
-                new SqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
-                new SqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
-                new SqlParameter("@Value", productSpecificationMapping.Value),
+                new MySqlParameter("@id", productSpecificationMapping.Id),
+                new MySqlParameter("@CatId", productSpecificationMapping.CatId),
+                new MySqlParameter("@ProductId", productSpecificationMapping.ProductID),
+                new MySqlParameter("@SpecId", productSpecificationMapping.SpecId),
+                new MySqlParameter("@SpecTypeId", productSpecificationMapping.SpecTypeId),
+                new MySqlParameter("@SpecValueId", productSpecificationMapping.SpecValueId),
+                new MySqlParameter("@Value", productSpecificationMapping.Value),
 
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int; 
+                output.MySqlDbType = MySqlDbType.Int32; 
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetProductSpecificationMapping, productSpecificationMappingParserAsync, output, newid: null, message, sqlParams.ToArray());

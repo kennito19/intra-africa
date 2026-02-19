@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -29,38 +29,38 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@OrderID", orderTrackDetails.OrderID),
-                new SqlParameter("@OrderItemID", orderTrackDetails.OrderItemID),
-                new SqlParameter("@OrderStage", orderTrackDetails.OrderStage),
-                new SqlParameter("@OrderStatus", orderTrackDetails.OrderStatus),
-                new SqlParameter("@OrderTrackDetail", orderTrackDetails.OrderTrackDetail),
-                new SqlParameter("@TrackDate", orderTrackDetails.TrackDate),
-                new SqlParameter("@RejectionType", orderTrackDetails.RejectionType),
-                new SqlParameter("@RejectionBy", orderTrackDetails.RejectionBy),
-                new SqlParameter("@ReasonForRejection", orderTrackDetails.ReasonForRejection),
-                new SqlParameter("@Comment", orderTrackDetails.Comment),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@OrderID", orderTrackDetails.OrderID),
+                new MySqlParameter("@OrderItemID", orderTrackDetails.OrderItemID),
+                new MySqlParameter("@OrderStage", orderTrackDetails.OrderStage),
+                new MySqlParameter("@OrderStatus", orderTrackDetails.OrderStatus),
+                new MySqlParameter("@OrderTrackDetail", orderTrackDetails.OrderTrackDetail),
+                new MySqlParameter("@TrackDate", orderTrackDetails.TrackDate),
+                new MySqlParameter("@RejectionType", orderTrackDetails.RejectionType),
+                new MySqlParameter("@RejectionBy", orderTrackDetails.RejectionBy),
+                new MySqlParameter("@ReasonForRejection", orderTrackDetails.ReasonForRejection),
+                new MySqlParameter("@Comment", orderTrackDetails.Comment),
 
-                new SqlParameter("@createdBy", orderTrackDetails.CreatedBy),
-                new SqlParameter("@createdAt", orderTrackDetails.CreatedAt)
+                new MySqlParameter("@createdBy", orderTrackDetails.CreatedBy),
+                new MySqlParameter("@createdAt", orderTrackDetails.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTrackDetails, output, newid, message, sqlParams.ToArray());
@@ -74,37 +74,37 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
 
-                new SqlParameter("@id", orderTrackDetails.Id),
-                new SqlParameter("@orderstage", orderTrackDetails.OrderStage),
-                new SqlParameter("@orderstatus", orderTrackDetails.OrderStatus),
-                new SqlParameter("@ordertrackdetail", orderTrackDetails.OrderTrackDetail),
-                new SqlParameter("@trackdate", orderTrackDetails.TrackDate),
-                new SqlParameter("@rejectiontype", orderTrackDetails.RejectionType),
-                new SqlParameter("@rejectionby", orderTrackDetails.RejectionBy),
-                new SqlParameter("@reasonforrejection", orderTrackDetails.ReasonForRejection),
-                new SqlParameter("@comment", orderTrackDetails.Comment),
-                new SqlParameter("@modifiedBy", orderTrackDetails.ModifiedBy),
-                new SqlParameter("@modifiedAt", orderTrackDetails.ModifiedAt),
+                new MySqlParameter("@id", orderTrackDetails.Id),
+                new MySqlParameter("@orderstage", orderTrackDetails.OrderStage),
+                new MySqlParameter("@orderstatus", orderTrackDetails.OrderStatus),
+                new MySqlParameter("@ordertrackdetail", orderTrackDetails.OrderTrackDetail),
+                new MySqlParameter("@trackdate", orderTrackDetails.TrackDate),
+                new MySqlParameter("@rejectiontype", orderTrackDetails.RejectionType),
+                new MySqlParameter("@rejectionby", orderTrackDetails.RejectionBy),
+                new MySqlParameter("@reasonforrejection", orderTrackDetails.ReasonForRejection),
+                new MySqlParameter("@comment", orderTrackDetails.Comment),
+                new MySqlParameter("@modifiedBy", orderTrackDetails.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orderTrackDetails.ModifiedAt),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTrackDetails, output, newid, message, sqlParams.ToArray());
@@ -119,30 +119,30 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderTrackDetails.Id),
-                new SqlParameter("@deletedby", orderTrackDetails.DeletedBy),
-                new SqlParameter("@deletedat", orderTrackDetails.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderTrackDetails.Id),
+                new MySqlParameter("@deletedby", orderTrackDetails.DeletedBy),
+                new MySqlParameter("@deletedat", orderTrackDetails.DeletedAt)
 
 
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderTrackDetails, output, newid, message, sqlParams.ToArray());
@@ -157,30 +157,30 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderTrackDetails.Id),
-                new SqlParameter("@orderid", orderTrackDetails.OrderID),
-                new SqlParameter("@orderitemid", orderTrackDetails.OrderItemID),
-                new SqlParameter("@isDeleted", orderTrackDetails.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderTrackDetails.Id),
+                new MySqlParameter("@orderid", orderTrackDetails.OrderID),
+                new MySqlParameter("@orderitemid", orderTrackDetails.OrderItemID),
+                new MySqlParameter("@isDeleted", orderTrackDetails.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderTrackDetails, orderTrackDetailsParserAsync, output, newid: null, message, sqlParams.ToArray());

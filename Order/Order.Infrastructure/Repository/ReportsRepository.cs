@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Domain;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,23 +32,23 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "OrderReport"),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@fromdate", fromDate),
-                    new SqlParameter("@todate",toDate),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "OrderReport"),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@fromdate", fromDate),
+                    new MySqlParameter("@todate",toDate),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetOrderReportParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -64,23 +64,23 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "TopSellingProducts"),
-                    new SqlParameter("@top", top),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@days", days),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "TopSellingProducts"),
+                    new MySqlParameter("@top", top),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@days", days),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetTopSellingProductsParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -96,22 +96,22 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "TopSellingSellers"),
-                    new SqlParameter("@top", top),
-                    new SqlParameter("@days", days),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "TopSellingSellers"),
+                    new MySqlParameter("@top", top),
+                    new MySqlParameter("@days", days),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetTopSellingSellersParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -127,23 +127,23 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "TopSellingBrands"),
-                    new SqlParameter("@top", top),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@days", days),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "TopSellingBrands"),
+                    new MySqlParameter("@top", top),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@days", days),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetTopSellingBrandsParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -159,23 +159,23 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "TopUsedCoupons"),
-                    new SqlParameter("@top", top),
-                    new SqlParameter("@sellerId", SellerId),
-                    new SqlParameter("@days", days),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "TopUsedCoupons"),
+                    new MySqlParameter("@top", top),
+                    new MySqlParameter("@sellerId", SellerId),
+                    new MySqlParameter("@days", days),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Reports, GetTopUsedCouponsParserAsync, output, newid: null, message, sqlParams.ToArray());

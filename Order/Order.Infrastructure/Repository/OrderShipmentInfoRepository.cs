@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 
 namespace Order.Infrastructure.Repository
 {
@@ -23,85 +23,85 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
 
-                new SqlParameter("@sellerid", orderShipmentInfo.SellerID),
-                new SqlParameter("@orderid", orderShipmentInfo.OrderID),
-                new SqlParameter("@orderitemids", orderShipmentInfo.OrderItemIDs),
-                new SqlParameter("@packageid", orderShipmentInfo.PackageID),
-                new SqlParameter("@paymentmode", orderShipmentInfo.PaymentMode),
-                new SqlParameter("@length", orderShipmentInfo.Length),
-                new SqlParameter("@width", orderShipmentInfo.Width),
-                new SqlParameter("@height", orderShipmentInfo.Height),
-                new SqlParameter("@weight", orderShipmentInfo.Weight),
-                new SqlParameter("@invoiceamount", orderShipmentInfo.InvoiceAmount),
-                new SqlParameter("@invoiceCodCharges", orderShipmentInfo.InvoiceCodCharges),
-                new SqlParameter("@packagedescription", orderShipmentInfo.PackageDescription),
-                new SqlParameter("@isshipmentinitiate", orderShipmentInfo.IsShipmentInitiate),
-                new SqlParameter("@ispaymentsuccess", orderShipmentInfo.IsPaymentSuccess),
-                new SqlParameter("@courierid", orderShipmentInfo.CourierID),
-                new SqlParameter("@serviceid", orderShipmentInfo.ServiceID),
-                new SqlParameter("@servicetype", orderShipmentInfo.ServiceType),
-                new SqlParameter("@pickupcontactpersonname", orderShipmentInfo.PickupContactPersonName),
-                new SqlParameter("@pickupcontactpersonmobileno", orderShipmentInfo.PickupContactPersonMobileNo),
-                new SqlParameter("@pickupcontactpersonemailid", orderShipmentInfo.PickupContactPersonEmailID),
-                new SqlParameter("@pickupcompanyname", orderShipmentInfo.PickupCompanyName),
-                new SqlParameter("@pickupaddressline1", orderShipmentInfo.PickupAddressLine1),
-                new SqlParameter("@pickupaddressline2", orderShipmentInfo.PickupAddressLine2),
-                new SqlParameter("@pickuplandmark", orderShipmentInfo.PickupLandmark),
-                new SqlParameter("@pickuppincode", orderShipmentInfo.PickupPincode),
-                new SqlParameter("@pickupcity", orderShipmentInfo.PickupCity),
-                new SqlParameter("@pickupstate", orderShipmentInfo.PickupState),
-                new SqlParameter("@pickupcountry", orderShipmentInfo.PickupCountry),
-                new SqlParameter("@pickupTaxNo", orderShipmentInfo.PickupTaxNo),
-                new SqlParameter("@dropcontactpersonname", orderShipmentInfo.DropContactPersonName),
-                new SqlParameter("@dropcontactpersonmobileno", orderShipmentInfo.DropContactPersonMobileNo),
-                new SqlParameter("@dropcontactpersonemailid", orderShipmentInfo.DropContactPersonEmailID),
-                new SqlParameter("@dropcompanyname", orderShipmentInfo.DropCompanyName),
-                new SqlParameter("@dropaddressline1", orderShipmentInfo.DropAddressLine1),
-                new SqlParameter("@dropaddressline2", orderShipmentInfo.DropAddressLine2),
-                new SqlParameter("@droplandmark", orderShipmentInfo.DropLandmark),
-                new SqlParameter("@droppincode", orderShipmentInfo.DropPincode),
-                new SqlParameter("@dropcity", orderShipmentInfo.DropCity),
-                new SqlParameter("@dropstate", orderShipmentInfo.DropState),
-                new SqlParameter("@dropcountry", orderShipmentInfo.DropCountry),
-                new SqlParameter("@dropTaxNo", orderShipmentInfo.DropTaxNo),
-                new SqlParameter("@shipmentid", orderShipmentInfo.ShipmentID),
-                new SqlParameter("@shipmentorderid", orderShipmentInfo.ShipmentOrderID),
-                new SqlParameter("@shippingpartner", orderShipmentInfo.ShippingPartner),
-                new SqlParameter("@couriername", orderShipmentInfo.CourierName),
-                new SqlParameter("@shippingamountfrompartner", orderShipmentInfo.ShippingAmountFromPartner),
-                new SqlParameter("@awbno", orderShipmentInfo.AwbNo),
-                new SqlParameter("@isshipmentsheduledbyadmin", orderShipmentInfo.IsShipmentSheduledByAdmin),
-                new SqlParameter("@pickuplocationid", orderShipmentInfo.PickupLocationID),
-                new SqlParameter("@errormessage", orderShipmentInfo.ErrorMessage),
-                new SqlParameter("@forwardlable", orderShipmentInfo.ForwardLable),
-                new SqlParameter("@returnlable", orderShipmentInfo.ReturnLable),
-                new SqlParameter("@shipmentTrackingNo", orderShipmentInfo.ShipmentTrackingNo),
-                new SqlParameter("@trackingNo", orderShipmentInfo.TrackingNo),
-                new SqlParameter("@shipmentInfo", orderShipmentInfo.ShipmentInfo),
+                new MySqlParameter("@sellerid", orderShipmentInfo.SellerID),
+                new MySqlParameter("@orderid", orderShipmentInfo.OrderID),
+                new MySqlParameter("@orderitemids", orderShipmentInfo.OrderItemIDs),
+                new MySqlParameter("@packageid", orderShipmentInfo.PackageID),
+                new MySqlParameter("@paymentmode", orderShipmentInfo.PaymentMode),
+                new MySqlParameter("@length", orderShipmentInfo.Length),
+                new MySqlParameter("@width", orderShipmentInfo.Width),
+                new MySqlParameter("@height", orderShipmentInfo.Height),
+                new MySqlParameter("@weight", orderShipmentInfo.Weight),
+                new MySqlParameter("@invoiceamount", orderShipmentInfo.InvoiceAmount),
+                new MySqlParameter("@invoiceCodCharges", orderShipmentInfo.InvoiceCodCharges),
+                new MySqlParameter("@packagedescription", orderShipmentInfo.PackageDescription),
+                new MySqlParameter("@isshipmentinitiate", orderShipmentInfo.IsShipmentInitiate),
+                new MySqlParameter("@ispaymentsuccess", orderShipmentInfo.IsPaymentSuccess),
+                new MySqlParameter("@courierid", orderShipmentInfo.CourierID),
+                new MySqlParameter("@serviceid", orderShipmentInfo.ServiceID),
+                new MySqlParameter("@servicetype", orderShipmentInfo.ServiceType),
+                new MySqlParameter("@pickupcontactpersonname", orderShipmentInfo.PickupContactPersonName),
+                new MySqlParameter("@pickupcontactpersonmobileno", orderShipmentInfo.PickupContactPersonMobileNo),
+                new MySqlParameter("@pickupcontactpersonemailid", orderShipmentInfo.PickupContactPersonEmailID),
+                new MySqlParameter("@pickupcompanyname", orderShipmentInfo.PickupCompanyName),
+                new MySqlParameter("@pickupaddressline1", orderShipmentInfo.PickupAddressLine1),
+                new MySqlParameter("@pickupaddressline2", orderShipmentInfo.PickupAddressLine2),
+                new MySqlParameter("@pickuplandmark", orderShipmentInfo.PickupLandmark),
+                new MySqlParameter("@pickuppincode", orderShipmentInfo.PickupPincode),
+                new MySqlParameter("@pickupcity", orderShipmentInfo.PickupCity),
+                new MySqlParameter("@pickupstate", orderShipmentInfo.PickupState),
+                new MySqlParameter("@pickupcountry", orderShipmentInfo.PickupCountry),
+                new MySqlParameter("@pickupTaxNo", orderShipmentInfo.PickupTaxNo),
+                new MySqlParameter("@dropcontactpersonname", orderShipmentInfo.DropContactPersonName),
+                new MySqlParameter("@dropcontactpersonmobileno", orderShipmentInfo.DropContactPersonMobileNo),
+                new MySqlParameter("@dropcontactpersonemailid", orderShipmentInfo.DropContactPersonEmailID),
+                new MySqlParameter("@dropcompanyname", orderShipmentInfo.DropCompanyName),
+                new MySqlParameter("@dropaddressline1", orderShipmentInfo.DropAddressLine1),
+                new MySqlParameter("@dropaddressline2", orderShipmentInfo.DropAddressLine2),
+                new MySqlParameter("@droplandmark", orderShipmentInfo.DropLandmark),
+                new MySqlParameter("@droppincode", orderShipmentInfo.DropPincode),
+                new MySqlParameter("@dropcity", orderShipmentInfo.DropCity),
+                new MySqlParameter("@dropstate", orderShipmentInfo.DropState),
+                new MySqlParameter("@dropcountry", orderShipmentInfo.DropCountry),
+                new MySqlParameter("@dropTaxNo", orderShipmentInfo.DropTaxNo),
+                new MySqlParameter("@shipmentid", orderShipmentInfo.ShipmentID),
+                new MySqlParameter("@shipmentorderid", orderShipmentInfo.ShipmentOrderID),
+                new MySqlParameter("@shippingpartner", orderShipmentInfo.ShippingPartner),
+                new MySqlParameter("@couriername", orderShipmentInfo.CourierName),
+                new MySqlParameter("@shippingamountfrompartner", orderShipmentInfo.ShippingAmountFromPartner),
+                new MySqlParameter("@awbno", orderShipmentInfo.AwbNo),
+                new MySqlParameter("@isshipmentsheduledbyadmin", orderShipmentInfo.IsShipmentSheduledByAdmin),
+                new MySqlParameter("@pickuplocationid", orderShipmentInfo.PickupLocationID),
+                new MySqlParameter("@errormessage", orderShipmentInfo.ErrorMessage),
+                new MySqlParameter("@forwardlable", orderShipmentInfo.ForwardLable),
+                new MySqlParameter("@returnlable", orderShipmentInfo.ReturnLable),
+                new MySqlParameter("@shipmentTrackingNo", orderShipmentInfo.ShipmentTrackingNo),
+                new MySqlParameter("@trackingNo", orderShipmentInfo.TrackingNo),
+                new MySqlParameter("@shipmentInfo", orderShipmentInfo.ShipmentInfo),
 
 
-                new SqlParameter("@createdBy", orderShipmentInfo.CreatedBy),
-                new SqlParameter("@createdAt", orderShipmentInfo.CreatedAt),
+                new MySqlParameter("@createdBy", orderShipmentInfo.CreatedBy),
+                new MySqlParameter("@createdAt", orderShipmentInfo.CreatedAt),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderShipmentInfo, output, newid, message, sqlParams.ToArray());
@@ -115,80 +115,80 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
 
-                 new SqlParameter("@paymentmode", orderShipmentInfo.PaymentMode),
-                new SqlParameter("@length", orderShipmentInfo.Length),
-                new SqlParameter("@width", orderShipmentInfo.Width),
-                new SqlParameter("@height", orderShipmentInfo.Height),
-                new SqlParameter("@weight", orderShipmentInfo.Weight),
-                new SqlParameter("@invoiceamount", orderShipmentInfo.InvoiceAmount),
-                new SqlParameter("@invoiceCodCharges", orderShipmentInfo.InvoiceCodCharges),
-                new SqlParameter("@packagedescription", orderShipmentInfo.PackageDescription),
-                new SqlParameter("@isshipmentinitiate", orderShipmentInfo.IsShipmentInitiate),
-                new SqlParameter("@ispaymentsuccess", orderShipmentInfo.IsPaymentSuccess),
-                new SqlParameter("@courierid", orderShipmentInfo.CourierID),
-                new SqlParameter("@serviceid", orderShipmentInfo.ServiceID),
-                new SqlParameter("@servicetype", orderShipmentInfo.ServiceType),
-                new SqlParameter("@pickupcontactpersonname", orderShipmentInfo.PickupContactPersonName),
-                new SqlParameter("@pickupcontactpersonmobileno", orderShipmentInfo.PickupContactPersonMobileNo),
-                new SqlParameter("@pickupcontactpersonemailid", orderShipmentInfo.PickupContactPersonEmailID),
-                new SqlParameter("@pickupcompanyname", orderShipmentInfo.PickupCompanyName),
-                new SqlParameter("@pickupaddressline1", orderShipmentInfo.PickupAddressLine1),
-                new SqlParameter("@pickupaddressline2", orderShipmentInfo.PickupAddressLine2),
-                new SqlParameter("@pickuplandmark", orderShipmentInfo.PickupLandmark),
-                new SqlParameter("@pickuppincode", orderShipmentInfo.PickupPincode),
-                new SqlParameter("@pickupcity", orderShipmentInfo.PickupCity),
-                new SqlParameter("@pickupstate", orderShipmentInfo.PickupState),
-                new SqlParameter("@pickupcountry", orderShipmentInfo.PickupCountry),
-                new SqlParameter("@pickupTaxNo", orderShipmentInfo.PickupTaxNo),
-                new SqlParameter("@dropcontactpersonname", orderShipmentInfo.DropContactPersonName),
-                new SqlParameter("@dropcontactpersonmobileno", orderShipmentInfo.DropContactPersonMobileNo),
-                new SqlParameter("@dropcontactpersonemailid", orderShipmentInfo.DropContactPersonEmailID),
-                new SqlParameter("@dropcompanyname", orderShipmentInfo.DropCompanyName),
-                new SqlParameter("@dropaddressline1", orderShipmentInfo.DropAddressLine1),
-                new SqlParameter("@dropaddressline2", orderShipmentInfo.DropAddressLine2),
-                new SqlParameter("@droplandmark", orderShipmentInfo.DropLandmark),
-                new SqlParameter("@droppincode", orderShipmentInfo.DropPincode),
-                new SqlParameter("@dropcity", orderShipmentInfo.DropCity),
-                new SqlParameter("@dropstate", orderShipmentInfo.DropState),
-                new SqlParameter("@dropcountry", orderShipmentInfo.DropCountry),
-                new SqlParameter("@dropTaxNo", orderShipmentInfo.DropTaxNo),
-                new SqlParameter("@shipmentid", orderShipmentInfo.ShipmentID),
-                new SqlParameter("@shipmentorderid", orderShipmentInfo.ShipmentOrderID),
-                new SqlParameter("@shippingpartner", orderShipmentInfo.ShippingPartner),
-                new SqlParameter("@couriername", orderShipmentInfo.CourierName),
-                new SqlParameter("@shippingamountfrompartner", orderShipmentInfo.ShippingAmountFromPartner),
-                new SqlParameter("@awbno", orderShipmentInfo.AwbNo),
-                new SqlParameter("@isshipmentsheduledbyadmin", orderShipmentInfo.IsShipmentSheduledByAdmin),
-                new SqlParameter("@pickuplocationid", orderShipmentInfo.PickupLocationID),
-                new SqlParameter("@errormessage", orderShipmentInfo.ErrorMessage),
-                new SqlParameter("@forwardlable", orderShipmentInfo.ForwardLable),
-                new SqlParameter("@returnlable", orderShipmentInfo.ReturnLable),
-                new SqlParameter("@shipmentTrackingNo", orderShipmentInfo.ShipmentTrackingNo),
-                new SqlParameter("@trackingNo", orderShipmentInfo.TrackingNo),
-                new SqlParameter("@shipmentInfo", orderShipmentInfo.ShipmentInfo),
+                 new MySqlParameter("@paymentmode", orderShipmentInfo.PaymentMode),
+                new MySqlParameter("@length", orderShipmentInfo.Length),
+                new MySqlParameter("@width", orderShipmentInfo.Width),
+                new MySqlParameter("@height", orderShipmentInfo.Height),
+                new MySqlParameter("@weight", orderShipmentInfo.Weight),
+                new MySqlParameter("@invoiceamount", orderShipmentInfo.InvoiceAmount),
+                new MySqlParameter("@invoiceCodCharges", orderShipmentInfo.InvoiceCodCharges),
+                new MySqlParameter("@packagedescription", orderShipmentInfo.PackageDescription),
+                new MySqlParameter("@isshipmentinitiate", orderShipmentInfo.IsShipmentInitiate),
+                new MySqlParameter("@ispaymentsuccess", orderShipmentInfo.IsPaymentSuccess),
+                new MySqlParameter("@courierid", orderShipmentInfo.CourierID),
+                new MySqlParameter("@serviceid", orderShipmentInfo.ServiceID),
+                new MySqlParameter("@servicetype", orderShipmentInfo.ServiceType),
+                new MySqlParameter("@pickupcontactpersonname", orderShipmentInfo.PickupContactPersonName),
+                new MySqlParameter("@pickupcontactpersonmobileno", orderShipmentInfo.PickupContactPersonMobileNo),
+                new MySqlParameter("@pickupcontactpersonemailid", orderShipmentInfo.PickupContactPersonEmailID),
+                new MySqlParameter("@pickupcompanyname", orderShipmentInfo.PickupCompanyName),
+                new MySqlParameter("@pickupaddressline1", orderShipmentInfo.PickupAddressLine1),
+                new MySqlParameter("@pickupaddressline2", orderShipmentInfo.PickupAddressLine2),
+                new MySqlParameter("@pickuplandmark", orderShipmentInfo.PickupLandmark),
+                new MySqlParameter("@pickuppincode", orderShipmentInfo.PickupPincode),
+                new MySqlParameter("@pickupcity", orderShipmentInfo.PickupCity),
+                new MySqlParameter("@pickupstate", orderShipmentInfo.PickupState),
+                new MySqlParameter("@pickupcountry", orderShipmentInfo.PickupCountry),
+                new MySqlParameter("@pickupTaxNo", orderShipmentInfo.PickupTaxNo),
+                new MySqlParameter("@dropcontactpersonname", orderShipmentInfo.DropContactPersonName),
+                new MySqlParameter("@dropcontactpersonmobileno", orderShipmentInfo.DropContactPersonMobileNo),
+                new MySqlParameter("@dropcontactpersonemailid", orderShipmentInfo.DropContactPersonEmailID),
+                new MySqlParameter("@dropcompanyname", orderShipmentInfo.DropCompanyName),
+                new MySqlParameter("@dropaddressline1", orderShipmentInfo.DropAddressLine1),
+                new MySqlParameter("@dropaddressline2", orderShipmentInfo.DropAddressLine2),
+                new MySqlParameter("@droplandmark", orderShipmentInfo.DropLandmark),
+                new MySqlParameter("@droppincode", orderShipmentInfo.DropPincode),
+                new MySqlParameter("@dropcity", orderShipmentInfo.DropCity),
+                new MySqlParameter("@dropstate", orderShipmentInfo.DropState),
+                new MySqlParameter("@dropcountry", orderShipmentInfo.DropCountry),
+                new MySqlParameter("@dropTaxNo", orderShipmentInfo.DropTaxNo),
+                new MySqlParameter("@shipmentid", orderShipmentInfo.ShipmentID),
+                new MySqlParameter("@shipmentorderid", orderShipmentInfo.ShipmentOrderID),
+                new MySqlParameter("@shippingpartner", orderShipmentInfo.ShippingPartner),
+                new MySqlParameter("@couriername", orderShipmentInfo.CourierName),
+                new MySqlParameter("@shippingamountfrompartner", orderShipmentInfo.ShippingAmountFromPartner),
+                new MySqlParameter("@awbno", orderShipmentInfo.AwbNo),
+                new MySqlParameter("@isshipmentsheduledbyadmin", orderShipmentInfo.IsShipmentSheduledByAdmin),
+                new MySqlParameter("@pickuplocationid", orderShipmentInfo.PickupLocationID),
+                new MySqlParameter("@errormessage", orderShipmentInfo.ErrorMessage),
+                new MySqlParameter("@forwardlable", orderShipmentInfo.ForwardLable),
+                new MySqlParameter("@returnlable", orderShipmentInfo.ReturnLable),
+                new MySqlParameter("@shipmentTrackingNo", orderShipmentInfo.ShipmentTrackingNo),
+                new MySqlParameter("@trackingNo", orderShipmentInfo.TrackingNo),
+                new MySqlParameter("@shipmentInfo", orderShipmentInfo.ShipmentInfo),
 
-                new SqlParameter("@modifiedBy", orderShipmentInfo.ModifiedBy),
-                new SqlParameter("@modifiedAt", orderShipmentInfo.ModifiedAt)
+                new MySqlParameter("@modifiedBy", orderShipmentInfo.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orderShipmentInfo.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderShipmentInfo, output, newid, message, sqlParams.ToArray());
@@ -203,30 +203,30 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
 
-                new SqlParameter("@id", orderShipmentInfo.Id),
+                new MySqlParameter("@id", orderShipmentInfo.Id),
 
-                new SqlParameter("@deletedby", orderShipmentInfo.DeletedBy),
-                new SqlParameter("@deletedat", orderShipmentInfo.DeletedAt),
+                new MySqlParameter("@deletedby", orderShipmentInfo.DeletedBy),
+                new MySqlParameter("@deletedat", orderShipmentInfo.DeletedAt),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderShipmentInfo, output, newid, message, sqlParams.ToArray());
@@ -241,32 +241,32 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderShipmentInfo.Id),
-                new SqlParameter("@sellerid", orderShipmentInfo.SellerID),
-                new SqlParameter("@orderid", orderShipmentInfo.OrderID),
-                new SqlParameter("@orderitemids", orderShipmentInfo.OrderItemIDs),
-                new SqlParameter("@packageid", orderShipmentInfo.PackageID),
-                new SqlParameter("@isDeleted", orderShipmentInfo.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderShipmentInfo.Id),
+                new MySqlParameter("@sellerid", orderShipmentInfo.SellerID),
+                new MySqlParameter("@orderid", orderShipmentInfo.OrderID),
+                new MySqlParameter("@orderitemids", orderShipmentInfo.OrderItemIDs),
+                new MySqlParameter("@packageid", orderShipmentInfo.PackageID),
+                new MySqlParameter("@isDeleted", orderShipmentInfo.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderShipmentInfo, OrderShipmentInfoParserAsync, output, newid: null, message, sqlParams.ToArray());

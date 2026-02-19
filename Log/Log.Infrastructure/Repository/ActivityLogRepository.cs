@@ -1,4 +1,4 @@
-﻿using Log.Application.IRepositories;
+using Log.Application.IRepositories;
 using Log.Domain;
 using Log.Domain.Entity;
 using Log.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -30,34 +30,34 @@ namespace Log.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
 
-                    new SqlParameter("@userid", activityLog.UserId),
-                    new SqlParameter("@usertype", activityLog.UserType),
-                    new SqlParameter("@url", activityLog.URL),
-                    new SqlParameter("@action", activityLog.Action),
-                    new SqlParameter("@logtitle", activityLog.LogTitle),
-                    new SqlParameter("@logDescription", activityLog.LogDescription),
+                    new MySqlParameter("@userid", activityLog.UserId),
+                    new MySqlParameter("@usertype", activityLog.UserType),
+                    new MySqlParameter("@url", activityLog.URL),
+                    new MySqlParameter("@action", activityLog.Action),
+                    new MySqlParameter("@logtitle", activityLog.LogTitle),
+                    new MySqlParameter("@logDescription", activityLog.LogDescription),
 
 
-                    new SqlParameter("@createdat", activityLog.CreatedAt),
+                    new MySqlParameter("@createdat", activityLog.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ActivityLog, output, newid, message, sqlParams.ToArray());
@@ -74,28 +74,28 @@ namespace Log.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
 
-                new SqlParameter("@userid ", activityLog.UserId),
-                new SqlParameter("@usertype ", activityLog.UserType),
-                new SqlParameter("@action ", activityLog.Action),
-                new SqlParameter("@searchtext", activityLog.Searchtext),
+                new MySqlParameter("@userid ", activityLog.UserId),
+                new MySqlParameter("@usertype ", activityLog.UserType),
+                new MySqlParameter("@action ", activityLog.Action),
+                new MySqlParameter("@searchtext", activityLog.Searchtext),
 
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
 
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetActivityLog, ActivityLogParserAsync, output, newid: null, message, sqlParams.ToArray());

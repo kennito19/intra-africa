@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,41 +32,41 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@userid",warehouse.UserID),
-                    new SqlParameter("@gstinfoid",warehouse.GSTInfoId),
-                    new SqlParameter("@name",warehouse.Name),
-                    new SqlParameter("@contactpersonname",warehouse.ContactPersonName),
-                    new SqlParameter("@contactpersonno",warehouse.ContactPersonMobileNo),
-                    new SqlParameter("@add1",warehouse.AddressLine1),
-                    new SqlParameter("@add2",warehouse.AddressLine2),
-                    new SqlParameter("@landmark",warehouse.Landmark),
-                    new SqlParameter("@pincode",warehouse.Pincode),
-                    new SqlParameter("@cityid",warehouse.CityId),
-                    new SqlParameter("@stateid",warehouse.StateId),
-                    new SqlParameter("@countryid",warehouse.CountryId),
-                    new SqlParameter("@status",warehouse.Status),
-                    new SqlParameter("@createdBy",warehouse.CreatedBy),
-                    new SqlParameter("@createdAt",warehouse.CreatedAt),
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@userid",warehouse.UserID),
+                    new MySqlParameter("@gstinfoid",warehouse.GSTInfoId),
+                    new MySqlParameter("@name",warehouse.Name),
+                    new MySqlParameter("@contactpersonname",warehouse.ContactPersonName),
+                    new MySqlParameter("@contactpersonno",warehouse.ContactPersonMobileNo),
+                    new MySqlParameter("@add1",warehouse.AddressLine1),
+                    new MySqlParameter("@add2",warehouse.AddressLine2),
+                    new MySqlParameter("@landmark",warehouse.Landmark),
+                    new MySqlParameter("@pincode",warehouse.Pincode),
+                    new MySqlParameter("@cityid",warehouse.CityId),
+                    new MySqlParameter("@stateid",warehouse.StateId),
+                    new MySqlParameter("@countryid",warehouse.CountryId),
+                    new MySqlParameter("@status",warehouse.Status),
+                    new MySqlParameter("@createdBy",warehouse.CreatedBy),
+                    new MySqlParameter("@createdAt",warehouse.CreatedAt),
                     
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Warehouse, output, newid, message, sqlParams.ToArray());
@@ -80,33 +80,33 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", warehouse.Id),
-                    new SqlParameter("@name",warehouse.Name),
-                    new SqlParameter("@contactpersonname",warehouse.ContactPersonName),
-                    new SqlParameter("@contactpersonno",warehouse.ContactPersonMobileNo),
-                    new SqlParameter("@add1",warehouse.AddressLine1),
-                    new SqlParameter("@add2",warehouse.AddressLine2),
-                    new SqlParameter("@landmark",warehouse.Landmark),
-                    new SqlParameter("@pincode",warehouse.Pincode),
-                    new SqlParameter("@cityid",warehouse.CityId),
-                    new SqlParameter("@stateid",warehouse.StateId),
-                    new SqlParameter("@countryid",warehouse.CountryId),
-                    new SqlParameter("@status",warehouse.Status),
-                    new SqlParameter("@modifiedBy", warehouse.ModifiedBy),
-                    new SqlParameter("@modifiedAt", warehouse.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", warehouse.Id),
+                    new MySqlParameter("@name",warehouse.Name),
+                    new MySqlParameter("@contactpersonname",warehouse.ContactPersonName),
+                    new MySqlParameter("@contactpersonno",warehouse.ContactPersonMobileNo),
+                    new MySqlParameter("@add1",warehouse.AddressLine1),
+                    new MySqlParameter("@add2",warehouse.AddressLine2),
+                    new MySqlParameter("@landmark",warehouse.Landmark),
+                    new MySqlParameter("@pincode",warehouse.Pincode),
+                    new MySqlParameter("@cityid",warehouse.CityId),
+                    new MySqlParameter("@stateid",warehouse.StateId),
+                    new MySqlParameter("@countryid",warehouse.CountryId),
+                    new MySqlParameter("@status",warehouse.Status),
+                    new MySqlParameter("@modifiedBy", warehouse.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", warehouse.ModifiedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Warehouse, output, newid: null, message, sqlParams.ToArray());
@@ -121,24 +121,24 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", warehouse.Id),
-                    new SqlParameter("@userid", warehouse.UserID),
-                    new SqlParameter("@gstinfoid", warehouse.GSTInfoId),
-                    new SqlParameter("@deletedBy", warehouse.DeletedBy),
-                    new SqlParameter("@deletedAt", warehouse.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", warehouse.Id),
+                    new MySqlParameter("@userid", warehouse.UserID),
+                    new MySqlParameter("@gstinfoid", warehouse.GSTInfoId),
+                    new MySqlParameter("@deletedBy", warehouse.DeletedBy),
+                    new MySqlParameter("@deletedAt", warehouse.DeletedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Warehouse, output, newid: null, message, sqlParams.ToArray());
@@ -154,38 +154,38 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", warehouse.Id),
-                    new SqlParameter("@userid", warehouse.UserID),
-                    new SqlParameter("@gstinfoid", warehouse.GSTInfoId),
-                    new SqlParameter("@gstno", warehouse.GSTNo),
-                    new SqlParameter("@searchtext", warehouse.searchText),
-                    new SqlParameter("@name", warehouse.Name),
-                    new SqlParameter("@contactpersonname", warehouse.ContactPersonName),
-                    new SqlParameter("@contactpersonno", warehouse.ContactPersonMobileNo),
-                    new SqlParameter("@pincode", warehouse.Pincode),
-                    new SqlParameter("@cityid", warehouse.CityId),
-                    new SqlParameter("@stateid", warehouse.StateId),
-                    new SqlParameter("@countryid", warehouse.CountryId),
-                    new SqlParameter("@status", warehouse.Status),
-                    new SqlParameter("@statename", warehouse.StateName),
-                    new SqlParameter("@cityname", warehouse.CityName),
-                    new SqlParameter("@countryname", warehouse.CountryName),
-                    new SqlParameter("@isDeleted", warehouse.IsDeleted),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", warehouse.Id),
+                    new MySqlParameter("@userid", warehouse.UserID),
+                    new MySqlParameter("@gstinfoid", warehouse.GSTInfoId),
+                    new MySqlParameter("@gstno", warehouse.GSTNo),
+                    new MySqlParameter("@searchtext", warehouse.searchText),
+                    new MySqlParameter("@name", warehouse.Name),
+                    new MySqlParameter("@contactpersonname", warehouse.ContactPersonName),
+                    new MySqlParameter("@contactpersonno", warehouse.ContactPersonMobileNo),
+                    new MySqlParameter("@pincode", warehouse.Pincode),
+                    new MySqlParameter("@cityid", warehouse.CityId),
+                    new MySqlParameter("@stateid", warehouse.StateId),
+                    new MySqlParameter("@countryid", warehouse.CountryId),
+                    new MySqlParameter("@status", warehouse.Status),
+                    new MySqlParameter("@statename", warehouse.StateName),
+                    new MySqlParameter("@cityname", warehouse.CityName),
+                    new MySqlParameter("@countryname", warehouse.CountryName),
+                    new MySqlParameter("@isDeleted", warehouse.IsDeleted),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetWarehouse, WarehouseParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -28,39 +28,39 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderid", orderWiseExtraCharges.OrderID),
-                 new SqlParameter("@orderitemid", orderWiseExtraCharges.OrderItemID),
-                new SqlParameter("@chargestype", orderWiseExtraCharges.ChargesType),
-                new SqlParameter("@chargespaidby", orderWiseExtraCharges.ChargesPaidBy),
-                new SqlParameter("@chargesin", orderWiseExtraCharges.ChargesIn),
-                new SqlParameter("@chargesvalueinpercentage", orderWiseExtraCharges.ChargesValueInPercentage),
-                new SqlParameter("@chargesvalueinamount", orderWiseExtraCharges.ChargesValueInAmount),
-                new SqlParameter("@chargesmaxamount", orderWiseExtraCharges.ChargesMaxAmount),
-                new SqlParameter("@taxonchargesamount", orderWiseExtraCharges.TaxOnChargesAmount),
-                new SqlParameter("@chargesamountwithouttax", orderWiseExtraCharges.ChargesAmountWithoutTax),
-                new SqlParameter("@totalCharges", orderWiseExtraCharges.TotalCharges),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderid", orderWiseExtraCharges.OrderID),
+                 new MySqlParameter("@orderitemid", orderWiseExtraCharges.OrderItemID),
+                new MySqlParameter("@chargestype", orderWiseExtraCharges.ChargesType),
+                new MySqlParameter("@chargespaidby", orderWiseExtraCharges.ChargesPaidBy),
+                new MySqlParameter("@chargesin", orderWiseExtraCharges.ChargesIn),
+                new MySqlParameter("@chargesvalueinpercentage", orderWiseExtraCharges.ChargesValueInPercentage),
+                new MySqlParameter("@chargesvalueinamount", orderWiseExtraCharges.ChargesValueInAmount),
+                new MySqlParameter("@chargesmaxamount", orderWiseExtraCharges.ChargesMaxAmount),
+                new MySqlParameter("@taxonchargesamount", orderWiseExtraCharges.TaxOnChargesAmount),
+                new MySqlParameter("@chargesamountwithouttax", orderWiseExtraCharges.ChargesAmountWithoutTax),
+                new MySqlParameter("@totalCharges", orderWiseExtraCharges.TotalCharges),
 
-                new SqlParameter("@createdBy", orderWiseExtraCharges.CreatedBy),
-                new SqlParameter("@createdAt", orderWiseExtraCharges.CreatedAt)
+                new MySqlParameter("@createdBy", orderWiseExtraCharges.CreatedBy),
+                new MySqlParameter("@createdAt", orderWiseExtraCharges.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseExtraCharges, output, newid, message, sqlParams.ToArray());
@@ -76,38 +76,38 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", orderWiseExtraCharges.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", orderWiseExtraCharges.Id),
 
-                new SqlParameter("@chargestype", orderWiseExtraCharges.ChargesType),
-                new SqlParameter("@chargespaidby", orderWiseExtraCharges.ChargesPaidBy),
-                new SqlParameter("@chargesin", orderWiseExtraCharges.ChargesIn),
-                new SqlParameter("@chargesvalueinpercentage", orderWiseExtraCharges.ChargesValueInPercentage),
-                new SqlParameter("@chargesvalueinamount", orderWiseExtraCharges.ChargesValueInAmount),
-                new SqlParameter("@chargesmaxamount", orderWiseExtraCharges.ChargesMaxAmount),
-                new SqlParameter("@taxonchargesamount", orderWiseExtraCharges.TaxOnChargesAmount),
-                new SqlParameter("@chargesamountwithouttax", orderWiseExtraCharges.ChargesAmountWithoutTax),
-                new SqlParameter("@totalCharges", orderWiseExtraCharges.TotalCharges),
-                new SqlParameter("@modifiedBy", orderWiseExtraCharges.ModifiedBy),
-                new SqlParameter("@modifiedAt", orderWiseExtraCharges.ModifiedAt)
+                new MySqlParameter("@chargestype", orderWiseExtraCharges.ChargesType),
+                new MySqlParameter("@chargespaidby", orderWiseExtraCharges.ChargesPaidBy),
+                new MySqlParameter("@chargesin", orderWiseExtraCharges.ChargesIn),
+                new MySqlParameter("@chargesvalueinpercentage", orderWiseExtraCharges.ChargesValueInPercentage),
+                new MySqlParameter("@chargesvalueinamount", orderWiseExtraCharges.ChargesValueInAmount),
+                new MySqlParameter("@chargesmaxamount", orderWiseExtraCharges.ChargesMaxAmount),
+                new MySqlParameter("@taxonchargesamount", orderWiseExtraCharges.TaxOnChargesAmount),
+                new MySqlParameter("@chargesamountwithouttax", orderWiseExtraCharges.ChargesAmountWithoutTax),
+                new MySqlParameter("@totalCharges", orderWiseExtraCharges.TotalCharges),
+                new MySqlParameter("@modifiedBy", orderWiseExtraCharges.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orderWiseExtraCharges.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseExtraCharges, output, newid, message, sqlParams.ToArray());
@@ -121,27 +121,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderWiseExtraCharges.Id),
-                new SqlParameter("@deletedby", orderWiseExtraCharges.DeletedBy),
-                new SqlParameter("@deletedat", orderWiseExtraCharges.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderWiseExtraCharges.Id),
+                new MySqlParameter("@deletedby", orderWiseExtraCharges.DeletedBy),
+                new MySqlParameter("@deletedat", orderWiseExtraCharges.DeletedAt)
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseExtraCharges, output, newid, message, sqlParams.ToArray());
@@ -156,30 +156,30 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderWiseExtraCharges.Id),
-                new SqlParameter("@orderid", orderWiseExtraCharges.OrderID),
-                new SqlParameter("@orderitemid", orderWiseExtraCharges.OrderItemID),
-                new SqlParameter("@isDeleted", orderWiseExtraCharges.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderWiseExtraCharges.Id),
+                new MySqlParameter("@orderid", orderWiseExtraCharges.OrderID),
+                new MySqlParameter("@orderitemid", orderWiseExtraCharges.OrderItemID),
+                new MySqlParameter("@isDeleted", orderWiseExtraCharges.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderWiseExtraCharges, orderWiseExtraChargesParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,27 +32,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@sellerid", productList.SellerId),
-                new SqlParameter("@brandid", productList.BrandId),
-                new SqlParameter("@categoryid", productList.CategoryId),
-                new SqlParameter("@status", productList.Status),
-                new SqlParameter("@live", productList.Live),
-                new SqlParameter("@isdeleted", productList.IsDeleted),
-                new SqlParameter("@searchtext", productList.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@sellerid", productList.SellerId),
+                new MySqlParameter("@brandid", productList.BrandId),
+                new MySqlParameter("@categoryid", productList.CategoryId),
+                new MySqlParameter("@status", productList.Status),
+                new MySqlParameter("@live", productList.Live),
+                new MySqlParameter("@isdeleted", productList.IsDeleted),
+                new MySqlParameter("@searchtext", productList.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetMasterProductListDetail, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

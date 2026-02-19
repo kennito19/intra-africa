@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -30,34 +30,34 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
-                new SqlParameter("@orderid", orderRefund.OrderID),
-                new SqlParameter("@orderitemid", orderRefund.OrderItemID),
-                new SqlParameter("@refundamount", orderRefund.RefundAmount),
-                new SqlParameter("@transactionid", orderRefund.TransactionID),
-                new SqlParameter("@comment", orderRefund.Comment),
-                new SqlParameter("@status", orderRefund.Status),
-                new SqlParameter("@createdBy", orderRefund.CreatedBy),
-                new SqlParameter("@createdAt", orderRefund.CreatedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
+                new MySqlParameter("@orderid", orderRefund.OrderID),
+                new MySqlParameter("@orderitemid", orderRefund.OrderItemID),
+                new MySqlParameter("@refundamount", orderRefund.RefundAmount),
+                new MySqlParameter("@transactionid", orderRefund.TransactionID),
+                new MySqlParameter("@comment", orderRefund.Comment),
+                new MySqlParameter("@status", orderRefund.Status),
+                new MySqlParameter("@createdBy", orderRefund.CreatedBy),
+                new MySqlParameter("@createdAt", orderRefund.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderRefund, output, newid, message, sqlParams.ToArray());
@@ -71,37 +71,37 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
 
-                new SqlParameter("@id", orderRefund.Id),
-                new SqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
-                new SqlParameter("@orderid", orderRefund.OrderID),
-                new SqlParameter("@orderitemid", orderRefund.OrderItemID),
-                new SqlParameter("@refundamount", orderRefund.RefundAmount),
-                new SqlParameter("@transactionid", orderRefund.TransactionID),
-                new SqlParameter("@comment", orderRefund.Comment),
-                new SqlParameter("@status", orderRefund.Status),
+                new MySqlParameter("@id", orderRefund.Id),
+                new MySqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
+                new MySqlParameter("@orderid", orderRefund.OrderID),
+                new MySqlParameter("@orderitemid", orderRefund.OrderItemID),
+                new MySqlParameter("@refundamount", orderRefund.RefundAmount),
+                new MySqlParameter("@transactionid", orderRefund.TransactionID),
+                new MySqlParameter("@comment", orderRefund.Comment),
+                new MySqlParameter("@status", orderRefund.Status),
 
-                new SqlParameter("modifiedBy", orderRefund.ModifiedBy),
-                new SqlParameter("modifiedAt", orderRefund.ModifiedAt)
+                new MySqlParameter("modifiedBy", orderRefund.ModifiedBy),
+                new MySqlParameter("modifiedAt", orderRefund.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderRefund, output, newid, message, sqlParams.ToArray());
@@ -116,29 +116,29 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderRefund.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderRefund.Id),
 
-                new SqlParameter("@deletedby", orderRefund.DeletedBy),
-                new SqlParameter("@deletedat", orderRefund.DeletedAt)
+                new MySqlParameter("@deletedby", orderRefund.DeletedBy),
+                new MySqlParameter("@deletedat", orderRefund.DeletedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderRefund, output, newid, message, sqlParams.ToArray());
@@ -153,35 +153,35 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderRefund.Id),
-                new SqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
-                new SqlParameter("@orderid", orderRefund.OrderID),
-                new SqlParameter("@orderitemid", orderRefund.OrderItemID),
-                new SqlParameter("@transactionid", orderRefund.TransactionID),
-                new SqlParameter("@status", orderRefund.Status),
-                new SqlParameter("@searchtext", orderRefund.searchText),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderRefund.Id),
+                new MySqlParameter("@ordercancelreturnid", orderRefund.OrderCancelReturnID),
+                new MySqlParameter("@orderid", orderRefund.OrderID),
+                new MySqlParameter("@orderitemid", orderRefund.OrderItemID),
+                new MySqlParameter("@transactionid", orderRefund.TransactionID),
+                new MySqlParameter("@status", orderRefund.Status),
+                new MySqlParameter("@searchtext", orderRefund.searchText),
 
-                new SqlParameter("@isDeleted", orderRefund.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                new MySqlParameter("@isDeleted", orderRefund.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderRefund, orderRefundParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.DTO;
@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,63 +30,63 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderno", orders.OrderNo),
-                new SqlParameter("@userid", orders.UserId),
-                new SqlParameter("@sellerid", orders.SellerID),
-                new SqlParameter("@username", orders.UserName),
-                new SqlParameter("@userphoneno", orders.UserPhoneNo),
-                new SqlParameter("@useremail", orders.UserEmail),
-                new SqlParameter("@useraddressline1", orders.UserAddressLine1),
-                new SqlParameter("@useraddressline2", orders.UserAddressLine2),
-                new SqlParameter("@userlandmark", orders.UserLandmark),
-                new SqlParameter("@userpincode", orders.UserPincode),
-                new SqlParameter("@usercity", orders.UserCity),
-                new SqlParameter("@userstate", orders.UserState),
-                new SqlParameter("@usercountry", orders.UserCountry),
-                new SqlParameter("@usergstno", orders.UserGSTNo),
-                new SqlParameter("@paymentmode", orders.PaymentMode),
-                new SqlParameter("@totalshippingcharge", orders.TotalShippingCharge),
-                new SqlParameter("@totalextracharges", orders.TotalExtraCharges),
-                new SqlParameter("@totalamount", orders.TotalAmount),
-                new SqlParameter("@iscouponapplied", orders.IsCouponApplied),
-                new SqlParameter("@coupon", orders.Coupon),
-                new SqlParameter("@coupontdiscount", orders.CoupontDiscount),
-                new SqlParameter("@coupontdetails", orders.CoupontDetails),
-                new SqlParameter("@codCharge", orders.CODCharge),
-                new SqlParameter("@paidamount", orders.PaidAmount),
-                new SqlParameter("@issale", orders.IsSale),
-                new SqlParameter("@saletype", orders.SaleType),
-                new SqlParameter("@orderdate", orders.OrderDate),
-                new SqlParameter("@deliverydate", orders.DeliveryDate),
-                new SqlParameter("@status", orders.Status),
-                new SqlParameter("@paymentinfo", orders.PaymentInfo),
-                new SqlParameter("@orderby", orders.OrderBy),
-                new SqlParameter("@isretailer", orders.IsRetailer),
-                new SqlParameter("@isvertualretailer", orders.IsVertualRetailer),
-                new SqlParameter("@isreplace", orders.IsReplace),
-                new SqlParameter("@parentid", orders.ParentID),
-                new SqlParameter("@orderRefNo", orders.OrderReferenceNo),
-                new SqlParameter("@createdBy", orders.CreatedBy),
-                new SqlParameter("@createdAt", orders.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderno", orders.OrderNo),
+                new MySqlParameter("@userid", orders.UserId),
+                new MySqlParameter("@sellerid", orders.SellerID),
+                new MySqlParameter("@username", orders.UserName),
+                new MySqlParameter("@userphoneno", orders.UserPhoneNo),
+                new MySqlParameter("@useremail", orders.UserEmail),
+                new MySqlParameter("@useraddressline1", orders.UserAddressLine1),
+                new MySqlParameter("@useraddressline2", orders.UserAddressLine2),
+                new MySqlParameter("@userlandmark", orders.UserLandmark),
+                new MySqlParameter("@userpincode", orders.UserPincode),
+                new MySqlParameter("@usercity", orders.UserCity),
+                new MySqlParameter("@userstate", orders.UserState),
+                new MySqlParameter("@usercountry", orders.UserCountry),
+                new MySqlParameter("@usergstno", orders.UserGSTNo),
+                new MySqlParameter("@paymentmode", orders.PaymentMode),
+                new MySqlParameter("@totalshippingcharge", orders.TotalShippingCharge),
+                new MySqlParameter("@totalextracharges", orders.TotalExtraCharges),
+                new MySqlParameter("@totalamount", orders.TotalAmount),
+                new MySqlParameter("@iscouponapplied", orders.IsCouponApplied),
+                new MySqlParameter("@coupon", orders.Coupon),
+                new MySqlParameter("@coupontdiscount", orders.CoupontDiscount),
+                new MySqlParameter("@coupontdetails", orders.CoupontDetails),
+                new MySqlParameter("@codCharge", orders.CODCharge),
+                new MySqlParameter("@paidamount", orders.PaidAmount),
+                new MySqlParameter("@issale", orders.IsSale),
+                new MySqlParameter("@saletype", orders.SaleType),
+                new MySqlParameter("@orderdate", orders.OrderDate),
+                new MySqlParameter("@deliverydate", orders.DeliveryDate),
+                new MySqlParameter("@status", orders.Status),
+                new MySqlParameter("@paymentinfo", orders.PaymentInfo),
+                new MySqlParameter("@orderby", orders.OrderBy),
+                new MySqlParameter("@isretailer", orders.IsRetailer),
+                new MySqlParameter("@isvertualretailer", orders.IsVertualRetailer),
+                new MySqlParameter("@isreplace", orders.IsReplace),
+                new MySqlParameter("@parentid", orders.ParentID),
+                new MySqlParameter("@orderRefNo", orders.OrderReferenceNo),
+                new MySqlParameter("@createdBy", orders.CreatedBy),
+                new MySqlParameter("@createdAt", orders.CreatedAt),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Orders, output, newid, message, sqlParams.ToArray());
@@ -100,39 +100,39 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", orders.Id),
-                new SqlParameter("@paymentmode", orders.PaymentMode),
-                new SqlParameter("@totalshippingcharge", orders.TotalShippingCharge),
-                new SqlParameter("@totalextracharges", orders.TotalExtraCharges),
-                new SqlParameter("@totalamount", orders.TotalAmount),
-                new SqlParameter("@paidamount", orders.PaidAmount),
-                new SqlParameter("@orderdate", orders.OrderDate),
-                new SqlParameter("@deliverydate", orders.DeliveryDate),
-                new SqlParameter("@status", orders.Status),
-                new SqlParameter("@paymentinfo", orders.PaymentInfo),
-                new SqlParameter("@orderRefNo", orders.OrderReferenceNo),
-              //new SqlParameter("@isreplace", orders.IsReplace),
-                new SqlParameter("@modifiedBy", orders.ModifiedBy),
-                new SqlParameter("@modifiedAt", orders.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", orders.Id),
+                new MySqlParameter("@paymentmode", orders.PaymentMode),
+                new MySqlParameter("@totalshippingcharge", orders.TotalShippingCharge),
+                new MySqlParameter("@totalextracharges", orders.TotalExtraCharges),
+                new MySqlParameter("@totalamount", orders.TotalAmount),
+                new MySqlParameter("@paidamount", orders.PaidAmount),
+                new MySqlParameter("@orderdate", orders.OrderDate),
+                new MySqlParameter("@deliverydate", orders.DeliveryDate),
+                new MySqlParameter("@status", orders.Status),
+                new MySqlParameter("@paymentinfo", orders.PaymentInfo),
+                new MySqlParameter("@orderRefNo", orders.OrderReferenceNo),
+              //new MySqlParameter("@isreplace", orders.IsReplace),
+                new MySqlParameter("@modifiedBy", orders.ModifiedBy),
+                new MySqlParameter("@modifiedAt", orders.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Orders, output, newid, message, sqlParams.ToArray());
@@ -147,29 +147,29 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orders.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orders.Id),
 
-                new SqlParameter("@deletedby", orders.DeletedBy),
-                new SqlParameter("@deletedat", orders.DeletedAt),
+                new MySqlParameter("@deletedby", orders.DeletedBy),
+                new MySqlParameter("@deletedat", orders.DeletedAt),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Orders, output, newid, message, sqlParams.ToArray());
@@ -184,39 +184,39 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orders.Id),
-                new SqlParameter("@guid", orders.Guid),
-                new SqlParameter("@orderno", orders.OrderNo),
-                new SqlParameter("@orderRefNo", orders.OrderReferenceNo),
-                new SqlParameter("@userid", orders.UserId),
-                new SqlParameter("@sellerid", orders.SellerID),
-                new SqlParameter("@status", orders.Status),
-                new SqlParameter("@searchtext", orders.SearchText),
-                new SqlParameter("@fromdate", orders.FromDate),
-                new SqlParameter("@todate", orders.ToDate),
-                new SqlParameter("@coupon", orders.Coupon),
-                new SqlParameter("@notInstatus", orders.NotInStatus),
-                new SqlParameter("@isDeleted", orders.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orders.Id),
+                new MySqlParameter("@guid", orders.Guid),
+                new MySqlParameter("@orderno", orders.OrderNo),
+                new MySqlParameter("@orderRefNo", orders.OrderReferenceNo),
+                new MySqlParameter("@userid", orders.UserId),
+                new MySqlParameter("@sellerid", orders.SellerID),
+                new MySqlParameter("@status", orders.Status),
+                new MySqlParameter("@searchtext", orders.SearchText),
+                new MySqlParameter("@fromdate", orders.FromDate),
+                new MySqlParameter("@todate", orders.ToDate),
+                new MySqlParameter("@coupon", orders.Coupon),
+                new MySqlParameter("@notInstatus", orders.NotInStatus),
+                new MySqlParameter("@isDeleted", orders.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrders, orderParserAsync, output, newid: null, message, sqlParams.ToArray());
@@ -297,27 +297,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
+                var sqlParams = new List<MySqlParameter>() {
 
-                new SqlParameter("@packageid", Packageid),
-                new SqlParameter("@orderNo", OrderNo),
+                new MySqlParameter("@packageid", Packageid),
+                new MySqlParameter("@orderNo", OrderNo),
 
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetInvoice, invoiceParserAsync, output, newid: null, message, sqlParams.ToArray());

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,42 +31,42 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@userid",address.UserId),
-                    new SqlParameter("@addressType",address.AddressType),
-                    new SqlParameter("@fullName",address.FullName),
-                    new SqlParameter("@mobileNo",address.MobileNo),
-                    new SqlParameter("@add1",address.AddressLine1),
-                    new SqlParameter("@add2",address.AddressLine2),
-                    new SqlParameter("@landmark",address.Landmark),
-                    new SqlParameter("@pincode",address.Pincode),
-                    new SqlParameter("@stateid",address.StateId),
-                    new SqlParameter("@cityid",address.CityId),
-                    new SqlParameter("@countryid",address.CountryId),
-                    new SqlParameter("@gstNo",address.GSTNo),
-                    new SqlParameter("@status",address.Status),
-                    new SqlParameter("@setDefault",address.SetDefault),
-                    new SqlParameter("@createdBy",address.CreatedBy),
-                    new SqlParameter("@createdAt",address.CreatedAt),
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@userid",address.UserId),
+                    new MySqlParameter("@addressType",address.AddressType),
+                    new MySqlParameter("@fullName",address.FullName),
+                    new MySqlParameter("@mobileNo",address.MobileNo),
+                    new MySqlParameter("@add1",address.AddressLine1),
+                    new MySqlParameter("@add2",address.AddressLine2),
+                    new MySqlParameter("@landmark",address.Landmark),
+                    new MySqlParameter("@pincode",address.Pincode),
+                    new MySqlParameter("@stateid",address.StateId),
+                    new MySqlParameter("@cityid",address.CityId),
+                    new MySqlParameter("@countryid",address.CountryId),
+                    new MySqlParameter("@gstNo",address.GSTNo),
+                    new MySqlParameter("@status",address.Status),
+                    new MySqlParameter("@setDefault",address.SetDefault),
+                    new MySqlParameter("@createdBy",address.CreatedBy),
+                    new MySqlParameter("@createdAt",address.CreatedAt),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Address, output, newid, message, sqlParams.ToArray());
@@ -81,36 +81,36 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@id", address.Id),
-                    new SqlParameter("@userid",address.UserId),
-                    new SqlParameter("@addressType",address.AddressType),
-                    new SqlParameter("@fullName",address.FullName),
-                    new SqlParameter("@mobileNo",address.MobileNo),
-                    new SqlParameter("@add1",address.AddressLine1),
-                    new SqlParameter("@add2",address.AddressLine2),
-                    new SqlParameter("@landmark",address.Landmark),
-                    new SqlParameter("@pincode",address.Pincode),
-                    new SqlParameter("@stateid",address.StateId),
-                    new SqlParameter("@cityid",address.CityId),
-                    new SqlParameter("@countryid",address.CountryId),
-                    new SqlParameter("@gstNo",address.GSTNo),
-                    new SqlParameter("@status",address.Status),
-                    new SqlParameter("@setDefault",address.SetDefault),
-                    new SqlParameter("@modifiedBy", address.ModifiedBy),
-                    new SqlParameter("@modifiedAt", address.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@id", address.Id),
+                    new MySqlParameter("@userid",address.UserId),
+                    new MySqlParameter("@addressType",address.AddressType),
+                    new MySqlParameter("@fullName",address.FullName),
+                    new MySqlParameter("@mobileNo",address.MobileNo),
+                    new MySqlParameter("@add1",address.AddressLine1),
+                    new MySqlParameter("@add2",address.AddressLine2),
+                    new MySqlParameter("@landmark",address.Landmark),
+                    new MySqlParameter("@pincode",address.Pincode),
+                    new MySqlParameter("@stateid",address.StateId),
+                    new MySqlParameter("@cityid",address.CityId),
+                    new MySqlParameter("@countryid",address.CountryId),
+                    new MySqlParameter("@gstNo",address.GSTNo),
+                    new MySqlParameter("@status",address.Status),
+                    new MySqlParameter("@setDefault",address.SetDefault),
+                    new MySqlParameter("@modifiedBy", address.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", address.ModifiedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Address, output, newid: null, message, sqlParams.ToArray());
@@ -126,20 +126,20 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", address.Id)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", address.Id)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Address, output, newid: null, message, sqlParams.ToArray());
@@ -155,35 +155,35 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", address.Id),
-                    new SqlParameter("@userid", address.UserId),
-                    new SqlParameter("@fullName", address.FullName),
-                    new SqlParameter("@mobileNo", address.MobileNo),
-                    new SqlParameter("@pincode", address.Pincode),
-                    new SqlParameter("@cityid", address.CityId),
-                    new SqlParameter("@stateid", address.StateId),
-                    new SqlParameter("@countryid", address.CountryId),
-                    new SqlParameter("@status", address.Status),
-                    new SqlParameter("@statename", address.StateName),
-                    new SqlParameter("@cityname", address.CityName),
-                    new SqlParameter("@countryname", address.CountryName),
-                    new SqlParameter("@searchtext", address.searchText),
-                    new SqlParameter("@setDefault", address.SetDefault),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", address.Id),
+                    new MySqlParameter("@userid", address.UserId),
+                    new MySqlParameter("@fullName", address.FullName),
+                    new MySqlParameter("@mobileNo", address.MobileNo),
+                    new MySqlParameter("@pincode", address.Pincode),
+                    new MySqlParameter("@cityid", address.CityId),
+                    new MySqlParameter("@stateid", address.StateId),
+                    new MySqlParameter("@countryid", address.CountryId),
+                    new MySqlParameter("@status", address.Status),
+                    new MySqlParameter("@statename", address.StateName),
+                    new MySqlParameter("@cityname", address.CityName),
+                    new MySqlParameter("@countryname", address.CountryName),
+                    new MySqlParameter("@searchtext", address.searchText),
+                    new MySqlParameter("@setDefault", address.SetDefault),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAddress, AddressParserAsync, output, newid: null, message, sqlParams.ToArray());

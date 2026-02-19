@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,28 +32,28 @@ namespace Catalogue.Infrastructure.Repository
     //    {
     //        try
     //        {
-    //            var sqlParams = new List<SqlParameter>() {
-    //            new SqlParameter("@mode", "add"),
-    //            new SqlParameter("@productid", productVideoLinks.ProductID),
-    //            new SqlParameter("@link", productVideoLinks.Link),
-    //            new SqlParameter("@createdby", productVideoLinks.CreatedBy),
-    //            new SqlParameter("@createdat", productVideoLinks.CreatedAt),
+    //            var sqlParams = new List<MySqlParameter>() {
+    //            new MySqlParameter("@mode", "add"),
+    //            new MySqlParameter("@productid", productVideoLinks.ProductID),
+    //            new MySqlParameter("@link", productVideoLinks.Link),
+    //            new MySqlParameter("@createdby", productVideoLinks.CreatedBy),
+    //            new MySqlParameter("@createdat", productVideoLinks.CreatedAt),
     //        };
 
-    //            SqlParameter output = new SqlParameter();
+    //            MySqlParameter output = new MySqlParameter();
     //            output.ParameterName = "@output";
     //            output.Direction = ParameterDirection.Output;
-    //            output.SqlDbType = SqlDbType.Int;
+    //            output.MySqlDbType = MySqlDbType.Int32;
 
-    //            SqlParameter newid = new SqlParameter();
+    //            MySqlParameter newid = new MySqlParameter();
     //            newid.ParameterName = "@newid";
     //            newid.Direction = ParameterDirection.Output;
-    //            newid.SqlDbType = SqlDbType.BigInt;
+    //            newid.MySqlDbType = MySqlDbType.Int64;
 
-    //            SqlParameter message = new SqlParameter();
+    //            MySqlParameter message = new MySqlParameter();
     //            message.ParameterName = "@message";
     //            message.Direction = ParameterDirection.Output;
-    //            message.SqlDbType = SqlDbType.NVarChar;
+    //            message.MySqlDbType = MySqlDbType.VarChar;
     //            message.Size = 50;
 
     //            return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductVideoLinks, output, newid, message, sqlParams.ToArray());
@@ -67,28 +67,28 @@ namespace Catalogue.Infrastructure.Repository
     //    {
     //        try
     //        {
-    //            var sqlParams = new List<SqlParameter>() {
-    //            new SqlParameter("@mode", "update"),
-    //            new SqlParameter("@id", productVideoLinks.Id),
-    //            new SqlParameter("@link", productVideoLinks.Link),
-    //            new SqlParameter("@modifiedby", productVideoLinks.ModifiedBy),
-    //            new SqlParameter("@modifiedat", productVideoLinks.ModifiedAt),
+    //            var sqlParams = new List<MySqlParameter>() {
+    //            new MySqlParameter("@mode", "update"),
+    //            new MySqlParameter("@id", productVideoLinks.Id),
+    //            new MySqlParameter("@link", productVideoLinks.Link),
+    //            new MySqlParameter("@modifiedby", productVideoLinks.ModifiedBy),
+    //            new MySqlParameter("@modifiedat", productVideoLinks.ModifiedAt),
     //        };
 
-    //            SqlParameter output = new SqlParameter();
+    //            MySqlParameter output = new MySqlParameter();
     //            output.ParameterName = "@output";
     //            output.Direction = ParameterDirection.Output;
-    //            output.SqlDbType = SqlDbType.Int;
+    //            output.MySqlDbType = MySqlDbType.Int32;
 
-    //            SqlParameter newid = new SqlParameter();
+    //            MySqlParameter newid = new MySqlParameter();
     //            newid.ParameterName = "@newid";
     //            newid.Direction = ParameterDirection.Output;
-    //            newid.SqlDbType = SqlDbType.BigInt;
+    //            newid.MySqlDbType = MySqlDbType.Int64;
 
-    //            SqlParameter message = new SqlParameter();
+    //            MySqlParameter message = new MySqlParameter();
     //            message.ParameterName = "@message";
     //            message.Direction = ParameterDirection.Output;
-    //            message.SqlDbType = SqlDbType.NVarChar;
+    //            message.MySqlDbType = MySqlDbType.VarChar;
     //            message.Size = 50;
 
     //            return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductVideoLinks, output, newid, message, sqlParams.ToArray());
@@ -102,25 +102,25 @@ namespace Catalogue.Infrastructure.Repository
     //    {
     //        try
     //        {
-    //            var sqlParams = new List<SqlParameter>() {
-    //            new SqlParameter("@mode", "delete"),
-    //            new SqlParameter("@productid", productVideoLinks.ProductID),
+    //            var sqlParams = new List<MySqlParameter>() {
+    //            new MySqlParameter("@mode", "delete"),
+    //            new MySqlParameter("@productid", productVideoLinks.ProductID),
     //        };
 
-    //            SqlParameter output = new SqlParameter();
+    //            MySqlParameter output = new MySqlParameter();
     //            output.ParameterName = "@output";
     //            output.Direction = ParameterDirection.Output;
-    //            output.SqlDbType = SqlDbType.Int;
+    //            output.MySqlDbType = MySqlDbType.Int32;
 
-    //            SqlParameter newid = new SqlParameter();
+    //            MySqlParameter newid = new MySqlParameter();
     //            newid.ParameterName = "@newid";
     //            newid.Direction = ParameterDirection.Output;
-    //            newid.SqlDbType = SqlDbType.BigInt;
+    //            newid.MySqlDbType = MySqlDbType.Int64;
 
-    //            SqlParameter message = new SqlParameter();
+    //            MySqlParameter message = new MySqlParameter();
     //            message.ParameterName = "@message";
     //            message.Direction = ParameterDirection.Output;
-    //            message.SqlDbType = SqlDbType.NVarChar;
+    //            message.MySqlDbType = MySqlDbType.VarChar;
     //            message.Size = 50;
 
     //            return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ProductVideoLinks, output, newid, message, sqlParams.ToArray());
@@ -135,29 +135,29 @@ namespace Catalogue.Infrastructure.Repository
     //    {
     //        try
     //        {
-    //            var sqlParams = new List<SqlParameter>() {
-    //            //new SqlParameter("@mode", "get"),
-    //            new SqlParameter("@mode", Mode),
-    //            new SqlParameter("@id", productVideoLinks.Id),
-    //            new SqlParameter("@productid", productVideoLinks.ProductID),
-    //            new SqlParameter("@pageIndex", PageIndex),
-    //            new SqlParameter("@PageSize", PageSize),
+    //            var sqlParams = new List<MySqlParameter>() {
+    //            //new MySqlParameter("@mode", "get"),
+    //            new MySqlParameter("@mode", Mode),
+    //            new MySqlParameter("@id", productVideoLinks.Id),
+    //            new MySqlParameter("@productid", productVideoLinks.ProductID),
+    //            new MySqlParameter("@pageIndex", PageIndex),
+    //            new MySqlParameter("@PageSize", PageSize),
 
     //        };
-    //            SqlParameter output = new SqlParameter();
+    //            MySqlParameter output = new MySqlParameter();
     //            output.ParameterName = "@output";
     //            output.Direction = ParameterDirection.Output;
-    //            output.SqlDbType = SqlDbType.Int;
+    //            output.MySqlDbType = MySqlDbType.Int32;
 
-    //            //SqlParameter newid = new SqlParameter();
+    //            //MySqlParameter newid = new MySqlParameter();
     //            //newid.ParameterName = "@newid";
     //            //newid.Direction = ParameterDirection.Output;
-    //            //newid.SqlDbType = SqlDbType.BigInt;
+    //            //newid.MySqlDbType = MySqlDbType.Int64;
 
-    //            SqlParameter message = new SqlParameter();
+    //            MySqlParameter message = new MySqlParameter();
     //            message.ParameterName = "@message";
     //            message.Direction = ParameterDirection.Output;
-    //            message.SqlDbType = SqlDbType.NVarChar;
+    //            message.MySqlDbType = MySqlDbType.VarChar;
     //            message.Size = 50;
 
     //            return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetProductVideoLinks, productVideoLinksParserAsync, output, newid: null, message, sqlParams.ToArray());

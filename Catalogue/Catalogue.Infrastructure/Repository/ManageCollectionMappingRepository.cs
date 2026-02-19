@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Application.IServices;
 using Catalogue.Domain.Entity;
 using Catalogue.Domain;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,29 +33,29 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "add"),
-                    new SqlParameter("@collectionId", collectionMapping.CollectionId),
-                    new SqlParameter("@productId", collectionMapping.ProductId),
-                    new SqlParameter("@status", collectionMapping.Status),
-                    new SqlParameter("@createdby", collectionMapping.CreatedBy),
-                new SqlParameter("@createdat", collectionMapping.CreatedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "add"),
+                    new MySqlParameter("@collectionId", collectionMapping.CollectionId),
+                    new MySqlParameter("@productId", collectionMapping.ProductId),
+                    new MySqlParameter("@status", collectionMapping.Status),
+                    new MySqlParameter("@createdby", collectionMapping.CreatedBy),
+                new MySqlParameter("@createdat", collectionMapping.CreatedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageCollectionMapping, output, newid, message, sqlParams.ToArray());
@@ -70,33 +70,33 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", collectionMapping.Id),
-                new SqlParameter("@collectionId", collectionMapping.CollectionId),
-                new SqlParameter("@productId", collectionMapping.ProductId),
-                new SqlParameter("@status", collectionMapping.Status),
-                new SqlParameter("@modifiedby", collectionMapping.ModifiedBy),
-                new SqlParameter("@modifiedat", collectionMapping.ModifiedAt),
-                new SqlParameter("@deletedby", collectionMapping.DeletedBy),
-                new SqlParameter("@deletedat", collectionMapping.DeletedAt),
-                new SqlParameter("@isdeleted", collectionMapping.IsDeleted),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", collectionMapping.Id),
+                new MySqlParameter("@collectionId", collectionMapping.CollectionId),
+                new MySqlParameter("@productId", collectionMapping.ProductId),
+                new MySqlParameter("@status", collectionMapping.Status),
+                new MySqlParameter("@modifiedby", collectionMapping.ModifiedBy),
+                new MySqlParameter("@modifiedat", collectionMapping.ModifiedAt),
+                new MySqlParameter("@deletedby", collectionMapping.DeletedBy),
+                new MySqlParameter("@deletedat", collectionMapping.DeletedAt),
+                new MySqlParameter("@isdeleted", collectionMapping.IsDeleted),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageCollectionMapping, output, newid, message, sqlParams.ToArray());
@@ -111,27 +111,27 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", collectionMapping.Id),
-                new SqlParameter("@deletedby", collectionMapping.DeletedBy),
-                new SqlParameter("@deletedat", collectionMapping.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", collectionMapping.Id),
+                new MySqlParameter("@deletedby", collectionMapping.DeletedBy),
+                new MySqlParameter("@deletedat", collectionMapping.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageCollectionMapping, output, newid, message, sqlParams.ToArray());
@@ -146,28 +146,28 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", collectionMapping.Id),
-                new SqlParameter("@collectionid", collectionMapping.CollectionId),
-                new SqlParameter("@productid", collectionMapping.ProductId),
-                new SqlParameter("@sellerid", collectionMapping.SellerId),
-                new SqlParameter("@collectionname", collectionMapping.CollectionName),
-                new SqlParameter("@productname", collectionMapping.ProductName),
-                new SqlParameter("@isdeleted", collectionMapping.IsDeleted),
-                new SqlParameter("@searchtext", collectionMapping.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", collectionMapping.Id),
+                new MySqlParameter("@collectionid", collectionMapping.CollectionId),
+                new MySqlParameter("@productid", collectionMapping.ProductId),
+                new MySqlParameter("@sellerid", collectionMapping.SellerId),
+                new MySqlParameter("@collectionname", collectionMapping.CollectionName),
+                new MySqlParameter("@productname", collectionMapping.ProductName),
+                new MySqlParameter("@isdeleted", collectionMapping.IsDeleted),
+                new MySqlParameter("@searchtext", collectionMapping.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageCollectionMapping, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());

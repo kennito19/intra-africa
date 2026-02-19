@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,44 +31,44 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>()
+                var sqlParams = new List<MySqlParameter>()
                 {
-                    new SqlParameter("@mode","add"),
-                    new SqlParameter("@userid",gSTInfo.UserID),
-                    new SqlParameter("@gstno",gSTInfo.GSTNo),
-                    new SqlParameter("@legalname",gSTInfo.LegalName),
-                    new SqlParameter("@tradename",gSTInfo.TradeName),
-                    new SqlParameter("@gsttype",gSTInfo.GSTType),
-                    new SqlParameter("@gstdoc",gSTInfo.GSTDoc),
-                    new SqlParameter("@add1",gSTInfo.RegisteredAddressLine1),
-                    new SqlParameter("@add2",gSTInfo.RegisteredAddressLine2),
-                    new SqlParameter("@landmark",gSTInfo.RegisteredLandmark),
-                    new SqlParameter("@pincode",gSTInfo.RegisteredPincode),
-                    new SqlParameter("@regcityid",gSTInfo.RegisteredCityId),
-                    new SqlParameter("@regstateid",gSTInfo.RegisteredStateId),
-                    new SqlParameter("@regcountryid",gSTInfo.RegisteredCountryId),
-                    new SqlParameter("@tcsno",gSTInfo.TCSNo),
-                    new SqlParameter("@status",gSTInfo.Status),
-                    new SqlParameter("@isHeadOffice",gSTInfo.IsHeadOffice),
-                    new SqlParameter("@createdBy",gSTInfo.CreatedBy),
-                    new SqlParameter("@createdAt",gSTInfo.CreatedAt),
+                    new MySqlParameter("@mode","add"),
+                    new MySqlParameter("@userid",gSTInfo.UserID),
+                    new MySqlParameter("@gstno",gSTInfo.GSTNo),
+                    new MySqlParameter("@legalname",gSTInfo.LegalName),
+                    new MySqlParameter("@tradename",gSTInfo.TradeName),
+                    new MySqlParameter("@gsttype",gSTInfo.GSTType),
+                    new MySqlParameter("@gstdoc",gSTInfo.GSTDoc),
+                    new MySqlParameter("@add1",gSTInfo.RegisteredAddressLine1),
+                    new MySqlParameter("@add2",gSTInfo.RegisteredAddressLine2),
+                    new MySqlParameter("@landmark",gSTInfo.RegisteredLandmark),
+                    new MySqlParameter("@pincode",gSTInfo.RegisteredPincode),
+                    new MySqlParameter("@regcityid",gSTInfo.RegisteredCityId),
+                    new MySqlParameter("@regstateid",gSTInfo.RegisteredStateId),
+                    new MySqlParameter("@regcountryid",gSTInfo.RegisteredCountryId),
+                    new MySqlParameter("@tcsno",gSTInfo.TCSNo),
+                    new MySqlParameter("@status",gSTInfo.Status),
+                    new MySqlParameter("@isHeadOffice",gSTInfo.IsHeadOffice),
+                    new MySqlParameter("@createdBy",gSTInfo.CreatedBy),
+                    new MySqlParameter("@createdAt",gSTInfo.CreatedAt),
 
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GSTInfo, output, newid, message, sqlParams.ToArray());
@@ -82,37 +82,37 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "update"),
-                    new SqlParameter("@userid",gSTInfo.UserID),
-                    new SqlParameter("@gstno",gSTInfo.GSTNo),
-                    new SqlParameter("@legalname",gSTInfo.LegalName),
-                    new SqlParameter("@tradename",gSTInfo.TradeName),
-                    new SqlParameter("@gsttype",gSTInfo.GSTType),
-                    new SqlParameter("@gstdoc",gSTInfo.GSTDoc),
-                    new SqlParameter("@add1",gSTInfo.RegisteredAddressLine1),
-                    new SqlParameter("@add2",gSTInfo.RegisteredAddressLine2),
-                    new SqlParameter("@landmark",gSTInfo.RegisteredLandmark),
-                    new SqlParameter("@pincode",gSTInfo.RegisteredPincode),
-                    new SqlParameter("@regcityid",gSTInfo.RegisteredCityId),
-                    new SqlParameter("@regstateid",gSTInfo.RegisteredStateId),
-                    new SqlParameter("@regcountryid",gSTInfo.RegisteredCountryId),
-                    new SqlParameter("@tcsno",gSTInfo.TCSNo),
-                    new SqlParameter("@status",gSTInfo.Status),
-                    new SqlParameter("@isHeadOffice",gSTInfo.IsHeadOffice),
-                    new SqlParameter("@modifiedBy", gSTInfo.ModifiedBy),
-                    new SqlParameter("@modifiedAt", gSTInfo.ModifiedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "update"),
+                    new MySqlParameter("@userid",gSTInfo.UserID),
+                    new MySqlParameter("@gstno",gSTInfo.GSTNo),
+                    new MySqlParameter("@legalname",gSTInfo.LegalName),
+                    new MySqlParameter("@tradename",gSTInfo.TradeName),
+                    new MySqlParameter("@gsttype",gSTInfo.GSTType),
+                    new MySqlParameter("@gstdoc",gSTInfo.GSTDoc),
+                    new MySqlParameter("@add1",gSTInfo.RegisteredAddressLine1),
+                    new MySqlParameter("@add2",gSTInfo.RegisteredAddressLine2),
+                    new MySqlParameter("@landmark",gSTInfo.RegisteredLandmark),
+                    new MySqlParameter("@pincode",gSTInfo.RegisteredPincode),
+                    new MySqlParameter("@regcityid",gSTInfo.RegisteredCityId),
+                    new MySqlParameter("@regstateid",gSTInfo.RegisteredStateId),
+                    new MySqlParameter("@regcountryid",gSTInfo.RegisteredCountryId),
+                    new MySqlParameter("@tcsno",gSTInfo.TCSNo),
+                    new MySqlParameter("@status",gSTInfo.Status),
+                    new MySqlParameter("@isHeadOffice",gSTInfo.IsHeadOffice),
+                    new MySqlParameter("@modifiedBy", gSTInfo.ModifiedBy),
+                    new MySqlParameter("@modifiedAt", gSTInfo.ModifiedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GSTInfo, output, newid: null, message, sqlParams.ToArray());
@@ -127,23 +127,23 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", "delete"),
-                    new SqlParameter("@id", gSTInfo.Id),
-                    new SqlParameter("@userid", gSTInfo.UserID),
-                    new SqlParameter("@deletedBy", gSTInfo.DeletedBy),
-                    new SqlParameter("@deletedAt", gSTInfo.DeletedAt)
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", "delete"),
+                    new MySqlParameter("@id", gSTInfo.Id),
+                    new MySqlParameter("@userid", gSTInfo.UserID),
+                    new MySqlParameter("@deletedBy", gSTInfo.DeletedBy),
+                    new MySqlParameter("@deletedAt", gSTInfo.DeletedAt)
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GSTInfo, output, newid: null, message, sqlParams.ToArray());
@@ -159,34 +159,34 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                    new SqlParameter("@mode", Mode),
-                    new SqlParameter("@id", gSTInfo.Id),
-                    new SqlParameter("@userid", gSTInfo.UserID),
-                    new SqlParameter("@gstno", gSTInfo.GSTNo),
-                    new SqlParameter("@pincode", gSTInfo.RegisteredPincode),
-                    new SqlParameter("@regcityid", gSTInfo.RegisteredCityId),
-                    new SqlParameter("@regstateid", gSTInfo.RegisteredStateId),
-                    new SqlParameter("@regcountryid", gSTInfo.RegisteredCountryId),
-                    new SqlParameter("@searchtext", gSTInfo.searchText),
-                    new SqlParameter("@status", gSTInfo.Status),
-                    new SqlParameter("@statename", gSTInfo.StateName),
-                    new SqlParameter("@cityname", gSTInfo.CityName),
-                    new SqlParameter("@countryname", gSTInfo.CountryName),
-                    new SqlParameter("@isDeleted", gSTInfo.IsDeleted),
-                    new SqlParameter("@pageIndex", PageIndex),
-                    new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                    new MySqlParameter("@mode", Mode),
+                    new MySqlParameter("@id", gSTInfo.Id),
+                    new MySqlParameter("@userid", gSTInfo.UserID),
+                    new MySqlParameter("@gstno", gSTInfo.GSTNo),
+                    new MySqlParameter("@pincode", gSTInfo.RegisteredPincode),
+                    new MySqlParameter("@regcityid", gSTInfo.RegisteredCityId),
+                    new MySqlParameter("@regstateid", gSTInfo.RegisteredStateId),
+                    new MySqlParameter("@regcountryid", gSTInfo.RegisteredCountryId),
+                    new MySqlParameter("@searchtext", gSTInfo.searchText),
+                    new MySqlParameter("@status", gSTInfo.Status),
+                    new MySqlParameter("@statename", gSTInfo.StateName),
+                    new MySqlParameter("@cityname", gSTInfo.CityName),
+                    new MySqlParameter("@countryname", gSTInfo.CountryName),
+                    new MySqlParameter("@isDeleted", gSTInfo.IsDeleted),
+                    new MySqlParameter("@pageIndex", PageIndex),
+                    new MySqlParameter("@PageSize", PageSize),
                 };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetGSTInfo, GSTInfoParserAsync, output, newid: null, message, sqlParams.ToArray());

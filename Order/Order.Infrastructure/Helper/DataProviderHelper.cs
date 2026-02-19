@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -12,13 +12,13 @@ namespace Order.Infrastructure.Helper
 {
     internal class DataProviderHelper
     {
-        internal async Task<BaseResponse<T>> ExecuteReaderAsync<T>(string connectionString, string storedProc, Func<DbDataReader, Task<T>> readerParserAction, params SqlParameter[] parameters)
+        internal async Task<BaseResponse<T>> ExecuteReaderAsync<T>(string connectionString, string storedProc, Func<DbDataReader, Task<T>> readerParserAction, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {
@@ -61,13 +61,13 @@ namespace Order.Infrastructure.Helper
             }
         }
 
-        internal async Task<BaseResponse<T>> ExecuteReaderAsync<T>(string connectionString, string storedProc, Func<DbDataReader, Task<T>> readerParserAction, SqlParameter output = null, SqlParameter newid = null, SqlParameter message = null, params SqlParameter[] parameters)
+        internal async Task<BaseResponse<T>> ExecuteReaderAsync<T>(string connectionString, string storedProc, Func<DbDataReader, Task<T>> readerParserAction, MySqlParameter output = null, MySqlParameter newid = null, MySqlParameter message = null, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {
@@ -117,13 +117,13 @@ namespace Order.Infrastructure.Helper
             }
         }
 
-        internal T ExecuteReader<T>(string connectionString, string storedProc, Func<DbDataReader, T> readerParserAction, params SqlParameter[] parameters)
+        internal T ExecuteReader<T>(string connectionString, string storedProc, Func<DbDataReader, T> readerParserAction, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {
@@ -152,14 +152,14 @@ namespace Order.Infrastructure.Helper
             }
         }
 
-        internal async Task ExecuteNonQueryAsync(string connectionString, string storedProc, params SqlParameter[] parameters)
+        internal async Task ExecuteNonQueryAsync(string connectionString, string storedProc, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
 
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {
@@ -182,13 +182,13 @@ namespace Order.Infrastructure.Helper
             }
         }
 
-        internal async Task<BaseResponse<long>> ExecuteNonQueryAsync(string connectionString, string storedProc, SqlParameter output = null, SqlParameter newid = null, SqlParameter message = null, params SqlParameter[] parameters)
+        internal async Task<BaseResponse<long>> ExecuteNonQueryAsync(string connectionString, string storedProc, MySqlParameter output = null, MySqlParameter newid = null, MySqlParameter message = null, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {
@@ -234,14 +234,14 @@ namespace Order.Infrastructure.Helper
             }
         }
 
-        internal async Task<BaseResponse<object>> ExecuteScalerAsync(string connectionString, string storedProc, SqlParameter output = null, SqlParameter newid = null, SqlParameter message = null, params SqlParameter[] parameters)
+        internal async Task<BaseResponse<object>> ExecuteScalerAsync(string connectionString, string storedProc, MySqlParameter output = null, MySqlParameter newid = null, MySqlParameter message = null, params MySqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new MySqlConnection(connectionString))
             {
 
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(storedProc, connection))
+                using (var command = new MySqlCommand(storedProc, connection))
                 {
                     try
                     {

@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -27,32 +27,32 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
-                new SqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
-                new SqlParameter("@seriesno", orderWiseProductSeriesNo.SeriesNo),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
+                new MySqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
+                new MySqlParameter("@seriesno", orderWiseProductSeriesNo.SeriesNo),
 
 
-                new SqlParameter("@createdBy", orderWiseProductSeriesNo.CreatedBy),
-                new SqlParameter("@createdAt", orderWiseProductSeriesNo.CreatedAt)
+                new MySqlParameter("@createdBy", orderWiseProductSeriesNo.CreatedBy),
+                new MySqlParameter("@createdAt", orderWiseProductSeriesNo.CreatedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseProductSeriesNo, output, newid, message, sqlParams.ToArray());
@@ -67,28 +67,28 @@ namespace Order.Infrastructure.Repository
 
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id", orderWiseProductSeriesNo.Id),
-                new SqlParameter("@seriesno", orderWiseProductSeriesNo.SeriesNo),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id", orderWiseProductSeriesNo.Id),
+                new MySqlParameter("@seriesno", orderWiseProductSeriesNo.SeriesNo),
 
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseProductSeriesNo, output, newid, message, sqlParams.ToArray());
@@ -103,26 +103,26 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
-                new SqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
+                new MySqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderWiseProductSeriesNo, output, newid, message, sqlParams.ToArray());
@@ -137,32 +137,32 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderWiseProductSeriesNo.Id),
-                new SqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
-                new SqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
-                new SqlParameter("@productId", orderWiseProductSeriesNo.ProductID),
-                new SqlParameter("@catId", orderWiseProductSeriesNo.CategoryId),
-                new SqlParameter("@productSeriesNo", orderWiseProductSeriesNo.SeriesNo),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderWiseProductSeriesNo.Id),
+                new MySqlParameter("@orderid", orderWiseProductSeriesNo.OrderID),
+                new MySqlParameter("@orderitemid", orderWiseProductSeriesNo.OrderItemID),
+                new MySqlParameter("@productId", orderWiseProductSeriesNo.ProductID),
+                new MySqlParameter("@catId", orderWiseProductSeriesNo.CategoryId),
+                new MySqlParameter("@productSeriesNo", orderWiseProductSeriesNo.SeriesNo),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderWiseProductSeriesNo, orderWiseExtraChargesParserAsync, output, newid: null, message, sqlParams.ToArray());

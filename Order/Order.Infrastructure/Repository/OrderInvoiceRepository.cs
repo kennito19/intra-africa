@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Order.Application.IRepositories;
 using Order.Domain;
 using Order.Domain.Entity;
 using Order.Infrastructure.Helper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -28,55 +28,55 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "add"),
-                new SqlParameter("@id",orderInvoice.Id),
-                new SqlParameter("@packageid",orderInvoice.PackageID),
-                new SqlParameter("@orderid",orderInvoice.OrderID),
-                new SqlParameter("@orderitemids",orderInvoice.OrderItemIDs),
-                new SqlParameter("@invoiceno",orderInvoice.InvoiceNo),
-                new SqlParameter("@sellertradename",orderInvoice.SellerTradeName),
-                new SqlParameter("@sellerlegalname",orderInvoice.SellerLegalName),
-                new SqlParameter("@sellergstno",orderInvoice.SellerGSTNo),
-                new SqlParameter("@sellerregisteredaddressline1",orderInvoice.SellerRegisteredAddressLine1),
-                new SqlParameter("@sellerregisteredaddressline2",orderInvoice.SellerRegisteredAddressLine2),
-                new SqlParameter("@sellerregisteredlandmark",orderInvoice.SellerRegisteredLandmark),
-                new SqlParameter("@sellerregisteredpincode",orderInvoice.SellerRegisteredPincode),
-                new SqlParameter("@sellerregisteredcity",orderInvoice.SellerRegisteredCity),
-                new SqlParameter("@sellerregisteredstate",orderInvoice.SellerRegisteredState),
-                new SqlParameter("@sellerregisteredcountry",orderInvoice.SellerRegisteredCountry),
-                new SqlParameter("@sellerpickupaddressline1",orderInvoice.SellerPickupAddressLine1),
-                new SqlParameter("@sellerpickupaddressline2",orderInvoice.SellerPickupAddressLine2),
-                new SqlParameter("@sellerpickuplandmark",orderInvoice.SellerPickupLandmark),
-                new SqlParameter("@sellerpickuppincode",orderInvoice.SellerPickupPincode),
-                new SqlParameter("@sellerpickupcity",orderInvoice.SellerPickupCity),
-                new SqlParameter("@sellerpickupstate",orderInvoice.SellerPickupState),
-                new SqlParameter("@sellerpickupcountry",orderInvoice.SellerPickupCountry),
-                new SqlParameter("@sellerpickupcontactpersonname",orderInvoice.SellerPickupContactPersonName),
-                new SqlParameter("@sellerpickupcontactpersonmobileno",orderInvoice.SellerPickupContactPersonMobileNo),
-                new SqlParameter("@sellerPickupTaxNo",orderInvoice.SellerPickupTaxNo),
-                new SqlParameter("@invoiceamount",orderInvoice.InvoiceAmount),
-                new SqlParameter("@invoiceCodCharges",orderInvoice.InvoiceCodCharges),
-                new SqlParameter("@status",orderInvoice.Status),
-                new SqlParameter("@createdAt", orderInvoice.CreatedAt),
-                new SqlParameter("@createdBy", orderInvoice.CreatedBy),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "add"),
+                new MySqlParameter("@id",orderInvoice.Id),
+                new MySqlParameter("@packageid",orderInvoice.PackageID),
+                new MySqlParameter("@orderid",orderInvoice.OrderID),
+                new MySqlParameter("@orderitemids",orderInvoice.OrderItemIDs),
+                new MySqlParameter("@invoiceno",orderInvoice.InvoiceNo),
+                new MySqlParameter("@sellertradename",orderInvoice.SellerTradeName),
+                new MySqlParameter("@sellerlegalname",orderInvoice.SellerLegalName),
+                new MySqlParameter("@sellergstno",orderInvoice.SellerGSTNo),
+                new MySqlParameter("@sellerregisteredaddressline1",orderInvoice.SellerRegisteredAddressLine1),
+                new MySqlParameter("@sellerregisteredaddressline2",orderInvoice.SellerRegisteredAddressLine2),
+                new MySqlParameter("@sellerregisteredlandmark",orderInvoice.SellerRegisteredLandmark),
+                new MySqlParameter("@sellerregisteredpincode",orderInvoice.SellerRegisteredPincode),
+                new MySqlParameter("@sellerregisteredcity",orderInvoice.SellerRegisteredCity),
+                new MySqlParameter("@sellerregisteredstate",orderInvoice.SellerRegisteredState),
+                new MySqlParameter("@sellerregisteredcountry",orderInvoice.SellerRegisteredCountry),
+                new MySqlParameter("@sellerpickupaddressline1",orderInvoice.SellerPickupAddressLine1),
+                new MySqlParameter("@sellerpickupaddressline2",orderInvoice.SellerPickupAddressLine2),
+                new MySqlParameter("@sellerpickuplandmark",orderInvoice.SellerPickupLandmark),
+                new MySqlParameter("@sellerpickuppincode",orderInvoice.SellerPickupPincode),
+                new MySqlParameter("@sellerpickupcity",orderInvoice.SellerPickupCity),
+                new MySqlParameter("@sellerpickupstate",orderInvoice.SellerPickupState),
+                new MySqlParameter("@sellerpickupcountry",orderInvoice.SellerPickupCountry),
+                new MySqlParameter("@sellerpickupcontactpersonname",orderInvoice.SellerPickupContactPersonName),
+                new MySqlParameter("@sellerpickupcontactpersonmobileno",orderInvoice.SellerPickupContactPersonMobileNo),
+                new MySqlParameter("@sellerPickupTaxNo",orderInvoice.SellerPickupTaxNo),
+                new MySqlParameter("@invoiceamount",orderInvoice.InvoiceAmount),
+                new MySqlParameter("@invoiceCodCharges",orderInvoice.InvoiceCodCharges),
+                new MySqlParameter("@status",orderInvoice.Status),
+                new MySqlParameter("@createdAt", orderInvoice.CreatedAt),
+                new MySqlParameter("@createdBy", orderInvoice.CreatedBy),
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderInvoice, output, newid, message, sqlParams.ToArray());
@@ -90,52 +90,52 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "update"),
-                new SqlParameter("@id",orderInvoice.Id),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "update"),
+                new MySqlParameter("@id",orderInvoice.Id),
 
-                new SqlParameter("@sellertradename",orderInvoice.SellerTradeName),
-                new SqlParameter("@sellerlegalname",orderInvoice.SellerLegalName),
-                new SqlParameter("@sellergstno",orderInvoice.SellerGSTNo),
-                new SqlParameter("@sellerregisteredaddressline1",orderInvoice.SellerRegisteredAddressLine1),
-                new SqlParameter("@sellerregisteredaddressline2",orderInvoice.SellerRegisteredAddressLine2),
-                new SqlParameter("@sellerregisteredlandmark",orderInvoice.SellerRegisteredLandmark),
-                new SqlParameter("@sellerregisteredpincode",orderInvoice.SellerRegisteredPincode),
-                new SqlParameter("@sellerregisteredcity",orderInvoice.SellerRegisteredCity),
-                new SqlParameter("@sellerregisteredstate",orderInvoice.SellerRegisteredState),
-                new SqlParameter("@sellerregisteredcountry",orderInvoice.SellerRegisteredCountry),
-                new SqlParameter("@sellerpickupaddressline1",orderInvoice.SellerPickupAddressLine1),
-                new SqlParameter("@sellerpickupaddressline2",orderInvoice.SellerPickupAddressLine2),
-                new SqlParameter("@sellerpickuplandmark",orderInvoice.SellerPickupLandmark),
-                new SqlParameter("@sellerpickuppincode",orderInvoice.SellerPickupPincode),
-                new SqlParameter("@sellerpickupcity",orderInvoice.SellerPickupCity),
-                new SqlParameter("@sellerpickupstate",orderInvoice.SellerPickupState),
-                new SqlParameter("@sellerpickupcountry",orderInvoice.SellerPickupCountry),
-                new SqlParameter("@sellerpickupcontactpersonname",orderInvoice.SellerPickupContactPersonName),
-                new SqlParameter("@sellerpickupcontactpersonmobileno",orderInvoice.SellerPickupContactPersonMobileNo),
-                new SqlParameter("@sellerPickupTaxNo",orderInvoice.SellerPickupTaxNo),
-                new SqlParameter("@invoiceamount",orderInvoice.InvoiceAmount),
-                new SqlParameter("@invoiceCodCharges",orderInvoice.InvoiceCodCharges),
-                new SqlParameter("@status",orderInvoice.Status),
-                new SqlParameter("@modifiedby", orderInvoice.ModifiedBy),
-                new SqlParameter("@modifiedat", orderInvoice.ModifiedAt)
+                new MySqlParameter("@sellertradename",orderInvoice.SellerTradeName),
+                new MySqlParameter("@sellerlegalname",orderInvoice.SellerLegalName),
+                new MySqlParameter("@sellergstno",orderInvoice.SellerGSTNo),
+                new MySqlParameter("@sellerregisteredaddressline1",orderInvoice.SellerRegisteredAddressLine1),
+                new MySqlParameter("@sellerregisteredaddressline2",orderInvoice.SellerRegisteredAddressLine2),
+                new MySqlParameter("@sellerregisteredlandmark",orderInvoice.SellerRegisteredLandmark),
+                new MySqlParameter("@sellerregisteredpincode",orderInvoice.SellerRegisteredPincode),
+                new MySqlParameter("@sellerregisteredcity",orderInvoice.SellerRegisteredCity),
+                new MySqlParameter("@sellerregisteredstate",orderInvoice.SellerRegisteredState),
+                new MySqlParameter("@sellerregisteredcountry",orderInvoice.SellerRegisteredCountry),
+                new MySqlParameter("@sellerpickupaddressline1",orderInvoice.SellerPickupAddressLine1),
+                new MySqlParameter("@sellerpickupaddressline2",orderInvoice.SellerPickupAddressLine2),
+                new MySqlParameter("@sellerpickuplandmark",orderInvoice.SellerPickupLandmark),
+                new MySqlParameter("@sellerpickuppincode",orderInvoice.SellerPickupPincode),
+                new MySqlParameter("@sellerpickupcity",orderInvoice.SellerPickupCity),
+                new MySqlParameter("@sellerpickupstate",orderInvoice.SellerPickupState),
+                new MySqlParameter("@sellerpickupcountry",orderInvoice.SellerPickupCountry),
+                new MySqlParameter("@sellerpickupcontactpersonname",orderInvoice.SellerPickupContactPersonName),
+                new MySqlParameter("@sellerpickupcontactpersonmobileno",orderInvoice.SellerPickupContactPersonMobileNo),
+                new MySqlParameter("@sellerPickupTaxNo",orderInvoice.SellerPickupTaxNo),
+                new MySqlParameter("@invoiceamount",orderInvoice.InvoiceAmount),
+                new MySqlParameter("@invoiceCodCharges",orderInvoice.InvoiceCodCharges),
+                new MySqlParameter("@status",orderInvoice.Status),
+                new MySqlParameter("@modifiedby", orderInvoice.ModifiedBy),
+                new MySqlParameter("@modifiedat", orderInvoice.ModifiedAt)
 
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderInvoice, output, newid, message, sqlParams.ToArray());
@@ -150,27 +150,27 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", "delete"),
-                new SqlParameter("@id", orderInvoice.Id),
-                new SqlParameter("@deletedby", orderInvoice.DeletedBy),
-                new SqlParameter("@deletedat", orderInvoice.DeletedAt),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", "delete"),
+                new MySqlParameter("@id", orderInvoice.Id),
+                new MySqlParameter("@deletedby", orderInvoice.DeletedBy),
+                new MySqlParameter("@deletedat", orderInvoice.DeletedAt),
             };
 
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter newid = new SqlParameter();
+                MySqlParameter newid = new MySqlParameter();
                 newid.ParameterName = "@newid";
                 newid.Direction = ParameterDirection.Output;
-                newid.SqlDbType = SqlDbType.BigInt;
+                newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.OrderInvoice, output, newid, message, sqlParams.ToArray());
@@ -185,36 +185,36 @@ namespace Order.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                //new SqlParameter("@mode", "get"),
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", orderInvoice.Id),
-                new SqlParameter("@packageid", orderInvoice.PackageID),
-                new SqlParameter("@sellerId", orderInvoice.SellerId),
-                new SqlParameter("@orderid", orderInvoice.OrderID),
-                new SqlParameter("@orderitemids", orderInvoice.OrderItemIDs),
-                new SqlParameter("@invoiceno", orderInvoice.InvoiceNo),
-                new SqlParameter("@searchtext", orderInvoice.SearchText),
-                new SqlParameter("@status", orderInvoice.Status),
-                new SqlParameter("@isDeleted", orderInvoice.IsDeleted),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@PageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                //new MySqlParameter("@mode", "get"),
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", orderInvoice.Id),
+                new MySqlParameter("@packageid", orderInvoice.PackageID),
+                new MySqlParameter("@sellerId", orderInvoice.SellerId),
+                new MySqlParameter("@orderid", orderInvoice.OrderID),
+                new MySqlParameter("@orderitemids", orderInvoice.OrderItemIDs),
+                new MySqlParameter("@invoiceno", orderInvoice.InvoiceNo),
+                new MySqlParameter("@searchtext", orderInvoice.SearchText),
+                new MySqlParameter("@status", orderInvoice.Status),
+                new MySqlParameter("@isDeleted", orderInvoice.IsDeleted),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@PageSize", PageSize),
 
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                //SqlParameter newid = new SqlParameter();
+                //MySqlParameter newid = new MySqlParameter();
                 //newid.ParameterName = "@newid";
                 //newid.Direction = ParameterDirection.Output;
-                //newid.SqlDbType = SqlDbType.BigInt;
+                //newid.MySqlDbType = MySqlDbType.Int64;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetOrderInvoice, orderInvoiceParserAsync, output, newid: null, message, sqlParams.ToArray());

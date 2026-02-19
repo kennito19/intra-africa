@@ -1,4 +1,4 @@
-﻿using Catalogue.Application.IRepositories;
+using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
 using Catalogue.Infrastructure.Helper;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,30 +32,30 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<SqlParameter>() {
-                new SqlParameter("@mode", Mode),
-                new SqlParameter("@id", productList.ProductId),
-                new SqlParameter("@guid", productList.Guid),
-                new SqlParameter("@parentid", productList.ProductMasterId),
-                new SqlParameter("@categoryid", productList.CategoryId),
-                new SqlParameter("@brandId", productList.BrandID),
-                new SqlParameter("@sellerId", productList.SellerID),
-                new SqlParameter("@assicategoryid", productList.AssiCategoryId),
-                new SqlParameter("@companyskucode", productList.CompanySKUCode),
-                new SqlParameter("@sellerskucode", productList.SellerSKUCode),
-                new SqlParameter("@searchtext", productList.SearchText),
-                new SqlParameter("@pageIndex", PageIndex),
-                new SqlParameter("@pageSize", PageSize),
+                var sqlParams = new List<MySqlParameter>() {
+                new MySqlParameter("@mode", Mode),
+                new MySqlParameter("@id", productList.ProductId),
+                new MySqlParameter("@guid", productList.Guid),
+                new MySqlParameter("@parentid", productList.ProductMasterId),
+                new MySqlParameter("@categoryid", productList.CategoryId),
+                new MySqlParameter("@brandId", productList.BrandID),
+                new MySqlParameter("@sellerId", productList.SellerID),
+                new MySqlParameter("@assicategoryid", productList.AssiCategoryId),
+                new MySqlParameter("@companyskucode", productList.CompanySKUCode),
+                new MySqlParameter("@sellerskucode", productList.SellerSKUCode),
+                new MySqlParameter("@searchtext", productList.SearchText),
+                new MySqlParameter("@pageIndex", PageIndex),
+                new MySqlParameter("@pageSize", PageSize),
             };
-                SqlParameter output = new SqlParameter();
+                MySqlParameter output = new MySqlParameter();
                 output.ParameterName = "@output";
                 output.Direction = ParameterDirection.Output;
-                output.SqlDbType = SqlDbType.Int;
+                output.MySqlDbType = MySqlDbType.Int32;
 
-                SqlParameter message = new SqlParameter();
+                MySqlParameter message = new MySqlParameter();
                 message.ParameterName = "@message";
                 message.Direction = ParameterDirection.Output;
-                message.SqlDbType = SqlDbType.NVarChar;
+                message.MySqlDbType = MySqlDbType.VarChar;
                 message.Size = 50;
 
                 return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetArchiveProducts, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
