@@ -12,6 +12,7 @@ RUN dotnet publish -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-RUN mkdir -p /app/StaticFiles /app/Resources
+COPY --from=build /src/StaticFiles ./StaticFiles
+COPY --from=build /src/Resources ./Resources
 ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "API-Gateway.dll"]

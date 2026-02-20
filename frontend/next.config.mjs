@@ -8,7 +8,7 @@ const nextConfig = {
             { protocol: 'https', hostname: 'encrypted-tbn0.gstatic.com' },
             { protocol: 'https', hostname: 'img.youtube.com' },
             { protocol: 'https', hostname: 'www.youtube.com' },
-            { protocol: 'https', hostname: 'api.intraafrica.hashtechy.space' },
+            { protocol: 'https', hostname: 'api.intra-africa.com' },
             { protocol: 'https', hostname: 'placehold.co' },
         ],
     },

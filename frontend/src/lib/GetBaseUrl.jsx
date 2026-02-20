@@ -6,7 +6,7 @@ import { _exception } from './exceptionMessage'
 import { generateDeviceId } from './nookieProvider'
 
 export const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_API_URL || 'https://api.intraafrica.hashtechy.space/api/'
+  return process.env.NEXT_PUBLIC_API_URL || 'https://api.intra-africa.com/'
 }
 
 export const getUserToken = () => {
@@ -103,7 +103,7 @@ export const changeHandler = (fieldName, value, setFieldValue) => {
 
 export const currencyIcon = 'R '
 export const reactImageUrl =
-  process.env.NEXT_PUBLIC_IMG_URL || 'https://api.intraafrica.hashtechy.space/Resources/'
+  process.env.NEXT_PUBLIC_IMG_URL || 'https://api.intra-africa.com/Resources/'
 
 export const productStatus = [
   { value: 'Active', label: 'Active' },

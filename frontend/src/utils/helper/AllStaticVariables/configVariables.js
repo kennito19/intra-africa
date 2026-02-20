@@ -9,5 +9,5 @@ export const _headKeywords_ =
   'Intra Africa, online shopping, electronics, fashion, home appliances'
 export const _ogDescription_ =
   'Explore a diverse collection of top-notch products at Intra Africa'
-export const _ogUrl_ = 'https://www.intraafrica14.hashtechy.space/'
+export const _ogUrl_ = 'https://www.intra-africa.com/'
 export const _ogLogo_ = `${reactImageUrl}${_categoryImg_}logo.jpg`

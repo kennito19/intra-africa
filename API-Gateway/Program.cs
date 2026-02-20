@@ -82,7 +82,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Env
     app.UseSwaggerUI(x => x.DisplayRequestDuration());
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Removed: Render terminates TLS at its proxy
 app.UseRouting();
 app.UseCors(AllowOrigin);
 app.UseStaticFiles(new StaticFileOptions
