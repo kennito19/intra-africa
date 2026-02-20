@@ -17,14 +17,14 @@ namespace Catalogue.Infrastructure.Repository
     public class TaxTypeValueRespository:ITaxTypeValueRepository
     {
         private readonly IConfiguration _configuration;
-        private SqlConnection con;
+        private MySqlConnection con;
         private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
 
         public TaxTypeValueRespository(IConfiguration configuration)
         {
             _configuration = configuration;
             string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new SqlConnection(connectionString);
+            con = new MySqlConnection(connectionString);
         }
 
         public async Task<BaseResponse<long>> AddTaxTypeValue(TaxTypeValueLibrary taxTypeValueLibrary)

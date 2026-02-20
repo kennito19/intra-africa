@@ -18,7 +18,7 @@ namespace Catalogue.Infrastructure.Repository
     {
         private readonly IConfiguration _configuration;
         private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        SqlConnection con;
+        MySqlConnection con;
 
         public SizeRepository(IConfiguration configuration)
         {

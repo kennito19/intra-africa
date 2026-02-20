@@ -14,12 +14,12 @@ namespace Catalogue.Infrastructure.Repository
 
         private readonly IConfiguration _configuration;
         private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        SqlConnection con;
+        MySqlConnection con;
 
         public UserProductsRepository(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new SqlConnection(connectionString);
+            con = new MySqlConnection(connectionString);
 
             _configuration = configuration;
         }

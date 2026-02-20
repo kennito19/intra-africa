@@ -17,14 +17,14 @@ namespace Catalogue.Infrastructure.Repository
 {
     public class ProductWarehouseRespository : IProductWarehouseRepository
     {
-        private readonly SqlConnection con;
+        private readonly MySqlConnection con;
         private readonly IConfiguration _configuration;
         private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
 
         public ProductWarehouseRespository(IConfiguration configuration)
         {
             string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new SqlConnection(connectionString);
+            con = new MySqlConnection(connectionString);
             _configuration = configuration;
         }
 
