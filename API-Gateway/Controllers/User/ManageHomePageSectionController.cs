@@ -38,7 +38,7 @@ namespace API_Gateway.Controllers.User
         {
             getHomePageSections getHomePage = new getHomePageSections(_configuration, _httpContext);
             JObject res = getHomePage.setSections(status);
-            return Ok(res);
+            return Ok(res.ToString());
         }
 
 
