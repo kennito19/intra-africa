@@ -17,9 +17,9 @@ CREATE PROCEDURE `sp_GetUserProductList`(
     IN p_AvailableProductsOnly TINYINT(1),
     IN p_PriceSort INT,
     IN p_SpecTypeIds LONGTEXT,
-    IN p_date VARCHAR(100),
     IN p_pageIndex INT,
     IN p_pageSize INT,
+    IN p_date VARCHAR(100),
     INOUT p_output INT,
     INOUT p_message VARCHAR(50)
 )

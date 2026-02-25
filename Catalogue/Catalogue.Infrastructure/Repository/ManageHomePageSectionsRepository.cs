@@ -377,8 +377,20 @@ LIMIT @offset, @pageSize;";
 
                 cmd.CommandText = $@"
 SELECT pm.Id, pm.Guid, pm.IsMasterProduct, pm.ParentId, pm.CategoryId, pm.AssiCategoryId,
-       pm.ProductName, pm.CustomeProductName, pm.CompanySKUCode, pm.CreatedAt, pm.ModifiedAt
+       pm.ProductName, pm.CustomeProductName, pm.CompanySKUCode, pm.CreatedAt, pm.ModifiedAt,
+       (SELECT pi.Url FROM ProductImages pi WHERE pi.ProductID = pm.Id AND pi.Type = 'Image' ORDER BY pi.Sequence LIMIT 1) AS Image1,
+       COALESCE(spm.MRP, 0) AS MRP,
+       COALESCE(spm.SellingPrice, 0) AS SellingPrice,
+       COALESCE(spm.Discount, 0) AS Discount,
+       COALESCE(spm.Quantity, 0) AS Quantity,
+       spm.Id AS SellerProductId,
+       spm.SellerID AS SellerId,
+       spm.BrandID AS BrandId,
+       spm.ExtraDetails,
+       spm.Status,
+       spm.Live
 FROM ProductMaster pm
+LEFT JOIN SellerProductMaster spm ON spm.ProductID = pm.Id AND spm.IsDeleted = 0 AND spm.Status = 'Active'
 {whereClause}
 ORDER BY pm.Id DESC
 LIMIT @top;";
@@ -399,23 +411,23 @@ LIMIT @top;";
                         productName = reader.IsDBNull(reader.GetOrdinal("ProductName")) ? null : reader.GetString(reader.GetOrdinal("ProductName")),
                         customeProductName = reader.IsDBNull(reader.GetOrdinal("CustomeProductName")) ? null : reader.GetString(reader.GetOrdinal("CustomeProductName")),
                         companySkuCode = reader.IsDBNull(reader.GetOrdinal("CompanySKUCode")) ? null : reader.GetString(reader.GetOrdinal("CompanySKUCode")),
-                        image1 = null,
-                        mrp = 0,
-                        sellingPrice = 0,
-                        discount = 0,
-                        Quantity = 0,
+                        image1 = reader.IsDBNull(reader.GetOrdinal("Image1")) ? null : reader.GetString(reader.GetOrdinal("Image1")),
+                        mrp = reader.IsDBNull(reader.GetOrdinal("MRP")) ? 0 : reader.GetDecimal(reader.GetOrdinal("MRP")),
+                        sellingPrice = reader.IsDBNull(reader.GetOrdinal("SellingPrice")) ? 0 : reader.GetDecimal(reader.GetOrdinal("SellingPrice")),
+                        discount = reader.IsDBNull(reader.GetOrdinal("Discount")) ? 0 : reader.GetDecimal(reader.GetOrdinal("Discount")),
+                        Quantity = reader.IsDBNull(reader.GetOrdinal("Quantity")) ? 0 : reader.GetInt32(reader.GetOrdinal("Quantity")),
                         createdAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                         modifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt")),
                         categoryName = null,
                         categoryPathIds = null,
                         categoryPathNames = null,
-                        sellerProductId = 0,
-                        sellerId = null,
-                        brandId = 0,
+                        sellerProductId = reader.IsDBNull(reader.GetOrdinal("SellerProductId")) ? 0 : reader.GetInt32(reader.GetOrdinal("SellerProductId")),
+                        sellerId = reader.IsDBNull(reader.GetOrdinal("SellerId")) ? null : reader.GetString(reader.GetOrdinal("SellerId")),
+                        brandId = reader.IsDBNull(reader.GetOrdinal("BrandId")) ? 0 : reader.GetInt32(reader.GetOrdinal("BrandId")),
                         brandName = null,
-                        status = "Active",
-                        live = true,
-                        extraDetails = null,
+                        status = reader.IsDBNull(reader.GetOrdinal("Status")) ? "Active" : reader.GetString(reader.GetOrdinal("Status")),
+                        live = !reader.IsDBNull(reader.GetOrdinal("Live")) && reader.GetBoolean(reader.GetOrdinal("Live")),
+                        extraDetails = reader.IsDBNull(reader.GetOrdinal("ExtraDetails")) ? null : reader.GetString(reader.GetOrdinal("ExtraDetails")),
                         totalVariant = 0
                     });
                 }

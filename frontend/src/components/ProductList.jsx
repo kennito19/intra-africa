@@ -87,9 +87,9 @@ const ProductList = ({
           <Image
             src={encodeURI(
               `${reactImageUrl}${_productImg_}${
-                product?.image1 ??
-                product?.products?.image1 ??
-                product?.productImage ??
+                (product?.image1 && product.image1 !== 'undefined') ? product.image1 :
+                (product?.products?.image1 && product.products.image1 !== 'undefined') ? product.products.image1 :
+                (product?.productImage && product.productImage !== 'undefined') ? product.productImage :
                 'pexels-base-product.jpg'
               }`
             )}

@@ -454,7 +454,7 @@ namespace API_Gateway.Controllers.Admin
         }
 
         [HttpGet("GetProductHomePageSection")]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult<ApiHelper> GetProductHomePageSection(int? categoryId = 0, int? topProduct = 0, string? productId = null)
         {
             string userId = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault() != null ? HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value : null;
