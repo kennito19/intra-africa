@@ -356,7 +356,7 @@ const HomePage = ({ homePageData }) => {
               />
             </div>
           )
-        case 'Thumbnail':
+        case 'Thumbline':
           return (
             <div key={value?.section?.section_id}>
               <Categories

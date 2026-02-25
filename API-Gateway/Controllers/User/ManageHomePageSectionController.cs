@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.User
         }
 
         [HttpGet("GetHomePageSection")]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult<ApiHelper> GetHomePageSection(string? status = null)
         {
             getHomePageSections getHomePage = new getHomePageSections(_configuration, _httpContext);
@@ -43,7 +43,7 @@ namespace API_Gateway.Controllers.User
 
 
         [HttpGet("GetMenu")]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult<ApiHelper> GetMenu()
         {
             getHomePageSections getHomePage = new getHomePageSections(_configuration, _httpContext);
