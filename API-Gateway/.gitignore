@@ -364,6 +364,18 @@ FodyWeavers.xsd
 appsettings.Development.json
 appsettings.json
 *.jpg
+*.jpeg
 *.png
+# Allow Resources image directories (static files for production)
+!Resources/HomePages/
+!Resources/HomePages/**
+!Resources/BrandImages/
+!Resources/BrandImages/**
+!Resources/ProductImage/
+!Resources/ProductImage/**
+!Resources/UserProfile/
+!Resources/UserProfile/**
+!Resources/Images/
+!Resources/Images/**
 /privateEncryption.pem
 *.pem
