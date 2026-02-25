@@ -9,13 +9,13 @@ namespace API_Gateway.Controllers.User
 {
     [Route("api/user/[controller]")]
     [ApiController]
-    public class UserProductController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
         private readonly IConfiguration _configuration;
         public static string CatalogueUrl = string.Empty;
-        public UserProductController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProductController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;
@@ -25,7 +25,7 @@ namespace API_Gateway.Controllers.User
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult Get(int? CategoryId = 0, string? SellerIds = null, string? BrandIds = null, string? searchTexts = null, string? SizeIds = null, string? ColorIds = null, string? productCollectionId = null, string? MinPrice = null, string? MaxPrice = null, string? MinDiscount = null, bool? available = false, int? PriceSort = 0, string? SpecTypeValueIds = null, int? pageIndex = 1, int? pageSize = 30, string? userId = null, string? fby = null)
         {
             GetProduct product = new GetProduct(_configuration, _httpContext);
@@ -39,7 +39,7 @@ namespace API_Gateway.Controllers.User
         }
 
         [HttpGet("ById")]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult GetById(string ProductGUID, int? sizeId = 0, string? sellerId = null, string? status = null, bool? isProductExist = null, bool? isDeleted = null, bool? isArchive = null, string? userId = null)
         {
             GetProduct product = new GetProduct(_configuration, _httpContext);
@@ -80,7 +80,7 @@ namespace API_Gateway.Controllers.User
 
 
         [HttpGet("searchsuggestion")]
-        [Authorize]
+        [AllowAnonymous]
         public ActionResult<ApiHelper> searchsuggestion(string searchText)
         {
             GetProduct getProduct = new GetProduct(_configuration, _httpContext);

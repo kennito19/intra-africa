@@ -10,8 +10,14 @@ const page = async ({ searchParams }) => {
     if (!isValid) return { data: null, code: 500 }
   }
 
-  if (!decryptId(searchParams?.CategoryId)) {
-    return { notFound: true }
+  // CategoryId is optional - if missing, show all products (CategoryId=0)
+  if (searchParams?.CategoryId) {
+    try {
+      const categoryId = decryptId(searchParams.CategoryId)
+      if (!categoryId && categoryId !== '0') return { notFound: true }
+    } catch {
+      return { notFound: true }
+    }
   }
 
   const queryParams = `?${query}&pageIndex=1&pageSize=10`
