@@ -89,13 +89,17 @@ const ProductList = ({
               `${reactImageUrl}${_productImg_}${
                 product?.image1 ??
                 product?.products?.image1 ??
-                product?.productImage
+                product?.productImage ??
+                'pexels-base-product.jpg'
               }`
             )}
             alt={product?.productName}
             width={300}
             height={300}
             className='prd-list-image'
+            onError={(e) => {
+              e.target.src = `${reactImageUrl}${_productImg_}pexels-base-product.jpg`
+            }}
           />
         </div>
       </Link>
