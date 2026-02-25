@@ -16,7 +16,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(int? CategoryId = 0, string? guIds = null, string? SellerIds = null, string? BrandIds = null, string? searchTexts = null, string? SizeIds = null, string? ColorIds = null, string? productCollectionId = null, string? MinPrice = null, string? MaxPrice = null, string? MinDiscount = null, bool? availableProduct = false, int? PriceSort = 0, string? SpecTypeIds = null, int? pageIndex = 1, int? pageSize = 30)
         {
             UserProductParams parameters = new UserProductParams()
