@@ -52,7 +52,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ManageStaticPagesLibrary>>> get(int Id = 0, string? Name = null, string? Status = null, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Searchtext = null)
         {
             ManageStaticPagesLibrary staticPages = new ManageStaticPagesLibrary();

@@ -19,7 +19,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<CollectionProductsList>>> Get(int collectionId = 0, int Id = 0, int categoryId = 0, string? sellerId = null, int? brandId = 0,  int pageIndex = 1, int pageSize = 10, string? searchText = null)
         {
             CollectionProductsList products = new CollectionProductsList();

@@ -55,7 +55,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<CategoryLibrary>>> get(int Id = 0, int? ParentID = 0, string? ParentName = null, string? Name = null, string? PathIds = null, string? Status = null,string? Guid = null, bool Isdeleted = false , bool Getparent =false, bool Getchild = false, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Searchtext = null)
         {
             CategoryLibrary category = new CategoryLibrary();
@@ -73,7 +73,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet("GetCategoryWithParent")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<CategoryLibrary>>> GetCategoryWithParent(int Categoryid = 0)
         {
             

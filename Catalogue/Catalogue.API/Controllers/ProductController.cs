@@ -124,7 +124,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet("getUserProductDetails")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<UserProductDetails>>> getUserProductDetails(string ProductGuid)
         {
             var data = await _productsService.getUserProductDetails(ProductGuid);
@@ -147,7 +147,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet("getProductCompare")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ProductCompare>>> getProductCompare(string SellerProductId)
         {
             var data = await _productsService.getProductCompare(SellerProductId);
@@ -155,7 +155,7 @@ namespace Catalogue.API.Controllers
         }
         
         [HttpGet("getProductCompareBrand")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ProductCompareBrand>>> getProductCompareBrand(int CategoryId)
         {
             var data = await _productsService.getProductCompareBrand(CategoryId);
@@ -163,7 +163,7 @@ namespace Catalogue.API.Controllers
         }
         
         [HttpGet("getProductCompareBrandProduct")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ProductCompareBrandProduct>>> getProductCompareBrandProduct(int CategoryId,int BrandId)
         {
             var data = await _productsService.getProductCompareBrandProduct(CategoryId, BrandId);
@@ -171,7 +171,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet("getProductBulkDetails")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ProductBulkDetails>>> getProductBulkDetails(int CategoryId, int BrandId)
         {
             ProductBulkDetailsParams detailsParams = new ProductBulkDetailsParams();

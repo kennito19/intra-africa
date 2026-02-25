@@ -71,7 +71,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet("getFrontHomepageDetails")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<FrontHomepageDetailsDto>>> GetFrontHomepageDetails(string? Status=null)
         {
             var data = await _homePageDetailsService.GetFrontHomepageDetails("homePage", Status);

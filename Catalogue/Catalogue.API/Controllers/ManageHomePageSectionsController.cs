@@ -52,7 +52,7 @@ namespace Catalogue.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ManageHomePageSectionsLibrary>>> get(int Id = 0, int? LayoutId = 0, int? LayoutTypeId = 0, string? Name = null, string? LayoutName = null, string? LayoutTypeName = null, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Status = null, string? Searchtext = null)
         {
             ManageHomePageSectionsLibrary layout = new ManageHomePageSectionsLibrary();
@@ -71,7 +71,7 @@ namespace Catalogue.API.Controllers
 
 
         [HttpGet("getProductHomePageSection")]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ProductHomePageSectionLibrary>>> getProductHomePageSection(int categoryId = 0, int? topProduct = 0, string? productId = null, string? Mode = "get")
         {
             ProductHomePageSectionLibrary productSection = new ProductHomePageSectionLibrary();

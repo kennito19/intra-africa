@@ -53,7 +53,7 @@ namespace Catalogue.API.Controllers
 		}
 
 		[HttpGet]
-        [Authorize(Policy = "General")]
+        [AllowAnonymous]
         public async Task<BaseResponse<List<ManageHeaderMenu>>> Get(int? id = null, string? name = null, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Searchtext = null)
 		{
 			ManageHeaderMenu manageHeader = new ManageHeaderMenu();
