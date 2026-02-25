@@ -1,4 +1,4 @@
-﻿using API_Gateway.Common;
+using API_Gateway.Common;
 using API_Gateway.Helper;
 using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.IDServer;
@@ -37,16 +37,55 @@ namespace API_Gateway.Controllers.Admin
         [HttpPost("Admin/Login")]
         public async Task<IActionResult> Login(SignIn model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
             {
                 var response = api.ApiCall(IDServerUrl, EndPoints.AdminSignIn, "POST", model);
                 var result = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, new
+                    {
+                        code = (int)response.StatusCode,
+                        message = "Admin login upstream service failed.",
+                        detail = string.IsNullOrWhiteSpace(result) ? null : result
+                    });
+                }
+
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    return StatusCode(502, new
+                    {
+                        code = 502,
+                        message = "Admin login upstream returned empty response."
+                    });
+                }
+
                 var rsf = JsonConvert.DeserializeObject<SignedInUserResponse>(result);
+                if (rsf == null)
+                {
+                    return StatusCode(502, new
+                    {
+                        code = 502,
+                        message = "Admin login upstream returned invalid JSON payload."
+                    });
+                }
+
                 return Ok(rsf);
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(ModelState);
+                return StatusCode(503, new
+                {
+                    code = 503,
+                    message = "Admin login service unavailable.",
+                    detail = ex.Message
+                });
             }
         }
 
@@ -75,7 +114,7 @@ namespace API_Gateway.Controllers.Admin
                 var response = api.ApiCall(IDServerUrl, EndPoints.ForgotPassword, "POST", model);
                 baseResponse = baseResponse.JsonParseList(response);
 
-                List<ResetModel> Resetdata = (List<ResetModel>)baseResponse.Data;
+                List<ResetModel> Resetdata = baseResponse.Data as List<ResetModel> ?? new List<ResetModel>();
 
                 if (Resetdata.Count > 0)
                 {
@@ -195,8 +234,23 @@ namespace API_Gateway.Controllers.Admin
         public async Task<IActionResult> GetNewTokens(RequestNewTokenModel model)
         {
             var response = api.ApiCall(IDServerUrl, EndPoints.GetNewAccessToken, "POST", model);
-            var result = response.Content.ReadAsStringAsync().Result;
-            return Ok(result);
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                return Ok(new { code = 204, message = "No token payload returned" });
+            }
+
+            try
+            {
+                var parsed = JsonConvert.DeserializeObject<object>(result);
+                return Ok(parsed);
+            }
+            catch
+            {
+                // Fallback for already-serialized JSON text payloads.
+                return Content(result, "application/json");
+            }
         }
 
         [Authorize(Roles = "Admin")]

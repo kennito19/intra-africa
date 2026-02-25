@@ -446,7 +446,7 @@ namespace API_Gateway.Helper
 
             if (cartResponse.code == 200)
             {
-                lstCart = (List<GetCheckOutDetailsList>)cartResponse.Data;
+                lstCart = cartResponse.Data as List<GetCheckOutDetailsList>;
             }
             return lstCart;
         }

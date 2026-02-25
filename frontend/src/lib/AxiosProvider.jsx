@@ -16,10 +16,8 @@ api.interceptors.request.use(
     const token = getUserToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      return config
-    } else {
-      handleLogout()
     }
+    return config
   },
   (error) => {
     return Promise.reject(error)

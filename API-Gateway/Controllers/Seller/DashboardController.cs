@@ -42,7 +42,7 @@ namespace API_Gateway.Controllers.Seller
             BaseResponse<BrandCounts> baseResponse = new BaseResponse<BrandCounts>();
             var response = helper.ApiCall(UserUrl, EndPoints.GetBrandCounts + "?days=" + days + "&sellerId=" + sellerId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            BrandCounts brandCounts = (BrandCounts)baseResponse.Data;
+            BrandCounts brandCounts = baseResponse.Data as BrandCounts;
             return Ok(baseResponse);
         }
 
@@ -54,7 +54,7 @@ namespace API_Gateway.Controllers.Seller
             BaseResponse<ProductCounts> baseResponse = new BaseResponse<ProductCounts>();
             var response = helper.ApiCall(URL, EndPoints.GetProductCounts + "?days=" + days + "&sellerId=" + sellerId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            ProductCounts productCounts = (ProductCounts)baseResponse.Data;
+            ProductCounts productCounts = baseResponse.Data as ProductCounts;
             return Ok(baseResponse);
         }
 
@@ -66,7 +66,7 @@ namespace API_Gateway.Controllers.Seller
             BaseResponse<OrdersCount> baseResponse = new BaseResponse<OrdersCount>();
             var response = helper.ApiCall(OrderUrl, EndPoints.OrderCount + "?days=" + days + "&sellerId=" + sellerId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            OrdersCount ordersCount = (OrdersCount)baseResponse.Data;
+            OrdersCount ordersCount = baseResponse.Data as OrdersCount;
             return Ok(baseResponse);
         }
         
@@ -155,7 +155,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
 
-            List<OrderItems> orders = (List<OrderItems>)baseResponse.Data;
+            List<OrderItems> orders = baseResponse.Data as List<OrderItems> ?? new List<OrderItems>();
             orders = orders.Where(p => p.Status.ToLower() != "replaced" && p.Status.ToLower() != "returned" && p.Status.ToLower() != "exchanged" && p.Status.ToLower() != "initiate" && p.Status.ToLower() != "cancelled").ToList();
             int DayRange = 0;
             if (ReportDays == "7") { DayRange = 1; }

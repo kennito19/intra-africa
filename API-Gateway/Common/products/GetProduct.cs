@@ -137,7 +137,7 @@ namespace API_Gateway.Common.products
             //    List<SellerKycList> lstSellers = new List<SellerKycList>();
             //    if (sellerBaseResponse.code == 200)
             //    {
-            //        List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+            //        List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
             //        sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             //        if (seller != null)
             //        {
@@ -226,7 +226,7 @@ namespace API_Gateway.Common.products
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "/getProductCompare?SellerProductId=" + SellerProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<ProductComparision> productComparisions = (List<ProductComparision>)baseResponse.Data;
+            List<ProductComparision> productComparisions = baseResponse.Data as List<ProductComparision>;
             List<KeyValueItem> scs = new List<KeyValueItem>();
 
             JObject ProductSummary = new JObject();
@@ -385,7 +385,7 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
 
-            List<ProductCompareBrand> details = (List<ProductCompareBrand>)baseResponse.Data;
+            List<ProductCompareBrand> details = baseResponse.Data as List<ProductCompareBrand>;
 
 
 
@@ -406,7 +406,7 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
 
-            List<ProductCompareBrandProduct> details = (List<ProductCompareBrandProduct>)baseResponse.Data;
+            List<ProductCompareBrandProduct> details = baseResponse.Data as List<ProductCompareBrandProduct>;
 
 
 
@@ -578,7 +578,7 @@ namespace API_Gateway.Common.products
             var responseFilterProduct = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&Mode=get&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
             baseResponseFilterProduct = baseResponseFilterProduct.JsonParseList(responseFilterProduct);
 
-            List<UserProductList> listFilterProduct = (List<UserProductList>)baseResponseFilterProduct.Data;
+            List<UserProductList> listFilterProduct = baseResponseFilterProduct.Data as List<UserProductList>;
 
             //var flist = listFilterProduct.Where(x => x.flag == f).ToList();
 
@@ -630,7 +630,7 @@ namespace API_Gateway.Common.products
                 responseFilterProduct = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&BrandIds=" + BrandIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&Mode=get&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 baseResponseFilterProduct = baseResponseFilterProduct.JsonParseList(responseFilterProduct);
 
-                listFilterProduct = (List<UserProductList>)baseResponseFilterProduct.Data;
+                listFilterProduct = baseResponseFilterProduct.Data as List<UserProductList>;
 
                 sizefilter = listFilterProduct.Where(x => x.flag == f && x.F_SizeID != null).Distinct().Select(x => new SizeFilterDTO
                 {
@@ -673,7 +673,7 @@ namespace API_Gateway.Common.products
                 responseFilterProduct = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&BrandIds=" + filterBrandIds + "&ColorIds=" + ColorIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&Mode=get&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 baseResponseFilterProduct = baseResponseFilterProduct.JsonParseList(responseFilterProduct);
 
-                listFilterProduct = (List<UserProductList>)baseResponseFilterProduct.Data;
+                listFilterProduct = baseResponseFilterProduct.Data as List<UserProductList>;
 
                 sizefilter = listFilterProduct.Where(x => x.flag == f && x.F_SizeID != null).Distinct().Select(x => new SizeFilterDTO
                 {
@@ -709,7 +709,7 @@ namespace API_Gateway.Common.products
                 responseFilterProduct = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&BrandIds=" + filterBrandIds + "&SizeIds=" + SizeIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&Mode=get&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 baseResponseFilterProduct = baseResponseFilterProduct.JsonParseList(responseFilterProduct);
 
-                listFilterProduct = (List<UserProductList>)baseResponseFilterProduct.Data;
+                listFilterProduct = baseResponseFilterProduct.Data as List<UserProductList>;
 
                 colorfilter = listFilterProduct.Where(x => x.flag == f && x.F_ColorID != null).Distinct().Select(x => new ColorFilterDTO
                 {
@@ -756,7 +756,7 @@ namespace API_Gateway.Common.products
             BaseResponse<Wishlist> baseResponseWishlist = new BaseResponse<Wishlist>();
             var responseWish = helper.ApiCall(UserURL, EndPoints.Wishlist + "?UserID=" + userId + "&pageIndex=0&pageSize=0", "GET", null);
             baseResponseWishlist = baseResponseWishlist.JsonParseList(responseWish);
-            List<Wishlist> listWishlist = (List<Wishlist>)baseResponseWishlist.Data;
+            List<Wishlist> listWishlist = baseResponseWishlist.Data as List<Wishlist>;
 
             #endregion
 
@@ -848,21 +848,21 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
             GetProductDTO product = new GetProductDTO();
-            Products details = (Products)baseResponse.Data;
+            Products details = baseResponse.Data as Products;
 
             product.productId = details.Id;
             product.productGuid = details.Guid;
-            product.CategoryId = (int)details.CategoryId;
+            product.CategoryId = details.CategoryId ?? 0;
             product.CategoryName = details.CategoryName;
             product.CategoryPathName = details.CategoryPathNames;
 
             product.ParentId = details.ParentId;
-            product.AssiCategoryId = (int)details.AssiCategoryId;
-            product.HSNCodeId = (int)details.HSNCodeId;
+            product.AssiCategoryId = details.AssiCategoryId ?? 0;
+            product.HSNCodeId = details.HSNCodeId ?? 0;
             product.CompanySKUCode = details.CompanySKUCode;
             product.ProductName = details.ProductName;
             product.CustomeProductName = details.CustomeProductName;
-            product.TaxValueId = (int)details.TaxValueId;
+            product.TaxValueId = details.TaxValueId ?? 0;
 
             product.Description = details.Description;
             product.Highlights = details.Highlights;
@@ -870,7 +870,7 @@ namespace API_Gateway.Common.products
             product.ProductLength = details.ProductLength;
             product.ProductBreadth = details.ProductBreadth;
             product.ProductHeight = details.ProductHeight;
-            product.ProductWeight = (decimal)details.ProductWeight;
+            product.ProductWeight = details.ProductWeight ?? 0;
             List<SellerProductDTO> SellerData = BindSellerProduct(ProductId, sellerProductId, sizeId, sellerId, live, isProductExist, status, isDeleted, isArchive);
             List<SellerProductDTO> _SellerData = new List<SellerProductDTO>();
             if (SellerData.Count() > 0)
@@ -959,21 +959,21 @@ namespace API_Gateway.Common.products
             {
                 productId = details.Id,
                 productGuid = details.Guid,
-                CategoryId = (int)details.CategoryId,
+                CategoryId = details.CategoryId ?? 0,
                 ParentId = details.ParentId,
-                AssiCategoryId = (int)details.AssiCategoryId,
-                HSNCodeId = (int)details.HSNCodeId,
+                AssiCategoryId = details.AssiCategoryId ?? 0,
+                HSNCodeId = details.HSNCodeId ?? 0,
                 CompanySKUCode = details.CompanySKUCode,
                 ProductName = details.ProductName,
                 CustomeProductName = details.CustomeProductName,
-                TaxValueId = (int)details.TaxValueId,
+                TaxValueId = details.TaxValueId ?? 0,
                 Description = details.Description,
                 Highlights = details.Highlights,
                 Keywords = details.Keywords,
                 ProductLength = details.ProductLength,
                 ProductBreadth = details.ProductBreadth,
                 ProductHeight = details.ProductHeight,
-                ProductWeight = (decimal)details.ProductWeight,
+                ProductWeight = details.ProductWeight ?? 0,
                 CategoryName = details.CategoryName,
                 CategoryPathName = details.CategoryPathNames,
                 SellerProducts = BindSellerProduct(details.Id, sellerProductId, sizeId, sellerId, live, isProductExist, status, isDeleted, isArchive),
@@ -981,7 +981,7 @@ namespace API_Gateway.Common.products
                 ProductColorMapping = BindColors(details.Id),
                 //ProductVideoLinks = BindVideos(details.Id),
                 ProductSpecificationsMapp = BindSpecs(details.Id),
-                ReturnPolicy = BindReturnPolicy((int)details.CategoryId)
+                ReturnPolicy = BindReturnPolicy(details.CategoryId ?? 0)
             }).ToList();
 
             return baseResponse1;
@@ -995,21 +995,21 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
             ProductDetails product = new ProductDetails();
-            Products details = (Products)baseResponse.Data;
+            Products details = baseResponse.Data as Products;
 
             product.productId = details.Id;
             product.productGuid = details.Guid;
-            product.CategoryId = (int)details.CategoryId;
+            product.CategoryId = details.CategoryId ?? 0;
             product.CategoryName = details.CategoryName;
             product.CategoryPathName = details.CategoryPathNames;
 
             product.ParentId = details.ParentId;
-            product.AssiCategoryId = (int)details.AssiCategoryId;
-            product.HSNCodeId = (int)details.HSNCodeId;
+            product.AssiCategoryId = details.AssiCategoryId ?? 0;
+            product.HSNCodeId = details.HSNCodeId ?? 0;
             product.CompanySKUCode = details.CompanySKUCode;
             product.ProductName = details.ProductName;
             product.CustomeProductName = details.CustomeProductName;
-            product.TaxValueId = (int)details.TaxValueId;
+            product.TaxValueId = details.TaxValueId ?? 0;
 
             product.Description = details.Description;
             product.Highlights = details.Highlights;
@@ -1017,7 +1017,7 @@ namespace API_Gateway.Common.products
             product.ProductLength = details.ProductLength;
             product.ProductBreadth = details.ProductBreadth;
             product.ProductHeight = details.ProductHeight;
-            product.ProductWeight = (decimal)details.ProductWeight;
+            product.ProductWeight = details.ProductWeight ?? 0;
             product.SellerProducts = BindSingleSellerProduct(ProductId, sellerId, sellerProductId, sizeId, live, isProductExist, status, isDeleted, isArchive);
             product.BrandID = product.SellerProducts != null ? product.SellerProducts.BrandID : 0;
             product.BrandName = product.SellerProducts != null ? !string.IsNullOrEmpty(product.SellerProducts.ExtraDetails) ? JObject.Parse(product.SellerProducts.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? product.SellerProducts.ExtraDetails : null : null;
@@ -1042,7 +1042,7 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
             GetProductDTO product = new GetProductDTO();
-            Products details = (Products)baseResponse.Data;
+            Products details = baseResponse.Data as Products;
             //product.SellerProducts = BindCustomerSideSellerProduct(details.Id, sizeId, sellerId, status, isProductExist,isDeleted, isArchive);
 
             List<SellerProductDTO> SellerData = BindCustomerSideSellerProduct(details.Id, sizeId, sellerId, status, isProductExist, isDeleted, isArchive);
@@ -1064,14 +1064,14 @@ namespace API_Gateway.Common.products
 
             product.productId = details.Id;
             product.productGuid = details.Guid;
-            product.CategoryId = (int)details.CategoryId;
+            product.CategoryId = details.CategoryId ?? 0;
             product.ParentId = details.ParentId;
-            product.AssiCategoryId = (int)details.AssiCategoryId;
-            product.HSNCodeId = (int)details.HSNCodeId;
+            product.AssiCategoryId = details.AssiCategoryId ?? 0;
+            product.HSNCodeId = details.HSNCodeId ?? 0;
             product.CompanySKUCode = details.CompanySKUCode;
             product.ProductName = details.ProductName;
             product.CustomeProductName = details.CustomeProductName;
-            product.TaxValueId = (int)details.TaxValueId;
+            product.TaxValueId = details.TaxValueId ?? 0;
             //product.BrandID = BindCustomerSideSellerProduct(details.Id, sizeId, sellerId, status, isProductExist,isDeleted, isArchive).FirstOrDefault().BrandID;
             //product.BrandID = product.SellerProducts.FirstOrDefault().BrandID;
             product.Description = details.Description;
@@ -1080,7 +1080,7 @@ namespace API_Gateway.Common.products
             product.ProductLength = details.ProductLength;
             product.ProductBreadth = details.ProductBreadth;
             product.ProductHeight = details.ProductHeight;
-            product.ProductWeight = (decimal)details.ProductWeight;
+            product.ProductWeight = details.ProductWeight ?? 0;
             product.CategoryName = details.CategoryName;
             product.CategoryPathName = details.CategoryPathNames;
             product.ProductSpecificationsMapp = BindSpecs(details.Id);
@@ -1130,21 +1130,21 @@ namespace API_Gateway.Common.products
             {
                 productId = details.Id,
                 productGuid = details.Guid,
-                CategoryId = (int)details.CategoryId,
+                CategoryId = details.CategoryId ?? 0,
                 ParentId = details.ParentId,
-                AssiCategoryId = (int)details.AssiCategoryId,
-                HSNCodeId = (int)details.HSNCodeId,
+                AssiCategoryId = details.AssiCategoryId ?? 0,
+                HSNCodeId = details.HSNCodeId ?? 0,
                 CompanySKUCode = details.CompanySKUCode,
                 ProductName = details.ProductName,
                 CustomeProductName = details.CustomeProductName,
-                TaxValueId = (int)details.TaxValueId,
+                TaxValueId = details.TaxValueId ?? 0,
                 Description = details.Description,
                 Highlights = details.Highlights,
                 Keywords = details.Keywords,
                 ProductLength = details.ProductLength,
                 ProductBreadth = details.ProductBreadth,
                 ProductHeight = details.ProductHeight,
-                ProductWeight = (decimal)details.ProductWeight,
+                ProductWeight = details.ProductWeight ?? 0,
                 CategoryName = details.CategoryName,
                 CategoryPathName = details.CategoryPathNames,
                 //SellerProducts = BindCurrentSellerProduct(details.Id),
@@ -1226,21 +1226,21 @@ namespace API_Gateway.Common.products
             {
                 productId = details.Id,
                 productGuid = details.Guid,
-                CategoryId = (int)details.CategoryId,
+                CategoryId = details.CategoryId ?? 0,
                 ParentId = details.ParentId,
-                AssiCategoryId = (int)details.AssiCategoryId,
-                HSNCodeId = (int)details.HSNCodeId,
+                AssiCategoryId = details.AssiCategoryId ?? 0,
+                HSNCodeId = details.HSNCodeId ?? 0,
                 CompanySKUCode = details.CompanySKUCode,
                 ProductName = details.ProductName,
                 CustomeProductName = details.CustomeProductName,
-                TaxValueId = (int)details.TaxValueId,
+                TaxValueId = details.TaxValueId ?? 0,
                 Description = details.Description,
                 Highlights = details.Highlights,
                 Keywords = details.Keywords,
                 ProductLength = details.ProductLength,
                 ProductBreadth = details.ProductBreadth,
                 ProductHeight = details.ProductHeight,
-                ProductWeight = (decimal)details.ProductWeight,
+                ProductWeight = details.ProductWeight ?? 0,
                 CategoryName = details.CategoryName,
                 CategoryPathName = details.CategoryPathNames,
                 //SellerProducts = BindCurrentSellerProduct(details.Id),
@@ -1286,7 +1286,7 @@ namespace API_Gateway.Common.products
                 GetResponse = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?SellerID=" + sellerId + "&productId=" + ProductId + url, "GET", null);
                 baseResponse = baseResponse.JsonParseList(GetResponse);
             }
-            List<SellerProduct> Sps = (List<SellerProduct>)baseResponse.Data;
+            List<SellerProduct> Sps = baseResponse.Data as List<SellerProduct>;
 
             //BaseResponse<SellerListModel> sellerBaseResponse = new BaseResponse<SellerListModel>();
             //var Seller_response = helper.ApiCall(IdServerURL, EndPoints.SellerList + "?pageIndex=0&pageSize=0&status=active", "GET", null);
@@ -1294,7 +1294,7 @@ namespace API_Gateway.Common.products
             //List<SellerKycList> lstSellers = new List<SellerKycList>();
             //if (sellerBaseResponse.code == 200)
             //{
-            //    List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+            //    List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
             //    sellerKycListDetail seller = new sellerKycListDetail(_configuration,_httpContext);
             //    if (seller != null)
             //    {
@@ -1314,7 +1314,7 @@ namespace API_Gateway.Common.products
             KycbaseResponse = KycbaseResponse.JsonParseList(Kycresponse);
             if (KycbaseResponse.code == 200)
             {
-                kYCDetails = (List<KYCDetails>)KycbaseResponse.Data;
+                kYCDetails = KycbaseResponse.Data as List<KYCDetails>;
             }
 
             var DTOList = Sps.Select(x => new SellerProductDTO
@@ -1385,7 +1385,7 @@ namespace API_Gateway.Common.products
                 GetResponse = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?productId=" + ProductId + url, "GET", null);
                 baseResponse = baseResponse.JsonParseList(GetResponse);
             }
-            List<SellerProduct> Sps = (List<SellerProduct>)baseResponse.Data;
+            List<SellerProduct> Sps = baseResponse.Data as List<SellerProduct>;
 
             //BaseResponse<SellerListModel> sellerBaseResponse = new BaseResponse<SellerListModel>();
             //var Seller_response = helper.ApiCall(IdServerURL, EndPoints.SellerList + "?pageIndex=0&pageSize=0&status=active", "GET", null);
@@ -1393,7 +1393,7 @@ namespace API_Gateway.Common.products
             List<UserDetailsDTO> lstSellers = new List<UserDetailsDTO>();
             //if (sellerBaseResponse.code == 200)
             //{
-            //    List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+            //    List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
             sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             //if (seller != null)
             //{
@@ -1459,7 +1459,7 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
 
-            List<SellerProduct> Sps = (List<SellerProduct>)baseResponse.Data;
+            List<SellerProduct> Sps = baseResponse.Data as List<SellerProduct>;
 
             //BaseResponse<SellerListModel> sellerBaseResponse = new BaseResponse<SellerListModel>();
             //var Seller_response = helper.ApiCall(IdServerURL, EndPoints.SellerList + "?pageIndex=0&pageSize=0&status=active", "GET", null);
@@ -1469,7 +1469,7 @@ namespace API_Gateway.Common.products
 
             //if (sellerBaseResponse.code == 200)
             //{
-            //    List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+            //    List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
             sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             //if (seller != null)
             //{
@@ -1572,7 +1572,7 @@ namespace API_Gateway.Common.products
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?productId=" + ProductId + "&isProductExist=false&live=true" + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<SellerProduct> Sps = (List<SellerProduct>)baseResponse.Data;
+            List<SellerProduct> Sps = baseResponse.Data as List<SellerProduct>;
 
             //BaseResponse<SellerListModel> sellerBaseResponse = new BaseResponse<SellerListModel>();
             //var Seller_response = helper.ApiCall(IdServerURL, EndPoints.SellerList + "?pageIndex=0&pageSize=0&status=active", "GET", null);
@@ -1582,7 +1582,7 @@ namespace API_Gateway.Common.products
 
             //if (sellerBaseResponse.code == 200)
             //{
-            //    List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+            //    List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
             sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             //if (seller != null)
             //{
@@ -1638,7 +1638,7 @@ namespace API_Gateway.Common.products
 
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<ProductPrice> productPrices = (List<ProductPrice>)baseResponse.Data;
+            List<ProductPrice> productPrices = baseResponse.Data as List<ProductPrice>;
             var DTOList = productPrices.Select(x => new ProductPriceDTO
             {
                 Id = x.Id,
@@ -1685,7 +1685,7 @@ namespace API_Gateway.Common.products
 
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<ProductPrice> productPrices = (List<ProductPrice>)baseResponse.Data;
+            List<ProductPrice> productPrices = baseResponse.Data as List<ProductPrice> ?? new List<ProductPrice>();
 
             var DTOList = productPrices.Select(x => new ProductPriceDTO
             {
@@ -1715,7 +1715,7 @@ namespace API_Gateway.Common.products
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.ProductWarehouse + "?sellerwiseproductpricemasterid=" + PriceMasterId + "&PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<ProductWareHouse> productWarehouses = (List<ProductWareHouse>)baseResponse.Data;
+            List<ProductWareHouse> productWarehouses = baseResponse.Data as List<ProductWareHouse> ?? new List<ProductWareHouse>();
             var DTOList = productWarehouses.Select(x => new ProductWarehouseDTO
             {
                 Id = x.Id,
@@ -1733,7 +1733,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductColorMapp> baseResponse = new BaseResponse<ProductColorMapp>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductColorMapping + "?ProductID=" + productId, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductColorMapp> tempList = (List<ProductColorMapp>)baseResponse.Data;
+            List<ProductColorMapp> tempList = baseResponse.Data as List<ProductColorMapp> ?? new List<ProductColorMapp>();
             var DTOList = tempList.Select(x => new ProductColorDTO
             {
                 Id = x.Id,
@@ -1750,7 +1750,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductImages> baseResponse = new BaseResponse<ProductImages>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductsImage + "?ProductID=" + productId, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductImages> tempList = (List<ProductImages>)baseResponse.Data;
+            List<ProductImages> tempList = baseResponse.Data as List<ProductImages> ?? new List<ProductImages>();
 
             var DTOList = tempList.Select(x => new ProductImageDTO
             {
@@ -1769,7 +1769,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductSpecificationMapping> baseResponse = new BaseResponse<ProductSpecificationMapping>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductSpecificationMapping + "?ProductID=" + productId + "&PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductSpecificationMapping> tempList = (List<ProductSpecificationMapping>)baseResponse.Data;
+            List<ProductSpecificationMapping> tempList = baseResponse.Data as List<ProductSpecificationMapping>;
 
             var DTOList = tempList.Select(x => new ProductSpecificationMappingDto
             {
@@ -1791,7 +1791,7 @@ namespace API_Gateway.Common.products
         //    BaseResponse<ProductVideoLink> baseResponse = new BaseResponse<ProductVideoLink>();
         //    var response = helper.ApiCall(CatelogueURL, EndPoints.ProductsVideoLinks + "?ProductID=" + productId, "GET", null);
         //    baseResponse = baseResponse.JsonParseList(response);
-        //    List<ProductVideoLink> tempList = (List<ProductVideoLink>)baseResponse.Data;
+        //    List<ProductVideoLink> tempList = baseResponse.Data as List<ProductVideoLink>;
 
         //    var res = tempList.Select(x => new ProductVideoLinkDTO
         //    {
@@ -1811,16 +1811,16 @@ namespace API_Gateway.Common.products
 
         //    var response2 = helper.ApiCall(IdServerURL, EndPoints.SellerById + "?ID=" + sellerId, "GET", null);
         //    baseResponse2 = baseResponse2.JsonParseRecord(response2);
-        //    SellerListModel seller = (SellerListModel)baseResponse2.Data;
+        //    SellerListModel seller = baseResponse2.Data as SellerListModel;
 
 
         //    var response = helper.ApiCall(UserURL, EndPoints.KYCDetails + "?UserID=" + sellerId, "GET", null);
         //    baseResponse = baseResponse.JsonParseRecord(response);
-        //    KYCDetails kycDetails = (KYCDetails)baseResponse.Data;
+        //    KYCDetails kycDetails = baseResponse.Data as KYCDetails;
 
         //    var response1 = helper.ApiCall(UserURL, EndPoints.GSTInfo + "?UserID=" + sellerId, "GET", null);
         //    baseResponse1 = baseResponse1.JsonParseRecord(response1);
-        //    GSTInfo gstInfo = (GSTInfo)baseResponse1.Data;
+        //    GSTInfo gstInfo = baseResponse1.Data as GSTInfo;
 
 
         //    // Create a new instance of SellerKycList
@@ -1857,7 +1857,7 @@ namespace API_Gateway.Common.products
         //    brandResponse = brandResponse.JsonParseRecord(response);
 
         //    BrandLibrary brand = new BrandLibrary();
-        //    brand = (BrandLibrary)brandResponse.Data;
+        //    brand = brandResponse.Data as BrandLibrary;
 
         //    return brand;
         //}
@@ -1869,7 +1869,7 @@ namespace API_Gateway.Common.products
             assignSpecValuesBaseResponse = assignSpecValuesBaseResponse.JsonParseList(response);
 
             List<AssignSpecValuesToCategoryLibrary> lstassignSpecValues = new List<AssignSpecValuesToCategoryLibrary>();
-            lstassignSpecValues = (List<AssignSpecValuesToCategoryLibrary>)assignSpecValuesBaseResponse.Data;
+            lstassignSpecValues = assignSpecValuesBaseResponse.Data as List<AssignSpecValuesToCategoryLibrary>;
 
             return lstassignSpecValues;
         }
@@ -1890,7 +1890,7 @@ namespace API_Gateway.Common.products
                     AssignReturnPolicyToCatagoryLibrary policy = new AssignReturnPolicyToCatagoryLibrary();
                     if (baseResponse.code == 200)
                     {
-                        policy = (AssignReturnPolicyToCatagoryLibrary)baseResponse.Data;
+                        policy = baseResponse.Data as AssignReturnPolicyToCatagoryLibrary;
                         returnPolicy.Id = policy.Id;
                         returnPolicy.ReturnPolicyID = Convert.ToInt32(policy.ReturnPolicyID);
                         returnPolicy.ValidityDays = Convert.ToInt32(policy.ValidityDays);
@@ -1932,7 +1932,7 @@ namespace API_Gateway.Common.products
             var response = helper.ApiCall(CatelogueURL, EndPoints.AssignTaxRateToHSNCode + "?HsnCodeId=" + hsnCodeId + "&TaxValueId=" + TaxTypeValueID, "GET", null);
             TaxbaseResponse = TaxbaseResponse.JsonParseRecord(response);
             AssignTaxRateToHSNCode taxdata = new AssignTaxRateToHSNCode();
-            taxdata = (AssignTaxRateToHSNCode)TaxbaseResponse.Data;
+            taxdata = TaxbaseResponse.Data as AssignTaxRateToHSNCode;
             return taxdata;
         }
 
@@ -1962,7 +1962,7 @@ namespace API_Gateway.Common.products
                 baseResponse1.Data = new MasterProductDTO();
                 return baseResponse1;
             }
-            var childproductsList = (List<Products>)baseResponseChildProduct.Data;
+            var childproductsList = baseResponseChildProduct.Data as List<Products>;
             SellerProductDTO SellerProduct = new SellerProductDTO();
             foreach (var item in childproductsList)
             {
@@ -2000,7 +2000,7 @@ namespace API_Gateway.Common.products
             var ResCat = helper.ApiCall(CatelogueURL, EndPoints.Category + "?Id=" + categoryId + "&Isdeleted=false", "GET", null);
             BaseResponse<CategoryLibrary> baseCat = new BaseResponse<CategoryLibrary>();
             baseCat = baseCat.JsonParseRecord(ResCat);
-            CategoryLibrary category = (CategoryLibrary)baseCat.Data;
+            CategoryLibrary category = baseCat.Data as CategoryLibrary;
 
             return category;
         }
@@ -2023,10 +2023,35 @@ namespace API_Gateway.Common.products
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "/getArchiveProductList" + "?PageIndex=" + PageIndex + "&PageSize=" + PageSize + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
-            List<ArchiveProductList> Sps = (List<ArchiveProductList>)baseResponse.Data;
-
-            var DTOList = Sps.Select(x => new ArchiveProductList
+            List<ArchiveProductList> Sps = baseResponse.Data as List<ArchiveProductList> ?? new List<ArchiveProductList>();
+            string? GetExtraDetailsValue(string? extraDetails, string section, string field, string? fallback = null)
             {
+                if (string.IsNullOrWhiteSpace(extraDetails))
+                {
+                    return fallback;
+                }
+
+                try
+                {
+                    var parsed = JObject.Parse(extraDetails);
+                    var value = parsed[section]?[field]?.ToString();
+                    return string.IsNullOrWhiteSpace(value) ? fallback : value;
+                }
+                catch
+                {
+                    return fallback;
+                }
+            }
+
+            var DTOList = Sps.Select(x =>
+            {
+                string? brandName = GetExtraDetailsValue(x.ExtraDetails, "BrandDetails", "Name", x.ExtraDetails);
+                string? sellerName = GetExtraDetailsValue(x.ExtraDetails, "SellerDetails", "Display")
+                    ?? GetExtraDetailsValue(x.ExtraDetails, "SellerDetails", "FullName")
+                    ?? "Unknown Seller";
+
+                return new ArchiveProductList
+                {
                 RowNumber = !string.IsNullOrEmpty(x.RowNumber.ToString()) ? x.RowNumber : null,
                 PageCount = !string.IsNullOrEmpty(x.PageCount.ToString()) ? x.PageCount : null,
                 RecordCount = !string.IsNullOrEmpty(x.RecordCount.ToString()) ? x.RecordCount : null,
@@ -2056,8 +2081,9 @@ namespace API_Gateway.Common.products
                 CategoryName = !string.IsNullOrEmpty(x.CategoryName) ? x.CategoryName : null,
                 CategoryPathIds = !string.IsNullOrEmpty(x.CategoryPathIds) ? x.CategoryPathIds : null,
                 CategoryPathNames = !string.IsNullOrEmpty(x.CategoryPathNames) ? x.CategoryPathNames : null,
-                BrandName = !string.IsNullOrEmpty(x.ExtraDetails) ? JObject.Parse(x.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? x.ExtraDetails : null,
-                SellerName = !string.IsNullOrEmpty(x.ExtraDetails) ? JObject.Parse(x.ExtraDetails)["SellerDetails"]?["Display"]?.ToString() ?? JObject.Parse(x.ExtraDetails)["SellerDetails"]?["FullName"]?.ToString() ?? "Unknown Seller" : null,
+                BrandName = !string.IsNullOrEmpty(x.ExtraDetails) ? brandName : null,
+                SellerName = !string.IsNullOrEmpty(x.ExtraDetails) ? sellerName : null,
+                };
             }).ToList();
             baseResponse.Data = DTOList;
 
@@ -2097,7 +2123,7 @@ namespace API_Gateway.Common.products
                 BaseResponse<Wishlist> baseResponseWishlist = new BaseResponse<Wishlist>();
                 var responseWish = helper.ApiCall(UserURL, EndPoints.Wishlist + "?UserID=" + userId + "&pageIndex=0&pageSize=0", "GET", null);
                 baseResponseWishlist = baseResponseWishlist.JsonParseList(responseWish);
-                listWishlist = (List<Wishlist>)baseResponseWishlist.Data;
+                listWishlist = baseResponseWishlist.Data as List<Wishlist>;
             }
             #endregion
 
@@ -2163,7 +2189,7 @@ namespace API_Gateway.Common.products
             //var responseFilterProduct = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&searchTexts=" + searchTexts + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&Mode=get&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
             //baseResponseFilterProduct = baseResponseFilterProduct.JsonParseList(responseFilterProduct);
 
-            //List<UserProductList> listFilterProduct = (List<UserProductList>)baseResponseFilterProduct.Data;
+            //List<UserProductList> listFilterProduct = baseResponseFilterProduct.Data as List<UserProductList>;
 
             List<CategoryFilterDTO> catfilter = listResult.Where(x => x.flag == f && x.F_CategoryId != null).Distinct().Select(x => new CategoryFilterDTO
             {
@@ -2216,7 +2242,7 @@ namespace API_Gateway.Common.products
                 filterBrandIds = "";
                 response = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&SellerIds=" + SellerIds + "&BrandIds=" + filterBrandIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&SizeIds=" + filterSize + "&ColorIds=" + filterColor + "&productCollectionId=" + productCollectionId + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&MinDiscount=" + MinDiscount + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&SpecTypeIds=" + filterSpecs + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 wholeResponse = wholeResponse.JsonParseList(response);
-                listResult = (List<UserProductList>)wholeResponse.Data;
+                listResult = wholeResponse.Data as List<UserProductList>;
 
                 brandfilter = listResult.Where(x => x.flag == f && x.F_BrandId != null).Distinct().Select(x => new BrandFilterDTO
                 {
@@ -2230,7 +2256,7 @@ namespace API_Gateway.Common.products
                 filterSize = "";
                 response = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&SellerIds=" + SellerIds + "&BrandIds=" + filterBrandIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&SizeIds=" + filterSize + "&ColorIds=" + filterColor + "&productCollectionId=" + productCollectionId + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&MinDiscount=" + MinDiscount + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&SpecTypeIds=" + filterSpecs + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 wholeResponse = wholeResponse.JsonParseList(response);
-                listResult = (List<UserProductList>)wholeResponse.Data;
+                listResult = wholeResponse.Data as List<UserProductList>;
 
                 sizefilter = listResult.Where(x => x.flag == f && x.F_SizeID != null).Distinct().Select(x => new SizeFilterDTO
                 {
@@ -2245,7 +2271,7 @@ namespace API_Gateway.Common.products
                 filterColor = "";
                 response = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&SellerIds=" + SellerIds + "&BrandIds=" + filterBrandIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&SizeIds=" + filterSize + "&ColorIds=" + filterColor + "&productCollectionId=" + productCollectionId + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&MinDiscount=" + MinDiscount + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&SpecTypeIds=" + filterSpecs + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 wholeResponse = wholeResponse.JsonParseList(response);
-                listResult = (List<UserProductList>)wholeResponse.Data;
+                listResult = wholeResponse.Data as List<UserProductList>;
 
                 colorfilter = listResult.Where(x => x.flag == f && x.F_ColorID != null).Distinct().Select(x => new ColorFilterDTO
                 {
@@ -2260,7 +2286,7 @@ namespace API_Gateway.Common.products
                 filterSpecs = "";
                 response = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?CategoryId=" + CategoryId + "&SellerIds=" + SellerIds + "&BrandIds=" + filterBrandIds + "&searchTexts=" + HttpUtility.UrlEncode(searchTexts) + "&SizeIds=" + filterSize + "&ColorIds=" + filterColor + "&productCollectionId=" + productCollectionId + "&MinPrice=" + MinPrice + "&MaxPrice=" + MaxPrice + "&MinDiscount=" + MinDiscount + "&availableProduct=" + available + "&PriceSort=" + PriceSort + "&SpecTypeIds=" + filterSpecs + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize, "GET", null);
                 wholeResponse = wholeResponse.JsonParseList(response);
-                listResult = (List<UserProductList>)wholeResponse.Data;
+                listResult = wholeResponse.Data as List<UserProductList>;
 
                 filterTypes = listResult.Where(x => x.flag == f && x.FilterTypeId != null && x.FilterValueId != null)
                 .GroupBy(x => new { x.FilterTypeId, x.FilterTypeName })
@@ -2315,14 +2341,14 @@ namespace API_Gateway.Common.products
                 BaseResponse<Wishlist> baseResponseWishlist = new BaseResponse<Wishlist>();
                 var responseWish = helper.ApiCall(UserURL, EndPoints.Wishlist + "?UserID=" + userId + "&pageIndex=0&pageSize=0", "GET", null);
                 baseResponseWishlist = baseResponseWishlist.JsonParseList(responseWish);
-                listWishlist = (List<Wishlist>)baseResponseWishlist.Data;
+                listWishlist = baseResponseWishlist.Data as List<Wishlist>;
             }
             #endregion
 
             GetProductDTO product = new GetProductDTO();
             if (baseResponse.code == 200)
             {
-                List<UserProductDetailsDto> details = (List<UserProductDetailsDto>)baseResponse.Data;
+                List<UserProductDetailsDto> details = baseResponse.Data as List<UserProductDetailsDto>;
 
                 var ProductDetails = details.FirstOrDefault();
                 List<SellerProductDTO> sellerProductlst = new List<SellerProductDTO>();
@@ -2336,7 +2362,7 @@ namespace API_Gateway.Common.products
 
                 //if (sellerBaseResponse.code == 200)
                 //{
-                //    List<SellerListModel> sellerLists = (List<SellerListModel>)sellerBaseResponse.Data;
+                //    List<SellerListModel> sellerLists = sellerBaseResponse.Data as List<SellerListModel>;
                 sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
                 //if (seller != null)
                 //{
@@ -2390,14 +2416,14 @@ namespace API_Gateway.Common.products
 
                 product.productId = ProductDetails.Id;
                 product.productGuid = ProductDetails.Guid;
-                product.CategoryId = (int)ProductDetails.CategoryId;
+                product.CategoryId = ProductDetails.CategoryId ?? 0;
                 product.ParentId = ProductDetails.MasterProductId;
-                product.AssiCategoryId = (int)ProductDetails.AssiCategoryId;
-                product.HSNCodeId = (int)ProductDetails.HSNCodeId;
+                product.AssiCategoryId = ProductDetails.AssiCategoryId ?? 0;
+                product.HSNCodeId = ProductDetails.HSNCodeId ?? 0;
                 product.CompanySKUCode = ProductDetails.CompanySKUCode;
                 product.ProductName = ProductDetails.ProductName;
                 product.CustomeProductName = ProductDetails.CustomeProductName;
-                product.TaxValueId = (int)ProductDetails.TaxValueId;
+                product.TaxValueId = ProductDetails.TaxValueId ?? 0;
                 product.Description = ProductDetails.Description;
                 product.Highlights = ProductDetails.Highlights;
                 product.CategoryName = ProductDetails.CategoryName;
@@ -2569,16 +2595,16 @@ namespace API_Gateway.Common.products
 
             var responseBrand = helper.ApiCall(UserURL, EndPoints.Brand + "?PageIndex=1&PageSize=6&searchText=" + searchText + "&status=Active", "GET", null);
             baseResponseBrand = baseResponseBrand.JsonParseList(responseBrand);
-            List<BrandLibrary> lstBrand = (List<BrandLibrary>)baseResponseBrand.Data;
+            List<BrandLibrary> lstBrand = baseResponseBrand.Data as List<BrandLibrary>;
 
             var response = helper.ApiCall(CatelogueURL, EndPoints.UserProductList + "?&searchTexts=" + HttpUtility.UrlEncode(searchText) + "&pageIndex=1&pageSize=6", "GET", null);
             wholeResponse = wholeResponse.JsonParseList(response);
-            List<UserProductList> UserProductList = (List<UserProductList>)wholeResponse.Data;
+            List<UserProductList> UserProductList = wholeResponse.Data as List<UserProductList>;
             UserProductList = UserProductList.Where(p => p.flag.ToString().ToLower() == "p").ToList();
 
             var responseCat = helper.ApiCall(CatelogueURL, EndPoints.Category + "?pageIndex=1&pageSize=6&Status=Active&Isdeleted=" + false + "&Searchtext=" + searchText, "GET", null);
             baseResponseCat = baseResponseCat.JsonParseList(responseCat);
-            List<CategoryLibrary> lstCategory = (List<CategoryLibrary>)baseResponseCat.Data;
+            List<CategoryLibrary> lstCategory = baseResponseCat.Data as List<CategoryLibrary>;
 
 
             SearchSuggestion searchSuggestion = new SearchSuggestion();
@@ -2599,7 +2625,7 @@ namespace API_Gateway.Common.products
             {
                 BaseResponse<CategoryLibrary> baseResponse = new BaseResponse<CategoryLibrary>();
                 baseResponse = baseResponse.JsonParseList(response);
-                lstCategoryLibrary = (List<CategoryLibrary>)baseResponse.Data;
+                lstCategoryLibrary = baseResponse.Data as List<CategoryLibrary>;
             }
             return lstCategoryLibrary;
 

@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderStatus + "?OrderStatus=" + model.OrderStatus, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderStatusLibrary> tmp = (List<OrderStatusLibrary>)baseResponse.Data;
+            List<OrderStatusLibrary> tmp = baseResponse.Data as List<OrderStatusLibrary> ?? new List<OrderStatusLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -58,7 +58,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderStatus + "?OrderStatus=" + model.OrderStatus, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderStatusLibrary> tmp = (List<OrderStatusLibrary>)baseResponse.Data;
+            List<OrderStatusLibrary> tmp = baseResponse.Data as List<OrderStatusLibrary> ?? new List<OrderStatusLibrary>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderStatus + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                OrderStatusLibrary Status = (OrderStatusLibrary)baseResponse.Data;
+                OrderStatusLibrary Status = baseResponse.Data as OrderStatusLibrary;
 
                 Status.Id = model.Id;
                 Status.OrderStatus = model.OrderStatus;
@@ -87,7 +87,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderStatus + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderStatusLibrary> templist = (List<OrderStatusLibrary>)baseResponse.Data;
+            List<OrderStatusLibrary> templist = baseResponse.Data as List<OrderStatusLibrary> ?? new List<OrderStatusLibrary>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderStatus + "?Id=" + id, "DELETE", null);

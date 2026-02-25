@@ -45,7 +45,7 @@ namespace API_Gateway.Common
 
             var temp = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?SellerID=" + model.SellerID + "&BrandId=" + model.BrandId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignBrandToSeller> tmp = (List<AssignBrandToSeller>)baseResponse.Data;
+            List<AssignBrandToSeller> tmp = baseResponse.Data as List<AssignBrandToSeller>;
             if (tmp != null && tmp.Where(x => x.BrandId == (model.BrandId) && x.SellerID == (model.SellerID)).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -54,7 +54,7 @@ namespace API_Gateway.Common
             {
                 var temp2 = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?SellerID=" + model.SellerID + "&BrandId=" + model.BrandId + "&isDeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp2);
-                List<AssignBrandToSeller> tmp2 = (List<AssignBrandToSeller>)baseResponse.Data;
+                List<AssignBrandToSeller> tmp2 = baseResponse.Data as List<AssignBrandToSeller>;
                 if (tmp2.Count > 0)
                 {
                     var data = tmp2.FirstOrDefault();
@@ -108,7 +108,7 @@ namespace API_Gateway.Common
                         sellerResponse = sellerResponse.JsonParseRecord(tmpresponse);
 
                         SellerListModel Resetdata = new SellerListModel();
-                        Resetdata = (SellerListModel)sellerResponse.Data;
+                        Resetdata = sellerResponse.Data as SellerListModel;
 
                         #region send mail
                         MailSendSES objses = new MailSendSES(_configuration);
@@ -158,7 +158,7 @@ namespace API_Gateway.Common
             BaseResponse<BrandLibrary> BrandbaseResponse = new BaseResponse<BrandLibrary>();
             var brandResponse = helper.ApiCall(_URL, EndPoints.Brand + "?Id=" + model.BrandId, "GET", null);
             BrandbaseResponse = BrandbaseResponse.JsonParseRecord(brandResponse);
-            BrandLibrary brandsdata = (BrandLibrary)BrandbaseResponse.Data;
+            BrandLibrary brandsdata = BrandbaseResponse.Data as BrandLibrary;
 
             if (brandsdata.Status.ToLower() == "request for approval")
             {
@@ -171,7 +171,7 @@ namespace API_Gateway.Common
 
             var temp = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?SellerID=" + model.SellerID + "&BrandId=" + model.BrandId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignBrandToSeller> tmp = (List<AssignBrandToSeller>)baseResponse.Data;
+            List<AssignBrandToSeller> tmp = baseResponse.Data as List<AssignBrandToSeller>;
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -180,7 +180,7 @@ namespace API_Gateway.Common
             {
                 var response = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                AssignBrandToSeller abts = (AssignBrandToSeller)baseResponse.Data;
+                AssignBrandToSeller abts = baseResponse.Data as AssignBrandToSeller;
                 string OldName = abts.BrandCertificate;
                 if (AllowBrandCerti)
                 {
@@ -228,7 +228,7 @@ namespace API_Gateway.Common
                 sellerResponse = sellerResponse.JsonParseRecord(tmpresponse);
 
                 SellerListModel Resetdata = new SellerListModel();
-                Resetdata = (SellerListModel)sellerResponse.Data;
+                Resetdata = sellerResponse.Data as SellerListModel;
 
                 if (tmp[0].Status.ToString().ToLower() == "request for approval" && model.Status.ToString().ToLower() == "active")
                 {
@@ -293,7 +293,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignBrandToSeller> templist = (List<AssignBrandToSeller>)baseResponse.Data;
+            List<AssignBrandToSeller> templist = baseResponse.Data as List<AssignBrandToSeller>;
             if (templist.Any())
             {
                 var _templist = templist.FirstOrDefault();
@@ -302,7 +302,7 @@ namespace API_Gateway.Common
 
                 var _tempproducts = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?sellerId=" + _templist.SellerID + "&brandId=" + _templist.BrandId + "&isDeleted=" + false, "GET", null);
                 sellerproduct = sellerproduct.JsonParseList(_tempproducts);
-                List<SellerProduct> _sellertemplist = (List<SellerProduct>)sellerproduct.Data;
+                List<SellerProduct> _sellertemplist = sellerproduct.Data as List<SellerProduct>;
                 if (_sellertemplist.Count > 0)
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("Products", "AssignBrandsToSeller");

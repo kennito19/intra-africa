@@ -26,171 +26,225 @@ namespace API_Gateway.Common
 
         public BaseResponse<BrandLibrary> SaveBrand([FromForm] BrandDTO model, string UserId, bool IsAdmin)
         {
-            var temp = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''"), "GET", null);
-            baseResponse = baseResponse.JsonParseList(temp);
-            List<BrandLibrary> tmp = (List<BrandLibrary>)baseResponse.Data;
-            if (tmp.Any())
+            try
             {
-                baseResponse = baseResponse.AlreadyExists();
-            }
-            else
-            {
-                var temp2 = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''") + "&isDeleted=" + true, "GET", null);
-                baseResponse = baseResponse.JsonParseList(temp2);
-                List<BrandLibrary> tmp2 = (List<BrandLibrary>)baseResponse.Data;
-                if (tmp2.Count > 0)
+                if (model == null || string.IsNullOrWhiteSpace(model.Name))
                 {
-                    var data = tmp2.FirstOrDefault();
+                    return baseResponse.InvalidInput("Brand name is required.");
+                }
 
-                    BrandLibrary abts = new BrandLibrary();
-                    abts.ID = data.ID;
-                    abts.Name = model.Name;
-                    abts.Description = model.Description;
-                    if (IsAdmin)
-                    {
-                        abts.Status = model.Status;
-                    }
-                    else
-                    {
-                        abts.Status = "Request For Approval";
-                    }
-                    if (model.Logo != null)
-                    {
-                        abts.Logo = UploadDoc(model.Name, model.FileName);
-                    }
-                    else
-                    {
-                        abts.Logo = model.Logo;
-                    }
-                    abts.CreatedBy = UserId;
-                    abts.CreatedAt = DateTime.Now;
-
-                    abts.ModifiedBy = null;
-                    abts.ModifiedAt = null;
-
-                    abts.IsDeleted = false;
-                    abts.DeletedAt = null;
-                    abts.DeletedBy = null;
-                    var response = helper.ApiCall(_URL, EndPoints.Brand, "PUT", abts);
-                    baseResponse = baseResponse.JsonParseInputResponse(response);
-                    baseResponse.Data = abts.ID;
+                var temp = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''"), "GET", null);
+                baseResponse = baseResponse.JsonParseList(temp);
+                List<BrandLibrary> tmp = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
+                if (tmp.Any())
+                {
+                    baseResponse = baseResponse.AlreadyExists();
                 }
                 else
                 {
-                    BrandLibrary abts = new BrandLibrary();
-                    abts.Name = model.Name;
-                    abts.Description = model.Description;
-                    if (IsAdmin)
+                    var temp2 = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''") + "&isDeleted=" + true, "GET", null);
+                    baseResponse = baseResponse.JsonParseList(temp2);
+                    List<BrandLibrary> tmp2 = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
+                    if (tmp2.Count > 0)
                     {
-                        abts.Status = model.Status;
-                    }
-                    else
-                    {
-                        abts.Status = "Request For Approval";
-                    }
-                    if (model.Logo != null)
-                    {
-                        abts.Logo = UploadDoc(model.Name, model.FileName);
-                    }
-                    else
-                    {
-                        abts.Logo = model.Logo;
-                    }
-                    abts.CreatedBy = UserId;
-                    abts.CreatedAt = DateTime.Now;
+                        var data = tmp2.FirstOrDefault();
 
-                    var response = helper.ApiCall(_URL, EndPoints.Brand, "POST", abts);
-                    baseResponse = baseResponse.JsonParseInputResponse(response);
+                        BrandLibrary abts = new BrandLibrary();
+                        abts.ID = data.ID;
+                        abts.Name = model.Name;
+                        abts.Description = model.Description;
+                        if (IsAdmin)
+                        {
+                            abts.Status = model.Status;
+                        }
+                        else
+                        {
+                            abts.Status = "Request For Approval";
+                        }
+                        if (model.FileName != null)
+                        {
+                            abts.Logo = UploadDoc(model.Name, model.FileName);
+                        }
+                        else
+                        {
+                            abts.Logo = model.Logo;
+                        }
+                        abts.Logo = abts.Logo ?? string.Empty;
+                        abts.CreatedBy = UserId;
+                        abts.CreatedAt = DateTime.Now;
+
+                        abts.ModifiedBy = null;
+                        abts.ModifiedAt = null;
+
+                        abts.IsDeleted = false;
+                        abts.DeletedAt = null;
+                        abts.DeletedBy = null;
+                        var response = helper.ApiCall(_URL, EndPoints.Brand, "PUT", abts);
+                        baseResponse = baseResponse.JsonParseInputResponse(response);
+                        baseResponse.Data = abts.ID;
+                    }
+                    else
+                    {
+                        BrandLibrary abts = new BrandLibrary();
+                        abts.Name = model.Name;
+                        abts.Description = model.Description;
+                        if (IsAdmin)
+                        {
+                            abts.Status = model.Status;
+                        }
+                        else
+                        {
+                            abts.Status = "Request For Approval";
+                        }
+                        if (model.FileName != null)
+                        {
+                            abts.Logo = UploadDoc(model.Name, model.FileName);
+                        }
+                        else
+                        {
+                            abts.Logo = model.Logo;
+                        }
+                        abts.Logo = abts.Logo ?? string.Empty;
+                        abts.CreatedBy = UserId;
+                        abts.CreatedAt = DateTime.Now;
+
+                        var response = helper.ApiCall(_URL, EndPoints.Brand, "POST", abts);
+                        baseResponse = baseResponse.JsonParseInputResponse(response);
+                    }
                 }
+                return baseResponse;
             }
-            return baseResponse;
+            catch (Exception ex)
+            {
+                return baseResponse.InvalidInput(ex.Message);
+            }
         }
 
         public BaseResponse<BrandLibrary> UpdateBrand([FromForm] BrandDTO model, string UserId)
         {
-            var temp = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''"), "GET", null);
-            baseResponse = baseResponse.JsonParseList(temp);
-            List<BrandLibrary> tmp = (List<BrandLibrary>)baseResponse.Data;
-            if (tmp.Where(x => x.ID != model.ID).Any())
+            try
             {
-                baseResponse = baseResponse.AlreadyExists();
-            }
-            else
-            {
-                var response = helper.ApiCall(_URL, EndPoints.Brand + "?Id=" + model.ID, "GET", null);
-                baseResponse = baseResponse.JsonParseRecord(response);
-                BrandLibrary abts = (BrandLibrary)baseResponse.Data;
-                string OldName = abts.Logo;
-                abts.Name = model.Name;
-                abts.Description = model.Description;
-                abts.Status = model.Status;
-                abts.Logo = UpdateDocFile(OldName, model.Name, model.FileName);
-
-                abts.ModifiedBy = UserId;
-                abts.ModifiedAt = DateTime.Now;
-
-                abts.IsDeleted = false;
-                abts.DeletedAt = null;
-                abts.DeletedBy = null;
-
-                response = helper.ApiCall(_URL, EndPoints.Brand, "PUT", abts);
-                baseResponse = baseResponse.JsonParseInputResponse(response);
-                if (baseResponse.code == 200)
+                if (model == null || model.ID == null || model.ID == 0 || string.IsNullOrWhiteSpace(model.Name))
                 {
-                    BaseResponse<ProductExtraDetailsDto> ExtraDetailsbaseResponse = new BaseResponse<ProductExtraDetailsDto>();
-
-                    ProductExtraDetailsDto productExtraDetails = new ProductExtraDetailsDto();
-                    productExtraDetails.BrandStatus = model.Status;
-                    productExtraDetails.BrandName = model.Name;
-                    productExtraDetails.BrandLogo = model.Logo;
-                    productExtraDetails.BrandId = model.ID;
-                    productExtraDetails.Mode = "updateBrands";
-                    var ExtraDetailsresponse = helper.ApiCall(catalougeURL, EndPoints.SellerProduct + "/UpdateExtraDetails", "PUT", productExtraDetails);
-                    ExtraDetailsbaseResponse = ExtraDetailsbaseResponse.JsonParseInputResponse(ExtraDetailsresponse);
+                    return baseResponse.InvalidInput("Brand id and name are required.");
                 }
 
+                var temp = helper.ApiCall(_URL, EndPoints.Brand + "?Name=" + model.Name.Replace("'", "''"), "GET", null);
+                baseResponse = baseResponse.JsonParseList(temp);
+                List<BrandLibrary> tmp = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
+                if (tmp.Where(x => x.ID != model.ID).Any())
+                {
+                    baseResponse = baseResponse.AlreadyExists();
+                }
+                else
+                {
+                    var response = helper.ApiCall(_URL, EndPoints.Brand + "?Id=" + model.ID, "GET", null);
+                    baseResponse = baseResponse.JsonParseRecord(response);
+                    BrandLibrary abts = baseResponse.Data as BrandLibrary;
+                    if (abts == null)
+                    {
+                        return baseResponse.NotExist();
+                    }
+                    string OldName = abts.Logo;
+                    abts.Name = model.Name;
+                    abts.Description = model.Description;
+                    abts.Status = model.Status;
+                    abts.Logo = UpdateDocFile(OldName, model.Name, model.FileName);
+                    abts.Logo = abts.Logo ?? string.Empty;
+
+                    abts.ModifiedBy = UserId;
+                    abts.ModifiedAt = DateTime.Now;
+
+                    abts.IsDeleted = false;
+                    abts.DeletedAt = null;
+                    abts.DeletedBy = null;
+
+                    response = helper.ApiCall(_URL, EndPoints.Brand, "PUT", abts);
+                    baseResponse = baseResponse.JsonParseInputResponse(response);
+                    if (baseResponse.code == 200)
+                    {
+                        BaseResponse<ProductExtraDetailsDto> ExtraDetailsbaseResponse = new BaseResponse<ProductExtraDetailsDto>();
+
+                        ProductExtraDetailsDto productExtraDetails = new ProductExtraDetailsDto();
+                        productExtraDetails.BrandStatus = model.Status;
+                        productExtraDetails.BrandName = model.Name;
+                        productExtraDetails.BrandLogo = model.Logo;
+                        productExtraDetails.BrandId = model.ID;
+                        productExtraDetails.Mode = "updateBrands";
+                        var ExtraDetailsresponse = helper.ApiCall(catalougeURL, EndPoints.SellerProduct + "/UpdateExtraDetails", "PUT", productExtraDetails);
+                        ExtraDetailsbaseResponse = ExtraDetailsbaseResponse.JsonParseInputResponse(ExtraDetailsresponse);
+                    }
+                }
+                return baseResponse;
             }
-            return baseResponse;
+            catch (Exception ex)
+            {
+                return baseResponse.InvalidInput(ex.Message);
+            }
         }
 
         public BaseResponse<BrandLibrary> DeleteBrand(int? id = 0)
         {
-            var temp = helper.ApiCall(_URL, EndPoints.Brand + "?id=" + id, "GET", null);
-            baseResponse = baseResponse.JsonParseList(temp);
-            List<BrandLibrary> templist = (List<BrandLibrary>)baseResponse.Data;
-            if (templist.Any())
+            try
             {
-                var tempAssignBrandToSeller = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?BrandId=" + id, "GET", null);
-                BaseResponse<AssignBrandToSeller> baseAssignBrandToSeller = new BaseResponse<AssignBrandToSeller>();
-                var assignBrandToSeller = baseAssignBrandToSeller.JsonParseList(tempAssignBrandToSeller);
-                List<AssignBrandToSeller> BrandToSeller = (List<AssignBrandToSeller>)assignBrandToSeller.Data;
-
-                var tempSellerProMaster = helper.ApiCall(catalougeURL, EndPoints.SellerProduct + "?brandId=" + id, "GET", null);
-                BaseResponse<SellerProduct> baseSellerProduct = new BaseResponse<SellerProduct>();
-                var sellerProduct = baseSellerProduct.JsonParseList(tempSellerProMaster);
-                List<SellerProduct> sellerProducts = (List<SellerProduct>)sellerProduct.Data;
-
-                if (BrandToSeller.Any() || sellerProducts.Any())
+                var temp = helper.ApiCall(_URL, EndPoints.Brand + "?id=" + id, "GET", null);
+                baseResponse = baseResponse.JsonParseList(temp);
+                List<BrandLibrary> templist = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
+                if (templist.Any())
                 {
-                    if (BrandToSeller.Any())
+                    List<AssignBrandToSeller> brandToSeller = new List<AssignBrandToSeller>();
+                    List<SellerProduct> sellerProducts = new List<SellerProduct>();
+
+                    try
                     {
-                        baseResponse = baseResponse.ChildAlreadyExists("AssignBrandToSeller", "Brand");
+                        var tempAssignBrandToSeller = helper.ApiCall(_URL, EndPoints.AssignBrandToSeller + "?BrandId=" + id, "GET", null);
+                        BaseResponse<AssignBrandToSeller> baseAssignBrandToSeller = new BaseResponse<AssignBrandToSeller>();
+                        var assignBrandToSeller = baseAssignBrandToSeller.JsonParseList(tempAssignBrandToSeller);
+                        brandToSeller = assignBrandToSeller.Data as List<AssignBrandToSeller> ?? new List<AssignBrandToSeller>();
+                    }
+                    catch
+                    {
+                        brandToSeller = new List<AssignBrandToSeller>();
                     }
 
-                    if (sellerProducts.Any())
+                    try
                     {
-                        baseResponse = baseResponse.ChildAlreadyExists("SellerProduct", "Brand");
+                        var tempSellerProMaster = helper.ApiCall(catalougeURL, EndPoints.SellerProduct + "?brandId=" + id, "GET", null);
+                        BaseResponse<SellerProduct> baseSellerProduct = new BaseResponse<SellerProduct>();
+                        var sellerProduct = baseSellerProduct.JsonParseList(tempSellerProMaster);
+                        sellerProducts = sellerProduct.Data as List<SellerProduct> ?? new List<SellerProduct>();
+                    }
+                    catch
+                    {
+                        sellerProducts = new List<SellerProduct>();
+                    }
+
+                    if (brandToSeller.Any() || sellerProducts.Any())
+                    {
+                        if (brandToSeller.Any())
+                        {
+                            baseResponse = baseResponse.ChildAlreadyExists("AssignBrandToSeller", "Brand");
+                        }
+
+                        if (sellerProducts.Any())
+                        {
+                            baseResponse = baseResponse.ChildAlreadyExists("SellerProduct", "Brand");
+                        }
+                    }
+                    else
+                    {
+                        var response = helper.ApiCall(_URL, EndPoints.Brand + "?Id=" + id, "DELETE", null);
+                        baseResponse = baseResponse.JsonParseInputResponse(response);
                     }
                 }
                 else
                 {
-                    var response = helper.ApiCall(_URL, EndPoints.Brand + "?Id=" + id, "DELETE", null);
-                    baseResponse = baseResponse.JsonParseInputResponse(response);
+                    baseResponse = baseResponse.NotExist();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                baseResponse = baseResponse.NotExist();
+                baseResponse = baseResponse.InvalidInput(ex.Message);
             }
             return baseResponse;
         }
@@ -222,20 +276,27 @@ namespace API_Gateway.Common
 
         public BaseResponse<BrandLibrary> Search(string? searchText = null, string? status = null, int? PageIndex = 0, int? PageSize = 0)
         {
-            string url = string.Empty;
-
-            if (!string.IsNullOrEmpty(searchText) && searchText != "")
+            try
             {
-                url = "&searchText=" + HttpUtility.UrlEncode(searchText);
-            }
+                string url = string.Empty;
 
-            if (!string.IsNullOrEmpty(status))
+                if (!string.IsNullOrEmpty(searchText) && searchText != "")
+                {
+                    url = "&searchText=" + HttpUtility.UrlEncode(searchText);
+                }
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    url += "&status=" + status;
+                }
+
+                var response = helper.ApiCall(_URL, EndPoints.Brand + "?PageIndex=" + PageIndex + "&PageSize=" + PageSize + url, "GET", null);
+                return baseResponse.JsonParseList(response);
+            }
+            catch (Exception ex)
             {
-                url += "&status=" + status;
+                return baseResponse.InvalidInput(ex.Message);
             }
-
-            var response = helper.ApiCall(_URL, EndPoints.Brand + "?PageIndex=" + PageIndex + "&PageSize=" + PageSize + url, "GET", null);
-            return baseResponse.JsonParseList(response);
         }
 
         [NonAction]

@@ -179,7 +179,7 @@ namespace API_Gateway.Controllers.Admin
 
             //    baseResponseProductDetails = product.GetAllProducts(0, sellerId, null, true, 0, 0);
             //    List<GetProductDTO> datalist = new List<GetProductDTO>();
-            //    datalist = (List<GetProductDTO>)baseResponseProductDetails.Data;
+            //    datalist = baseResponseProductDetails.Data as List<GetProductDTO> ?? new List<GetProductDTO>();
 
             //    datalist = datalist.Where(x => x.CompanySKUCode.ToLower().Contains(searchText.ToLower()) || x.CategoryName.ToLower().Contains(searchText.ToLower()) || x.ProductName.ToLower().Contains(searchText.ToLower())).ToList();
             //    if (datalist.Count > 0)
@@ -204,7 +204,7 @@ namespace API_Gateway.Controllers.Admin
             //{
             //    baseResponseProductDetails = product.GetAllProducts(0, sellerId, null, true, pageIndex, pageSize);
             //    List<GetProductDTO> datalist = new List<GetProductDTO>();
-            //    datalist = (List<GetProductDTO>)baseResponseProductDetails.Data;
+            //    datalist = baseResponseProductDetails.Data as List<GetProductDTO> ?? new List<GetProductDTO>();
             //    if (datalist.Count > 0)
             //    {
             //        int totalCount = datalist.Count;
@@ -383,7 +383,7 @@ namespace API_Gateway.Controllers.Admin
                     var ResAssignSpec = helper.ApiCall(CatalogueUrl, EndPoints.AssignSpecToCat + "?CategoryID=" + model.CategoryId, "GET", null);
                     BaseResponse<AssignSpecificationToCategoryLibrary> baseAssignSpec = new BaseResponse<AssignSpecificationToCategoryLibrary>();
                     baseAssignSpec = baseAssignSpec.JsonParseRecord(ResAssignSpec);
-                    AssignSpecificationToCategoryLibrary assignSpec = (AssignSpecificationToCategoryLibrary)baseAssignSpec.Data;
+                    AssignSpecificationToCategoryLibrary assignSpec = baseAssignSpec.Data as AssignSpecificationToCategoryLibrary;
                     #endregion
 
                     #region Seller Product
@@ -391,7 +391,7 @@ namespace API_Gateway.Controllers.Admin
                     var ResProduct = helper.ApiCall(CatalogueUrl, EndPoints.SellerProduct + "?categoryId=" + model.CategoryId + "&brandId=" + model.BrandId + "&PageIndex=0&PageSize=0", "GET", null);
                     BaseResponse<SellerProduct> baseProduct = new BaseResponse<SellerProduct>();
                     baseProduct = baseProduct.JsonParseList(ResProduct);
-                    List<SellerProduct> LSTProduct = (List<SellerProduct>)baseProduct.Data;
+                    List<SellerProduct> LSTProduct = baseProduct.Data as List<SellerProduct> ?? new List<SellerProduct>();
                     #endregion
 
                     #region AssignTaxRateToHSNCode
@@ -400,7 +400,7 @@ namespace API_Gateway.Controllers.Admin
                     var ResAssiTax = helper.ApiCall(CatalogueUrl, EndPoints.AssignTaxRateToHSNCode + "?PageIndex=0&PageSize=0", "GET", null);
                     BaseResponse<AssignTaxRateToHSNCode> baseAssiTax = new BaseResponse<AssignTaxRateToHSNCode>();
                     baseAssiTax = baseAssiTax.JsonParseList(ResAssiTax);
-                    List<AssignTaxRateToHSNCode> LSTAssiTax = (List<AssignTaxRateToHSNCode>)baseAssiTax.Data;
+                    List<AssignTaxRateToHSNCode> LSTAssiTax = baseAssiTax.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
                     #endregion
 
                     #region WeightSlab
@@ -409,7 +409,7 @@ namespace API_Gateway.Controllers.Admin
                     var ResWeight = helper.ApiCall(CatalogueUrl, EndPoints.WeightSlab + "?PageIndex=0&PageSize=0", "GET", null);
                     BaseResponse<WeightSlabLibrary> baseWeight = new BaseResponse<WeightSlabLibrary>();
                     baseWeight = baseWeight.JsonParseList(ResWeight);
-                    List<WeightSlabLibrary> LSTWeight = (List<WeightSlabLibrary>)baseWeight.Data;
+                    List<WeightSlabLibrary> LSTWeight = baseWeight.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
                     #endregion
 
                     #region AssignSizeValueToCategory 
@@ -417,7 +417,7 @@ namespace API_Gateway.Controllers.Admin
                     var ResSize = helper.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + assignSpec.Id + "&PageIndex=0&PageSize=0", "GET", null);
                     BaseResponse<AssignSizeValueToCategory> baseSize = new BaseResponse<AssignSizeValueToCategory>();
                     baseSize = baseSize.JsonParseList(ResSize);
-                    List<AssignSizeValueToCategory> LSTSize = (List<AssignSizeValueToCategory>)baseSize.Data;
+                    List<AssignSizeValueToCategory> LSTSize = baseSize.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
                     #endregion
 
                     #region Color 
@@ -426,7 +426,7 @@ namespace API_Gateway.Controllers.Admin
                     var Rescolor = helper.ApiCall(CatalogueUrl, EndPoints.Color + "?PageIndex=0&PageSize=0", "GET", null);
                     BaseResponse<ColorLibrary> baseColor = new BaseResponse<ColorLibrary>();
                     baseColor = baseColor.JsonParseList(Rescolor);
-                    List<ColorLibrary> LSTColor = (List<ColorLibrary>)baseColor.Data;
+                    List<ColorLibrary> LSTColor = baseColor.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
                     #endregion
 
 
@@ -436,7 +436,7 @@ namespace API_Gateway.Controllers.Admin
 
                     BaseResponse<AssignSpecValuesToCategoryLibrary> baseAssignSpecValueToCat = new BaseResponse<AssignSpecValuesToCategoryLibrary>();
                     baseAssignSpecValueToCat = baseAssignSpecValueToCat.JsonParseList(ResSpecification);
-                    List<AssignSpecValuesToCategoryLibrary> lstAssignSpecValueToCat = (List<AssignSpecValuesToCategoryLibrary>)baseAssignSpecValueToCat.Data;
+                    List<AssignSpecValuesToCategoryLibrary> lstAssignSpecValueToCat = baseAssignSpecValueToCat.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
 
                     #endregion
 
@@ -445,7 +445,7 @@ namespace API_Gateway.Controllers.Admin
                     //var ResWarehouse = helper.ApiCall(userUrl, EndPoints.Warehouse + "?PageIndex=0&PageSize=0", "GET", null, token);
                     //BaseResponse<Warehouse> baseWarehouse = new BaseResponse<Warehouse>();
                     //baseWarehouse = baseWarehouse.JsonParseList(ResWarehouse);
-                    //List<Warehouse> LSTWarehosue = (List<Warehouse>)baseWarehouse.Data;
+                    //List<Warehouse> LSTWarehosue = baseWarehouse.Data as List<Warehouse> ?? new List<Warehouse>();
 
                     #endregion
 
@@ -670,7 +670,7 @@ namespace API_Gateway.Controllers.Admin
                     var response = helper.ApiCall(userUrl, EndPoints.Warehouse + "?UserID=" + SellerId, "GET", null);
                     WarebaseResponse = WarebaseResponse.JsonParseList(response);
 
-                    List<Warehouse> warehouses = (List<Warehouse>)WarebaseResponse.Data;
+                    List<Warehouse> warehouses = WarebaseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
                     int wcount = 1;
                     foreach (var item in warehouses)
                     {
@@ -707,7 +707,7 @@ namespace API_Gateway.Controllers.Admin
                 var response = helper.ApiCall(userUrl, EndPoints.Warehouse + "?UserID=" + SellerId, "GET", null);
                 WarebaseResponse = WarebaseResponse.JsonParseList(response);
 
-                List<Warehouse> warehouses = (List<Warehouse>)WarebaseResponse.Data;
+                List<Warehouse> warehouses = WarebaseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
                 int wcount = 1;
                 foreach (var item in warehouses)
                 {
@@ -865,7 +865,7 @@ namespace API_Gateway.Controllers.Admin
             AssignSpecificationToCategoryLibrary assignSpecToCat = new AssignSpecificationToCategoryLibrary();
             if (baseSpecToCat.code == 200)
             {
-                assignSpecToCat = (AssignSpecificationToCategoryLibrary)baseSpecToCat.Data;
+                assignSpecToCat = baseSpecToCat.Data as AssignSpecificationToCategoryLibrary;
 
             }
             #endregion
@@ -908,7 +908,7 @@ namespace API_Gateway.Controllers.Admin
                 var response = helper.ApiCall(userUrl, EndPoints.Warehouse + "?UserID=" + sellerId, "GET", null);
                 WarebaseResponse = WarebaseResponse.JsonParseList(response);
 
-                List<Warehouse> warehouses = (List<Warehouse>)WarebaseResponse.Data;
+                List<Warehouse> warehouses = WarebaseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
                 int wcount = 1;
                 foreach (var item in warehouses)
                 {
@@ -953,8 +953,8 @@ namespace API_Gateway.Controllers.Admin
             var ResCat = helper.ApiCall(CatalogueUrl, EndPoints.Category + "?Id=" + categoryId + "&PageIndex=0", "GET", null);
             BaseResponse<CategoryLibrary> baseCat = new BaseResponse<CategoryLibrary>();
             baseCat = baseCat.JsonParseRecord(ResCat);
-            //List<CategoryLibrary> lstCat = (List<CategoryLibrary>)baseCat.Data;
-            CategoryLibrary lstCat = (CategoryLibrary)baseCat.Data;
+            //List<CategoryLibrary> lstCat = baseCat.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>();
+            CategoryLibrary lstCat = baseCat.Data as CategoryLibrary;
 
             totalCount.Add(1);
 
@@ -978,7 +978,7 @@ namespace API_Gateway.Controllers.Admin
             var ResAssiTax = helper.ApiCall(CatalogueUrl, EndPoints.AssignTaxRateToHSNCode + "?PageIndex=0&PageSize=0", "GET", null);
             BaseResponse<AssignTaxRateToHSNCode> baseAssiTax = new BaseResponse<AssignTaxRateToHSNCode>();
             baseAssiTax = baseAssiTax.JsonParseList(ResAssiTax);
-            List<AssignTaxRateToHSNCode> lstAssiTax = (List<AssignTaxRateToHSNCode>)baseAssiTax.Data;
+            List<AssignTaxRateToHSNCode> lstAssiTax = baseAssiTax.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
 
             totalCount.Add(lstAssiTax.Count());
 
@@ -1000,7 +1000,7 @@ namespace API_Gateway.Controllers.Admin
             var ResWeight = helper.ApiCall(CatalogueUrl, EndPoints.WeightSlab + "?PageIndex=0", "GET", null);
             BaseResponse<WeightSlabLibrary> baseWeight = new BaseResponse<WeightSlabLibrary>();
             baseWeight = baseWeight.JsonParseList(ResWeight);
-            List<WeightSlabLibrary> lstWeight = (List<WeightSlabLibrary>)baseWeight.Data;
+            List<WeightSlabLibrary> lstWeight = baseWeight.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
 
             totalCount.Add(lstWeight.Count());
 
@@ -1027,7 +1027,7 @@ namespace API_Gateway.Controllers.Admin
                 var ResSize = helper.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + assignSpecToCat.Id + "&PageIndex=0&PageSize=0", "GET", null);
                 BaseResponse<AssignSizeValueToCategory> baseSize = new BaseResponse<AssignSizeValueToCategory>();
                 baseSize = baseSize.JsonParseList(ResSize);
-                List<AssignSizeValueToCategory> lstSize = (List<AssignSizeValueToCategory>)baseSize.Data;
+                List<AssignSizeValueToCategory> lstSize = baseSize.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
 
 
 
@@ -1078,7 +1078,7 @@ namespace API_Gateway.Controllers.Admin
                 var ResColor = helper.ApiCall(CatalogueUrl, EndPoints.Color + "?PageIndex=0", "GET", null);
                 BaseResponse<ColorLibrary> baseColor = new BaseResponse<ColorLibrary>();
                 baseColor = baseColor.JsonParseList(ResColor);
-                List<ColorLibrary> lstColor = (List<ColorLibrary>)baseColor.Data;
+                List<ColorLibrary> lstColor = baseColor.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
 
                 totalCount.Add(lstColor.Count());
 
@@ -1174,7 +1174,7 @@ namespace API_Gateway.Controllers.Admin
             AssignSpecificationToCategoryLibrary assignSpecToCat = new AssignSpecificationToCategoryLibrary();
             if (baseSpecToCat.code == 200)
             {
-                assignSpecToCat = (AssignSpecificationToCategoryLibrary)baseSpecToCat.Data;
+                assignSpecToCat = baseSpecToCat.Data as AssignSpecificationToCategoryLibrary;
 
             }
             #endregion
@@ -1220,7 +1220,7 @@ namespace API_Gateway.Controllers.Admin
                 var response = helper.ApiCall(userUrl, EndPoints.Warehouse + "?UserID=" + sellerId, "GET", null);
                 WarebaseResponse = WarebaseResponse.JsonParseList(response);
 
-                warehouses = (List<Warehouse>)WarebaseResponse.Data;
+                warehouses = WarebaseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
                 int wcount = 1;
                 foreach (var item in warehouses)
                 {
@@ -1259,8 +1259,8 @@ namespace API_Gateway.Controllers.Admin
             var ResCat = helper.ApiCall(CatalogueUrl, EndPoints.Category + "?Id=" + categoryId + "&PageIndex=0", "GET", null);
             BaseResponse<CategoryLibrary> baseCat = new BaseResponse<CategoryLibrary>();
             baseCat = baseCat.JsonParseRecord(ResCat);
-            //List<CategoryLibrary> lstCat = (List<CategoryLibrary>)baseCat.Data;
-            CategoryLibrary lstCat = (CategoryLibrary)baseCat.Data;
+            //List<CategoryLibrary> lstCat = baseCat.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>();
+            CategoryLibrary lstCat = baseCat.Data as CategoryLibrary;
 
             totalCount.Add(1);
 
@@ -1284,7 +1284,7 @@ namespace API_Gateway.Controllers.Admin
             var ResAssiTax = helper.ApiCall(CatalogueUrl, EndPoints.AssignTaxRateToHSNCode + "?PageIndex=0&PageSize=0", "GET", null);
             BaseResponse<AssignTaxRateToHSNCode> baseAssiTax = new BaseResponse<AssignTaxRateToHSNCode>();
             baseAssiTax = baseAssiTax.JsonParseList(ResAssiTax);
-            List<AssignTaxRateToHSNCode> lstAssiTax = (List<AssignTaxRateToHSNCode>)baseAssiTax.Data;
+            List<AssignTaxRateToHSNCode> lstAssiTax = baseAssiTax.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
 
             totalCount.Add(lstAssiTax.Count());
 
@@ -1306,7 +1306,7 @@ namespace API_Gateway.Controllers.Admin
             var ResWeight = helper.ApiCall(CatalogueUrl, EndPoints.WeightSlab + "?PageIndex=0", "GET", null);
             BaseResponse<WeightSlabLibrary> baseWeight = new BaseResponse<WeightSlabLibrary>();
             baseWeight = baseWeight.JsonParseList(ResWeight);
-            List<WeightSlabLibrary> lstWeight = (List<WeightSlabLibrary>)baseWeight.Data;
+            List<WeightSlabLibrary> lstWeight = baseWeight.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
 
             totalCount.Add(lstWeight.Count());
 
@@ -1333,7 +1333,7 @@ namespace API_Gateway.Controllers.Admin
                 var ResSize = helper.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + assignSpecToCat.Id + "&PageIndex=0&PageSize=0", "GET", null);
                 BaseResponse<AssignSizeValueToCategory> baseSize = new BaseResponse<AssignSizeValueToCategory>();
                 baseSize = baseSize.JsonParseList(ResSize);
-                List<AssignSizeValueToCategory> lstSize = (List<AssignSizeValueToCategory>)baseSize.Data;
+                List<AssignSizeValueToCategory> lstSize = baseSize.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
 
 
                 rowCount = 0;
@@ -1364,7 +1364,7 @@ namespace API_Gateway.Controllers.Admin
                 var ResColor = helper.ApiCall(CatalogueUrl, EndPoints.Color + "?PageIndex=0", "GET", null);
                 BaseResponse<ColorLibrary> baseColor = new BaseResponse<ColorLibrary>();
                 baseColor = baseColor.JsonParseList(ResColor);
-                List<ColorLibrary> lstColor = (List<ColorLibrary>)baseColor.Data;
+                List<ColorLibrary> lstColor = baseColor.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
 
                 totalCount.Add(lstColor.Count());
 
@@ -1388,7 +1388,7 @@ namespace API_Gateway.Controllers.Admin
 
                 BaseResponse<AssignSpecValuesToCategoryLibrary> baseAssignSpecValueToCat = new BaseResponse<AssignSpecValuesToCategoryLibrary>();
                 baseAssignSpecValueToCat = baseAssignSpecValueToCat.JsonParseList(ResSpecification);
-                List<AssignSpecValuesToCategoryLibrary> lstAssignSpecValueToCat = (List<AssignSpecValuesToCategoryLibrary>)baseAssignSpecValueToCat.Data;
+                List<AssignSpecValuesToCategoryLibrary> lstAssignSpecValueToCat = baseAssignSpecValueToCat.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
 
                 List<AssignSpecValuesToCategoryLibrary> lstSpec = new List<AssignSpecValuesToCategoryLibrary>();
                 List<AssignSpecValuesToCategoryLibrary> lstSpecType = new List<AssignSpecValuesToCategoryLibrary>();
@@ -1476,7 +1476,7 @@ namespace API_Gateway.Controllers.Admin
 
             baseResponseProduct = baseResponseProduct.JsonParseList(responseproduct);
 
-            List<ProductBulkDownload> tempList = (List<ProductBulkDownload>)baseResponseProduct.Data;
+            List<ProductBulkDownload> tempList = baseResponseProduct.Data as List<ProductBulkDownload> ?? new List<ProductBulkDownload>();
 
             List<ProductBulkDownload> childProductList = tempList.Where(p => p.flag == "p").ToList();
 
@@ -1890,7 +1890,7 @@ namespace API_Gateway.Controllers.Admin
 
                         if (baseproductDetails.code == 200)
                         {
-                            List<ProductBulkDetails> lstbulkDetails = (List<ProductBulkDetails>)baseproductDetails.Data;
+                            List<ProductBulkDetails> lstbulkDetails = baseproductDetails.Data as List<ProductBulkDetails> ?? new List<ProductBulkDetails>();
                             ProductBulkDetails bulkDetail = lstbulkDetails.FirstOrDefault();
 
                             dynamic jsonCategory = JsonConvert.DeserializeObject<dynamic>(bulkDetail.Category);
@@ -2253,7 +2253,7 @@ namespace API_Gateway.Controllers.Admin
             var response = helper.ApiCall(userUrl, EndPoints.Warehouse + "?UserID=" + sellerId, "GET", null);
             WarebaseResponse = WarebaseResponse.JsonParseList(response);
 
-            List<Warehouse> warehouses = (List<Warehouse>)WarebaseResponse.Data;
+            List<Warehouse> warehouses = WarebaseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
             bool AllowWarehouseManagement = Convert.ToBoolean(_configuration.GetValue<string>("Allow_warehouse_management"));
             if (AllowWarehouseManagement)
             {
@@ -2286,7 +2286,7 @@ namespace API_Gateway.Controllers.Admin
 
             baseResponseProduct = baseResponseProduct.JsonParseList(responseproduct);
 
-            List<ProductBulkDownloadForStock> tempList = (List<ProductBulkDownloadForStock>)baseResponseProduct.Data;
+            List<ProductBulkDownloadForStock> tempList = baseResponseProduct.Data as List<ProductBulkDownloadForStock> ?? new List<ProductBulkDownloadForStock>();
 
             List<ProductBulkDownloadForStock> childProductList = tempList.Where(p => p.flag == "p").ToList();
 
@@ -2562,7 +2562,7 @@ namespace API_Gateway.Controllers.Admin
             //baseResponse = baseResponse.JsonParseList(response);
             //if (baseResponse.code == 200)
             //{
-            //    List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse.Data;
+            //    List<SellerListModel> sellerLists = baseResponse.Data as List<SellerListModel> ?? new List<SellerListModel>();
             //    sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             //    sellerLists = sellerLists.Where(x => x.Status.ToLower() != "archived").ToList();
             //    //List<SellerKycList> lst = seller.bindSellerDetails(sellerLists);
@@ -2605,7 +2605,7 @@ namespace API_Gateway.Controllers.Admin
             bbaseResponse = bbaseResponse.JsonParseList(bresponse);
             if (bbaseResponse.code == 200)
             {
-                List<AssignBrandToSeller> BrandLists = (List<AssignBrandToSeller>)bbaseResponse.Data;
+                List<AssignBrandToSeller> BrandLists = bbaseResponse.Data as List<AssignBrandToSeller> ?? new List<AssignBrandToSeller>();
 
                 foreach (var item in BrandLists)
                 {

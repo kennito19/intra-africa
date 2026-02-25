@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutOption> tempList = (List<ManageLayoutOption>)baseResponse.Data;
+            List<ManageLayoutOption> tempList = baseResponse.Data as List<ManageLayoutOption> ?? new List<ManageLayoutOption>();
 
             if (tempList.Any())
             {
@@ -62,7 +62,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutOption> tempList = (List<ManageLayoutOption>)baseResponse.Data;
+            List<ManageLayoutOption> tempList = baseResponse.Data as List<ManageLayoutOption> ?? new List<ManageLayoutOption>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -72,7 +72,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageLayoutOption record = (ManageLayoutOption)baseResponse.Data;
+                ManageLayoutOption record = baseResponse.Data as ManageLayoutOption;
                 string OldName = record.Image;
                 record.Name = model.Name;
                 record.Image = UpdateDocFile(OldName, model.Name, model.ImageFile);
@@ -91,7 +91,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutOption> tempList = (List<ManageLayoutOption>)baseResponse.Data;
+            List<ManageLayoutOption> tempList = baseResponse.Data as List<ManageLayoutOption> ?? new List<ManageLayoutOption>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?Id=" + id, "DELETE", null);
@@ -131,7 +131,7 @@ namespace API_Gateway.Controllers.Admin
                 url = "&Searchtext=" + HttpUtility.UrlEncode(searchtext);
             }
 
-            var response = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "PageIndex=" + pageIndex + "&PageSize=" + pageSize + url, "GET", null);
+            var response = helper.ApiCall(URL, EndPoints.ManageLayoutOption + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize + url, "GET", null);
             return Ok(baseResponse.JsonParseList(response));
         }
 

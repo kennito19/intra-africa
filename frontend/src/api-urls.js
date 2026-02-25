@@ -4,6 +4,9 @@ const baseUrl = getBaseUrl()
 
 const apiPath = {
   getHomePage: baseUrl + `ManageHomePageSection/GetHomePageSection`,
+  getHomepageBrands: baseUrl + 'ManageHomePageSection/GetBrands',
+  getHomepageFeaturedProducts:
+    baseUrl + 'ManageHomePageSection/GetFeaturedProducts',
   getStaticPages: baseUrl + 'ManageStaticPages',
   getStaticPagesDetails: baseUrl + 'ManageStaticPages/byId',
   getMenu: baseUrl + 'ManageHomePageSection/GetMenu',

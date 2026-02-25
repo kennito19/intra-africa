@@ -1,67 +1,47 @@
 using Catalogue.Application.IRepositories;
-using Catalogue.Domain.Entity;
 using Catalogue.Domain;
-using Catalogue.Infrastructure.Helper;
+using Catalogue.Domain.Entity;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using MySqlConnector;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Data.Common;
 
 namespace Catalogue.Infrastructure.Repository
 {
     public class ManageConfigValueRepository : IManageConfigValueRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
 
         public ManageConfigValueRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(ManageConfigValueLibrary configValue)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
-                    new MySqlParameter("@id", configValue.Id),
-                    new MySqlParameter("@keyId", configValue.KeyId),
-                    new MySqlParameter("@value", configValue.Value),
-                    new MySqlParameter("@createdby", configValue.CreatedBy),
-                new MySqlParameter("@createdat", configValue.CreatedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+INSERT INTO manageconfigvalues (KeyId, Value, CreatedAt, CreatedBy)
+VALUES (@keyId, @value, @createdAt, @createdBy);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@keyId", configValue.KeyId);
+                cmd.Parameters.AddWithValue("@value", (object?)configValue.Value ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", configValue.CreatedAt ?? DateTime.Now);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)configValue.CreatedBy ?? DBNull.Value);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageConfigValue, output, newid, message, sqlParams.ToArray());
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -69,36 +49,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "update"),
-                new MySqlParameter("@id", configValue.Id),
-                new MySqlParameter("@keyId", configValue.KeyId),
-                new MySqlParameter("@value", configValue.Value),
-                new MySqlParameter("@modifiedby", configValue.ModifiedBy),
-                new MySqlParameter("@modifiedat", configValue.ModifiedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE manageconfigvalues
+SET KeyId = @keyId,
+    Value = @value,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", configValue.Id);
+                cmd.Parameters.AddWithValue("@keyId", configValue.KeyId);
+                cmd.Parameters.AddWithValue("@value", (object?)configValue.Value ?? string.Empty);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)configValue.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", configValue.ModifiedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageConfigValue, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = configValue.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -106,32 +85,24 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "delete"),
-                new MySqlParameter("@id", configValue.Id),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = "DELETE FROM manageconfigvalues WHERE Id = @id;";
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", configValue.Id);
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageConfigValue, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = configValue.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -139,56 +110,99 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", configValue.Id),
-                new MySqlParameter("@keyId", configValue.KeyId),
-                new MySqlParameter("@keyName", configValue.KeyName),
-                new MySqlParameter("@searchtext", configValue.SearchText),
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var where = new List<string>();
+                if (configValue.Id > 0)
+                {
+                    where.Add("v.Id = @id");
+                    cmd.Parameters.AddWithValue("@id", configValue.Id);
+                }
+                if (configValue.KeyId > 0)
+                {
+                    where.Add("v.KeyId = @keyId");
+                    cmd.Parameters.AddWithValue("@keyId", configValue.KeyId);
+                }
+                if (!string.IsNullOrWhiteSpace(configValue.KeyName))
+                {
+                    where.Add("k.Name LIKE @keyName");
+                    cmd.Parameters.AddWithValue("@keyName", $"%{configValue.KeyName}%");
+                }
+                if (!string.IsNullOrWhiteSpace(configValue.Value))
+                {
+                    where.Add("v.Value LIKE @value");
+                    cmd.Parameters.AddWithValue("@value", $"%{configValue.Value}%");
+                }
+                if (!string.IsNullOrWhiteSpace(configValue.SearchText))
+                {
+                    where.Add("(k.Name LIKE @search OR v.Value LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{configValue.SearchText}%");
+                }
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageConfigValue, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $@"
+SELECT COUNT(1)
+FROM manageconfigvalues v
+INNER JOIN manageconfigkey k ON k.Id = v.KeyId
+{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
+
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var offset = (safePageIndex - 1) * safePageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+
+                var items = new List<ManageConfigValueLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT
+  v.Id, v.KeyId, v.Value, v.CreatedBy, v.CreatedAt, v.ModifiedBy, v.ModifiedAt,
+  k.Name AS KeyName
+FROM manageconfigvalues v
+INNER JOIN manageconfigkey k ON k.Id = v.KeyId
+{whereClause}
+ORDER BY v.Id DESC
+LIMIT @offset, @pageSize;";
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new ManageConfigValueLibrary
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            KeyId = reader.GetInt32(reader.GetOrdinal("KeyId")),
+                            Value = reader.IsDBNull(reader.GetOrdinal("Value")) ? null : reader.GetString(reader.GetOrdinal("Value")),
+                            CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? null : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                            ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt")),
+                            KeyName = reader.IsDBNull(reader.GetOrdinal("KeyName")) ? null : reader.GetString(reader.GetOrdinal("KeyName"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<ManageConfigValueLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<ManageConfigValueLibrary>> { code = 400, message = ex.Message, data = new List<ManageConfigValueLibrary>() };
             }
         }
-
-        private async Task<List<ManageConfigValueLibrary>> LayoutParserAsync(DbDataReader reader)
-        {
-            List<ManageConfigValueLibrary> lstLayouts = new List<ManageConfigValueLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new ManageConfigValueLibrary()
-                {
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    KeyId = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("KeyId"))),
-                    Value = Convert.ToString(reader.GetValue(reader.GetOrdinal("Value"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    KeyName = Convert.ToString(reader.GetValue(reader.GetOrdinal("KeyName"))),
-                });
-            }
-            return lstLayouts;
-        }
-
     }
 }

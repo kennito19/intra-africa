@@ -2,7 +2,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { _homePageImg_ } from '../../lib/ImagePath'
-import { checkCase, reactImageUrl } from '../../lib/GetBaseUrl'
+import {
+  buildResourceImageUrl,
+  checkCase,
+  imagePlaceholderUrl
+} from '../../lib/GetBaseUrl'
 
 const DoubleImage = ({ data }) => {
   const renderComponent = (card) => {
@@ -14,13 +18,16 @@ const DoubleImage = ({ data }) => {
           key={card?.id}
         >
           <Image
-            src={encodeURI(`${reactImageUrl}${_homePageImg_}${card?.image}`)}
+            src={buildResourceImageUrl(card?.image, _homePageImg_)}
             alt={card?.image_alt}
             className='w-f'
             width={0}
             height={0}
             quality={100}
             sizes='100vw'
+            onError={(event) => {
+              event.currentTarget.src = imagePlaceholderUrl
+            }}
           />
         </Link>
       )

@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.RejectionType + "?Type=" + model.Type, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<RejectionTypeLibrary> tmp = (List<RejectionTypeLibrary>)baseResponse.Data;
+            List<RejectionTypeLibrary> tmp = baseResponse.Data as List<RejectionTypeLibrary> ?? new List<RejectionTypeLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -57,7 +57,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.RejectionType + "?Type=" + model.Type, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<RejectionTypeLibrary> tmp = (List<RejectionTypeLibrary>)baseResponse.Data;
+            List<RejectionTypeLibrary> tmp = baseResponse.Data as List<RejectionTypeLibrary> ?? new List<RejectionTypeLibrary>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -66,7 +66,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.RejectionType + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                RejectionTypeLibrary rejectionType = (RejectionTypeLibrary)baseResponse.Data;
+                RejectionTypeLibrary rejectionType = baseResponse.Data as RejectionTypeLibrary;
 
                 rejectionType.Id = model.Id;
                 rejectionType.Type = model.Type;
@@ -86,13 +86,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.RejectionType + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<RejectionTypeLibrary> tmp = (List<RejectionTypeLibrary>)baseResponse.Data;
+            List<RejectionTypeLibrary> tmp = baseResponse.Data as List<RejectionTypeLibrary> ?? new List<RejectionTypeLibrary>();
             if (tmp.Any())
             {
                 var tempIssue = helper.ApiCall(URL, EndPoints.IssueType + "?RejectionTypeId=" + id, "GET", null);
                 BaseResponse<IssueTypeLibrary> baseResIssue = new BaseResponse<IssueTypeLibrary>();
                 var IssueResponse = baseResIssue.JsonParseList(tempIssue);
-                List<IssueTypeLibrary> IssueType = (List<IssueTypeLibrary>)IssueResponse.Data;
+                List<IssueTypeLibrary> IssueType = IssueResponse.Data as List<IssueTypeLibrary> ?? new List<IssueTypeLibrary>();
 
                 if (IssueType.Any())
                 {
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
                 var tempIssueReason = helper.ApiCall(URL, EndPoints.IssueReason + "?RejectionTypeId=" + id, "GET", null);
                 BaseResponse<IssueReasonLibrary> baseResIssueReasons = new BaseResponse<IssueReasonLibrary>();
                 var IssueReasonsResponse = baseResIssueReasons.JsonParseList(tempIssueReason);
-                List<IssueReasonLibrary> IssueReasons = (List<IssueReasonLibrary>)IssueReasonsResponse.Data;
+                List<IssueReasonLibrary> IssueReasons = IssueReasonsResponse.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
 
                 if (IssueReasons.Any())
                 {

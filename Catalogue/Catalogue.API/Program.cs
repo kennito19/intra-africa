@@ -97,6 +97,9 @@ builder.Services.AddScoped<IManageLayoutTypesService, ManageLayoutTypesService>(
 builder.Services.AddScoped<IManageLayoutTypesDetailsRepository, ManageLayoutTypesDetailsRepository>();
 builder.Services.AddScoped<IManageLayoutTypesDetailsService, ManageLayoutTypesDetailsService>();
 
+builder.Services.AddScoped<IManageHomePageRepository, ManageHomePageRepository>();
+builder.Services.AddScoped<IManageHomePageService, ManageHomePageService>();
+
 builder.Services.AddScoped<IManageHomePageSectionsRepository, ManageHomePageSectionsRepository>();
 builder.Services.AddScoped<IManageHomePageSectionsService, ManageHomePageSectionsService>();
 

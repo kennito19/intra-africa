@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?ReturnPolicyDetailID=" + model.ReturnPolicyDetailID + "&CategoryID=" + model.CategoryID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignReturnPolicyToCatagoryLibrary> asrpc = (List<AssignReturnPolicyToCatagoryLibrary>)baseResponse.Data;
+            List<AssignReturnPolicyToCatagoryLibrary> asrpc = baseResponse.Data as List<AssignReturnPolicyToCatagoryLibrary> ?? new List<AssignReturnPolicyToCatagoryLibrary>();
             if (asrpc.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -56,7 +56,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?CategoryID=" + model.CategoryID + "&ReturnPolicyDetailID=" + model.ReturnPolicyDetailID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignReturnPolicyToCatagoryLibrary> templist = (List<AssignReturnPolicyToCatagoryLibrary>)baseResponse.Data;
+            List<AssignReturnPolicyToCatagoryLibrary> templist = baseResponse.Data as List<AssignReturnPolicyToCatagoryLibrary> ?? new List<AssignReturnPolicyToCatagoryLibrary>();
             if (templist.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -65,7 +65,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var responsemessage = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(responsemessage);
-                var record = (AssignReturnPolicyToCatagoryLibrary)baseResponse.Data;
+                var record = baseResponse.Data as AssignReturnPolicyToCatagoryLibrary;
                 record.Id = model.Id;
                 record.ReturnPolicyDetailID = model.ReturnPolicyDetailID;
                 record.CategoryID = model.CategoryID;
@@ -83,7 +83,7 @@ namespace API_Gateway.Controllers.Admin
             //token = TokenRelay.GetBearerToken(HttpContext);
             var temp = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignReturnPolicyToCatagoryLibrary> tempList = (List<AssignReturnPolicyToCatagoryLibrary>)baseResponse.Data;
+            List<AssignReturnPolicyToCatagoryLibrary> tempList = baseResponse.Data as List<AssignReturnPolicyToCatagoryLibrary> ?? new List<AssignReturnPolicyToCatagoryLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?Id=" + id, "DELETE", null);

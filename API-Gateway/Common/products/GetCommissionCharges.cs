@@ -39,7 +39,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseRecord(response);
                 if (baseResponse.code == 200)
                 {
-                    chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                    chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                 }
             }
 
@@ -78,7 +78,7 @@ namespace API_Gateway.Common.products
             {
                 BaseResponse<CategoryLibrary> baseResponse = new BaseResponse<CategoryLibrary>();
                 baseResponse = baseResponse.JsonParseRecord(response);
-                categoryLibrary = (CategoryLibrary)baseResponse.Data;
+                categoryLibrary = baseResponse.Data as CategoryLibrary;
             }
             return categoryLibrary;
         }
@@ -93,7 +93,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseRecord(response);
                 if (baseResponse.code == 200)
                 {
-                    chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                    chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                 }
                 else
                 {
@@ -118,7 +118,7 @@ namespace API_Gateway.Common.products
                                         baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                         if (baseResponse.code == 200)
                                         {
-                                            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                             break;
                                         }
                                         else
@@ -189,7 +189,7 @@ namespace API_Gateway.Common.products
                                     baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                     if (baseResponse.code == 200)
                                     {
-                                        chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                        chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                         break;
                                     }
                                     else
@@ -249,7 +249,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseRecord(response);
                 if (baseResponse.code == 200)
                 {
-                    chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                    chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                 }
                 else
                 {
@@ -274,7 +274,7 @@ namespace API_Gateway.Common.products
                                         baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                         if (baseResponse.code == 200)
                                         {
-                                            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                             break;
                                         }
                                         else
@@ -345,7 +345,7 @@ namespace API_Gateway.Common.products
                                     baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                     if (baseResponse.code == 200)
                                     {
-                                        chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                        chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                         break;
                                     }
                                     else
@@ -405,7 +405,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseRecord(response);
                 if (baseResponse.code == 200)
                 {
-                    chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                    chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                 }
                 else
                 {
@@ -430,7 +430,7 @@ namespace API_Gateway.Common.products
                                         baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                         if (baseResponse.code == 200)
                                         {
-                                            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                             break;
                                         }
                                         else
@@ -491,7 +491,7 @@ namespace API_Gateway.Common.products
                                     baseResponse = baseResponse.JsonParseRecord(Parentresponse);
                                     if (baseResponse.code == 200)
                                     {
-                                        chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+                                        chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
                                         break;
                                     }
                                     else
@@ -543,7 +543,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseRecord(response);
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //        }
         //        else
         //        {
@@ -567,7 +567,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseRecord(response);
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //        }
         //        else
         //        {
@@ -592,7 +592,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseRecord(response);
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //        }
         //    }
 
@@ -609,7 +609,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseRecord(response);
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //        }
         //        else
         //        {
@@ -634,7 +634,7 @@ namespace API_Gateway.Common.products
         //                                baseResponse = baseResponse.JsonParseRecord(Parentresponse);
         //                                if (baseResponse.code == 200)
         //                                {
-        //                                    chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //                                    chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //                                    break;
         //                                }
         //                                else
@@ -694,7 +694,7 @@ namespace API_Gateway.Common.products
         //                        {
         //                            baseResponse = new BaseResponse<CommissionChargesLibrary>();
         //                            baseResponse = baseResponse.JsonParseList(Parentresponse);
-        //                            chargesLibrary = (CommissionChargesLibrary)baseResponse.Data;
+        //                            chargesLibrary = baseResponse.Data as CommissionChargesLibrary;
         //                            break;
         //                        }
         //                        else

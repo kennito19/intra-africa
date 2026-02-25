@@ -73,7 +73,7 @@ namespace API_Gateway.Common.products
             baseResponse1 = baseResponse1.JsonParseRecord(response1);
             if (baseResponse1.code == 200)
             {
-                SellerProduct sellerProductData = (SellerProduct)baseResponse1.Data;
+                SellerProduct sellerProductData = baseResponse1.Data as SellerProduct;
                 try
                 {
                     sellerProductData.Status = "Archived";

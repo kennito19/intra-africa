@@ -54,13 +54,13 @@ namespace API_Gateway.Common.cart
             {
                 response = helper.ApiCall(URL, EndPoints.Cart + "?sessionId=" + CartSessionId + url, "GET", null);
                 cartResponse = cartResponse.JsonParseList(response);
-                lstCart = (List<Cart>)cartResponse.Data;
+                lstCart = cartResponse.Data as List<Cart>;
             }
             else if (UserId != null)
             {
                 response = helper.ApiCall(URL, EndPoints.Cart + "?sessionId=" + CartSessionId + "&UserId=" + UserId + url, "GET", null);
                 cartResponse = cartResponse.JsonParseList(response);
-                lstCart = (List<Cart>)cartResponse.Data;
+                lstCart = cartResponse.Data as List<Cart>;
             }
             return lstCart;
         }
@@ -73,7 +73,7 @@ namespace API_Gateway.Common.cart
             {
                 response = helper.ApiCall(URL, EndPoints.SellerProduct + "/getSellerProductDetails?sellerProductId=" + SellerProductId, "GET", null);
                 sellerProductResponse = sellerProductResponse.JsonParseList(response);
-                sellerProduct = (List<SellerProductDetails>)sellerProductResponse.Data;
+                sellerProduct = sellerProductResponse.Data as List<SellerProductDetails>;
 
             }
             return sellerProduct;
@@ -85,7 +85,7 @@ namespace API_Gateway.Common.cart
             List<GSTInfo> collectionlst = new List<GSTInfo>();
             var response = helper.ApiCall(URL, EndPoints.GSTInfo + "?UserID=" + UserId, "GET", null);
             gstInfoResponse = gstInfoResponse.JsonParseList(response);
-            collectionlst = (List<GSTInfo>)gstInfoResponse.Data;
+            collectionlst = gstInfoResponse.Data as List<GSTInfo>;
             return collectionlst;
         }
 
@@ -96,7 +96,7 @@ namespace API_Gateway.Common.cart
 
             var response = helper.ApiCall(URL, EndPoints.Delivery + "?pincode=" + pincode, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            DeliveryData = (DeliveryLibrary)baseResponse.Data;
+            DeliveryData = baseResponse.Data as DeliveryLibrary;
             return DeliveryData;
         }
 
@@ -107,7 +107,7 @@ namespace API_Gateway.Common.cart
             sellerResponse = sellerResponse.JsonParseRecord(response);
 
             SellerListModel seller = new SellerListModel();
-            seller = (SellerListModel)sellerResponse.Data;
+            seller = sellerResponse.Data as SellerListModel;
 
             return seller;
         }
@@ -121,7 +121,7 @@ namespace API_Gateway.Common.cart
 
         //    if (baseResponse2.code == 200)
         //    {
-        //        List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse2.Data;
+        //        List<SellerListModel> sellerLists = baseResponse2.Data as List<SellerListModel>;
         //        sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
         //        List<SellerKycList> lst = seller.bindSellerDetails(sellerLists);
         //        sellerKyc = lst.FirstOrDefault();
@@ -131,12 +131,12 @@ namespace API_Gateway.Common.cart
         //    //sellerKycResponse = sellerKycResponse.JsonParseRecord(response);
 
         //    //SellerKycList sellerKyc = new SellerKycList();
-        //    //sellerKyc = (SellerKycList)sellerKycResponse.Data;
+        //    //sellerKyc = sellerKycResponse.Data as SellerKycList;
 
         //    //BaseResponse<ChargesPaidByLibrary> baseResponseCharges = new BaseResponse<ChargesPaidByLibrary>();
         //    //var response1_1 = helper.ApiCall(CatelogueURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
         //    //baseResponseCharges = baseResponseCharges.JsonParseList(response1_1);
-        //    //List<ChargesPaidByLibrary> Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+        //    //List<ChargesPaidByLibrary> Charges = baseResponseCharges.Data as List<ChargesPaidByLibrary>;
         //    //string CName = sellerKyc.ShipmentChargesPaidBy != null ? Charges.Where(p => p.Id == sellerKyc.ShipmentChargesPaidBy).FirstOrDefault().Name : null;
         //    //sellerKyc.ShipmentChargesPaidByName = CName;
 
@@ -216,7 +216,7 @@ namespace API_Gateway.Common.cart
             brandResponse = brandResponse.JsonParseRecord(response);
 
             BrandLibrary brand = new BrandLibrary();
-            brand = (BrandLibrary)brandResponse.Data;
+            brand = brandResponse.Data as BrandLibrary;
 
             return brand;
         }
@@ -227,7 +227,7 @@ namespace API_Gateway.Common.cart
             colorResponse = colorResponse.JsonParseRecord(response);
 
             ColorLibrary color = new ColorLibrary();
-            color = (ColorLibrary)colorResponse.Data;
+            color = colorResponse.Data as ColorLibrary;
 
             return color;
         }
@@ -238,7 +238,7 @@ namespace API_Gateway.Common.cart
             taxResponse = taxResponse.JsonParseRecord(response);
 
             TaxTypeValueDTO taxTypeValue = new TaxTypeValueDTO();
-            taxTypeValue = (TaxTypeValueDTO)taxResponse.Data;
+            taxTypeValue = taxResponse.Data as TaxTypeValueDTO;
 
             return taxTypeValue;
         }
@@ -251,7 +251,7 @@ namespace API_Gateway.Common.cart
             collectionResponse = collectionResponse.JsonParseList(response);
 
             List<ManageCollectionDTO> collectionlst = new List<ManageCollectionDTO>();
-            collectionlst = (List<ManageCollectionDTO>)collectionResponse.Data;
+            collectionlst = collectionResponse.Data as List<ManageCollectionDTO>;
 
             if (collectionlst.Count > 0)
             {
@@ -266,7 +266,7 @@ namespace API_Gateway.Common.cart
                     if (collectionmappResponse.code == 200)
                     {
                         ManageCollectionMappingDTO collectionmapp = new ManageCollectionMappingDTO();
-                        collectionmapp = (ManageCollectionMappingDTO)collectionmappResponse.Data;
+                        collectionmapp = collectionmappResponse.Data as ManageCollectionMappingDTO;
 
                         if (collectionmapp != null)
                         {
@@ -278,7 +278,7 @@ namespace API_Gateway.Common.cart
                                 FlashSalePriceMasterDTO _flashsale = new FlashSalePriceMasterDTO();
                                 if (flashSaleResponse.code == 200)
                                 {
-                                    var _flashsalelst = (List<FlashSalePriceMasterDTO>)flashSaleResponse.Data;
+                                    var _flashsalelst = flashSaleResponse.Data as List<FlashSalePriceMasterDTO>;
                                     _flashsale = _flashsalelst.FirstOrDefault();
                                     if (_flashsale.Status.ToLower() == "active")
                                     {
@@ -316,7 +316,7 @@ namespace API_Gateway.Common.cart
             ManageOffersLibrary _OffersLibrary = new ManageOffersLibrary();
             if (OfferItembaseResponse.code == 200)
             {
-                _OffersLibrary = (ManageOffersLibrary)OfferItembaseResponse.Data;
+                _OffersLibrary = OfferItembaseResponse.Data as ManageOffersLibrary;
                 DateTime currentDate = DateTime.ParseExact(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 if (_OffersLibrary != null && !string.IsNullOrEmpty(_OffersLibrary.code) && (_OffersLibrary.startDate <= currentDate && _OffersLibrary.endDate >= currentDate))
                 {
@@ -381,7 +381,7 @@ namespace API_Gateway.Common.cart
             configResponse = configResponse.JsonParseList(response);
             if (configResponse.code == 200)
             {
-                manageConfigValue = (List<ManageConfigValueLibrary>)configResponse.Data;
+                manageConfigValue = configResponse.Data as List<ManageConfigValueLibrary>;
 
                 if (manageConfigValue.Count > 0)
                 {
@@ -483,7 +483,7 @@ namespace API_Gateway.Common.cart
             {
                 BaseResponse<CategoryLibrary> baseResponse = new BaseResponse<CategoryLibrary>();
                 baseResponse = baseResponse.JsonParseRecord(response);
-                categoryLibrary = (CategoryLibrary)baseResponse.Data;
+                categoryLibrary = baseResponse.Data as CategoryLibrary;
             }
             return categoryLibrary;
         }
@@ -537,7 +537,7 @@ namespace API_Gateway.Common.cart
             {
                 BaseResponse<ProductColorDTO> baseResponse = new BaseResponse<ProductColorDTO>();
                 baseResponse = baseResponse.JsonParseList(response);
-                lstProductColorDTO = (List<ProductColorDTO>)baseResponse.Data;
+                lstProductColorDTO = baseResponse.Data as List<ProductColorDTO>;
             }
             return lstProductColorDTO;
         }
@@ -554,7 +554,7 @@ namespace API_Gateway.Common.cart
             if (_OffersLibrary.usesPerCustomer.ToLower() != "nolimits")
             {
                 List<OrderDetails> orderdata = new List<OrderDetails>();
-                orderdata = (List<OrderDetails>)orderResponse.Data;
+                orderdata = orderResponse.Data as List<OrderDetails>;
                 if (Convert.ToBoolean(_OffersLibrary.onlyForNewCustomers) && orderdata.Count > 0)
                 {
                     couponusage = 1;
@@ -1177,7 +1177,7 @@ namespace API_Gateway.Common.cart
             configResponse = configResponse.JsonParseList(response);
             if (configResponse.code == 200)
             {
-                manageConfigValue = (List<ManageConfigValueLibrary>)configResponse.Data;
+                manageConfigValue = configResponse.Data as List<ManageConfigValueLibrary>;
 
                 if (manageConfigValue.Count > 0)
                 {
@@ -1226,7 +1226,7 @@ namespace API_Gateway.Common.cart
             {
                 BaseResponse<CategoryLibrary> baseResponse = new BaseResponse<CategoryLibrary>();
                 baseResponse = baseResponse.JsonParseList(response);
-                lstCategoryLibrary = (List<CategoryLibrary>)baseResponse.Data;
+                lstCategoryLibrary = baseResponse.Data as List<CategoryLibrary>;
             }
             return lstCategoryLibrary;
 

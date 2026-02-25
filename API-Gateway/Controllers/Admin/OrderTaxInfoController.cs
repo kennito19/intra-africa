@@ -30,7 +30,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderTaxInfo + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderTaxInfo> tmp = (List<OrderTaxInfo>)baseResponse.Data;
+            List<OrderTaxInfo> tmp = baseResponse.Data as List<OrderTaxInfo> ?? new List<OrderTaxInfo>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -72,7 +72,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderTaxInfo + "?Id=" + model.Id, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderTaxInfo> tmp = (List<OrderTaxInfo>)baseResponse.Data;
+            List<OrderTaxInfo> tmp = baseResponse.Data as List<OrderTaxInfo> ?? new List<OrderTaxInfo>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -81,7 +81,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderTaxInfo + "?Id=" + model.Id, "GET");
                 baseResponse = baseResponse.JsonParseRecord(response);
-                OrderTaxInfo OrderTax = (OrderTaxInfo)baseResponse.Data;
+                OrderTaxInfo OrderTax = baseResponse.Data as OrderTaxInfo;
 
                 OrderTax.Id = model.Id;
                 OrderTax.ShippingCharge = model.ShippingCharge;
@@ -115,7 +115,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderTaxInfo + "?Id=" + id, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderTaxInfo> templist = (List<OrderTaxInfo>)baseResponse.Data;
+            List<OrderTaxInfo> templist = baseResponse.Data as List<OrderTaxInfo> ?? new List<OrderTaxInfo>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderTaxInfo + "?Id=" + id, "DELETE");

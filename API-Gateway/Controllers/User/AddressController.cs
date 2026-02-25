@@ -62,7 +62,7 @@ namespace API_Gateway.Controllers.User
         {
             var response = helper.ApiCall(URL, EndPoints.Address + "?Id=" + model.Id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            Address address = (Address)baseResponse.Data;
+            Address address = baseResponse.Data as Address;
 
             address.Id = Convert.ToInt32(model.Id);
             address.UserId = model.UserId;
@@ -95,7 +95,7 @@ namespace API_Gateway.Controllers.User
             baseResponse = baseResponse.JsonParseRecord(response);
             if (baseResponse.code == 200)
             {
-                Address address = (Address)baseResponse.Data;
+                Address address = baseResponse.Data as Address;
                 address.SetDefault = false;
                 address.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
                 address.ModifiedAt = DateTime.Now;
@@ -107,7 +107,7 @@ namespace API_Gateway.Controllers.User
             baseResponse = baseResponse.JsonParseRecord(Uresponse);
             if (baseResponse.code == 200)
             {
-                Address _address = (Address)baseResponse.Data;
+                Address _address = baseResponse.Data as Address;
                 _address.SetDefault = model.SetDefault;
                 _address.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
                 _address.ModifiedAt = DateTime.Now;
@@ -125,7 +125,7 @@ namespace API_Gateway.Controllers.User
         {
             var Uresponse = helper.ApiCall(URL, EndPoints.Address + "?Id=" + model.Id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(Uresponse);
-            Address _address = (Address)baseResponse.Data;
+            Address _address = baseResponse.Data as Address;
             _address.Status = model.Status;
             _address.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
             _address.ModifiedAt = DateTime.Now;
@@ -143,7 +143,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(URL, EndPoints.Address + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Address> tmp = (List<Address>)baseResponse.Data;
+            List<Address> tmp = baseResponse.Data as List<Address> ?? new List<Address>();
             if (tmp.Count > 0)
             {
                 var tempdeleteRecord = helper.ApiCall(URL, EndPoints.Address + "?Id=" + id, "DELETE", null);

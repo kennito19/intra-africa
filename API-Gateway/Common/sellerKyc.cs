@@ -89,7 +89,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(IdserverURL, EndPoints.SellerById + "?Id=" + sellerID + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
 
-            SellerListModel sellerDetails = (SellerListModel)baseResponse.Data;
+            SellerListModel sellerDetails = baseResponse.Data as SellerListModel;
             sellerKycDetails.UserID = sellerDetails.Id;
             sellerKycDetails.FullName = sellerDetails.FirstName + " " + sellerDetails.LastName;
             sellerKycDetails.PhoneNumber = sellerDetails.MobileNo;
@@ -106,14 +106,14 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(UserURL, EndPoints.KYCDetails + "?UserID=" + sellerID + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
 
-            var check = (List<KYCDetails>)baseResponse.Data;
+            var check = baseResponse.Data as List<KYCDetails>;
             KYCDetails kycDetails = null;
             if (check.Any())
             {
                 BaseResponse<ChargesPaidByLibrary> baseResponseCharges = new BaseResponse<ChargesPaidByLibrary>();
                 var response1 = helper.ApiCall(CatelogueURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                 baseResponseCharges = baseResponseCharges.JsonParseList(response1);
-                List<ChargesPaidByLibrary> Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+                List<ChargesPaidByLibrary> Charges = baseResponseCharges.Data as List<ChargesPaidByLibrary>;
                 kycDetails = check.FirstOrDefault();
                 model.UserID = kycDetails.UserID;
                 model.KYCFor = kycDetails.KYCFor;
@@ -164,7 +164,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(UserURL, EndPoints.GSTInfo + "?UserID=" + sellerID + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
 
-            List<GSTInfo> gSTInfos = (List<GSTInfo>)baseResponse.Data;
+            List<GSTInfo> gSTInfos = baseResponse.Data as List<GSTInfo>;
 
             model.gSTInfos = gSTInfos;
 
@@ -178,7 +178,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(UserURL, EndPoints.Warehouse + "?UserID=" + sellerID + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
 
-            List<Warehouse> warehouses = (List<Warehouse>)baseResponse.Data;
+            List<Warehouse> warehouses = baseResponse.Data as List<Warehouse>;
 
             model.wareHouses = warehouses;
 
@@ -192,7 +192,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(UserURL, EndPoints.AssignBrandToSeller + "?SellerID=" + sellerID + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
 
-            List<AssignBrandToSeller> brandName = (List<AssignBrandToSeller>)baseResponse.Data;
+            List<AssignBrandToSeller> brandName = baseResponse.Data as List<AssignBrandToSeller>;
 
             model.Brands = brandName;
 

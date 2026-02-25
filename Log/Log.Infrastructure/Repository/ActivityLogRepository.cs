@@ -1,138 +1,158 @@
 using Log.Application.IRepositories;
 using Log.Domain;
 using Log.Domain.Entity;
-using Log.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Log.Infrastructure.Repository
 {
     public class ActivityLogRepository : IActivityLogRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
+        private readonly string _connectionString;
+
         public ActivityLogRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
-
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(ActivityLog activityLog)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                    new MySqlParameter("@userid", activityLog.UserId),
-                    new MySqlParameter("@usertype", activityLog.UserType),
-                    new MySqlParameter("@url", activityLog.URL),
-                    new MySqlParameter("@action", activityLog.Action),
-                    new MySqlParameter("@logtitle", activityLog.LogTitle),
-                    new MySqlParameter("@logDescription", activityLog.LogDescription),
+                const string sql = @"
+INSERT INTO ActivityLog (UserId, UserType, URL, Action, LogTitle, LogDescription, CreatedAt)
+VALUES (@userId, @userType, @url, @action, @logTitle, @logDescription, @createdAt);
+SELECT LAST_INSERT_ID();";
 
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@userId", (object?)activityLog.UserId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@userType", (object?)activityLog.UserType ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@url", (object?)activityLog.URL ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@action", (object?)activityLog.Action ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@logTitle", (object?)activityLog.LogTitle ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@logDescription", (object?)activityLog.LogDescription ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@createdAt", activityLog.CreatedAt ?? DateTime.Now);
 
-                    new MySqlParameter("@createdat", activityLog.CreatedAt),
-            };
+                var newIdObj = await cmd.ExecuteScalarAsync();
+                var newId = Convert.ToInt64(newIdObj ?? 0);
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ActivityLog, output, newid, message, sqlParams.ToArray());
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record added successfully.",
+                    data = newId
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
-
-
 
         public async Task<BaseResponse<List<ActivityLog>>> get(ActivityLog activityLog, int PageIndex, int PageSize, string Mode)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-                new MySqlParameter("@userid ", activityLog.UserId),
-                new MySqlParameter("@usertype ", activityLog.UserType),
-                new MySqlParameter("@action ", activityLog.Action),
-                new MySqlParameter("@searchtext", activityLog.Searchtext),
+                var where = new List<string>();
+                if (!string.IsNullOrWhiteSpace(activityLog.UserId))
+                {
+                    where.Add("UserId = @userId");
+                    cmd.Parameters.AddWithValue("@userId", activityLog.UserId);
+                }
+                if (!string.IsNullOrWhiteSpace(activityLog.UserType))
+                {
+                    where.Add("UserType = @userType");
+                    cmd.Parameters.AddWithValue("@userType", activityLog.UserType);
+                }
+                if (!string.IsNullOrWhiteSpace(activityLog.Action))
+                {
+                    where.Add("Action = @action");
+                    cmd.Parameters.AddWithValue("@action", activityLog.Action);
+                }
+                if (!string.IsNullOrWhiteSpace(activityLog.Searchtext))
+                {
+                    where.Add("(LogTitle LIKE @search OR LogDescription LIKE @search OR URL LIKE @search OR Action LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{activityLog.Searchtext}%");
+                }
 
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
 
+                cmd.CommandText = $"SELECT COUNT(1) FROM ActivityLog{whereClause};";
+                var totalObj = await cmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
 
+                var safePageIndex = PageIndex < 1 ? 1 : PageIndex;
+                var safePageSize = PageSize < 1 ? 10 : PageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+                var offset = (safePageIndex - 1) * safePageSize;
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var items = new List<ActivityLog>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT Id, UserId, UserType, URL, Action, LogTitle, LogDescription, CreatedAt
+FROM ActivityLog
+{whereClause}
+ORDER BY Id DESC
+LIMIT @offset, @pageSize;";
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetActivityLog, ActivityLogParserAsync, output, newid: null, message, sqlParams.ToArray());
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new ActivityLog
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.IsDBNull(reader.GetOrdinal("Id")) ? null : reader.GetInt32(reader.GetOrdinal("Id")),
+                            UserId = reader.IsDBNull(reader.GetOrdinal("UserId")) ? null : reader.GetString(reader.GetOrdinal("UserId")),
+                            UserType = reader.IsDBNull(reader.GetOrdinal("UserType")) ? string.Empty : reader.GetString(reader.GetOrdinal("UserType")),
+                            URL = reader.IsDBNull(reader.GetOrdinal("URL")) ? string.Empty : reader.GetString(reader.GetOrdinal("URL")),
+                            Action = reader.IsDBNull(reader.GetOrdinal("Action")) ? string.Empty : reader.GetString(reader.GetOrdinal("Action")),
+                            LogTitle = reader.IsDBNull(reader.GetOrdinal("LogTitle")) ? string.Empty : reader.GetString(reader.GetOrdinal("LogTitle")),
+                            LogDescription = reader.IsDBNull(reader.GetOrdinal("LogDescription")) ? string.Empty : reader.GetString(reader.GetOrdinal("LogDescription")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<ActivityLog>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        private async Task<List<ActivityLog>> ActivityLogParserAsync(DbDataReader reader)
-        {
-            List<ActivityLog> lstactivitylog = new List<ActivityLog>();
-            while (await reader.ReadAsync())
-            {
-                lstactivitylog.Add(new ActivityLog()
+                return new BaseResponse<List<ActivityLog>>
                 {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-
-                    UserId = Convert.ToString(reader.GetValue(reader.GetOrdinal("UserId"))),
-                    UserType = Convert.ToString(reader.GetValue(reader.GetOrdinal("UserType"))),
-                    URL = Convert.ToString(reader.GetValue(reader.GetOrdinal("URL"))),
-                    Action = Convert.ToString(reader.GetValue(reader.GetOrdinal("Action"))),
-                    LogTitle = Convert.ToString(reader.GetValue(reader.GetOrdinal("LogTitle"))),
-                    LogDescription = Convert.ToString(reader.GetValue(reader.GetOrdinal("LogDescription"))),
-
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-
-
-                });
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<ActivityLog>()
+                };
             }
-            return lstactivitylog;
         }
-
-
     }
 }

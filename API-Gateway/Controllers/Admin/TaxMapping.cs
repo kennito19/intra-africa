@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxMapping + "?taxId=" + model.TaxId + "&taxTypeId=" + model.TaxTypeId+ "&taxMapBy=" + model.TaxMapBy, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxMapping> tempList = (List<TaxMapping>)baseResponse.Data;
+            List<TaxMapping> tempList = baseResponse.Data as List<TaxMapping> ?? new List<TaxMapping>();
 
             if (tempList.Any())
             {
@@ -44,7 +44,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp1 = api.ApiCall(CatalogueUrl, EndPoints.TaxMapping + "?taxId=" + model.TaxId + "&taxTypeId=" + model.TaxTypeId + "&taxMapBy=" + model.TaxMapBy + "&isDeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp1);
-                List<TaxMapping> tempList1 = (List<TaxMapping>)baseResponse.Data;
+                List<TaxMapping> tempList1 = baseResponse.Data as List<TaxMapping> ?? new List<TaxMapping>();
                 TaxMapping taxMap = new TaxMapping();
                 if (tempList1.Any())
                 {
@@ -94,7 +94,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxMapping + "?taxId=" + model.TaxId + "&taxTypeId=" + model.TaxTypeId + "&taxMapBy=" + model.TaxMapBy, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxMapping> tempList = (List<TaxMapping>)baseResponse.Data;
+            List<TaxMapping> tempList = baseResponse.Data as List<TaxMapping> ?? new List<TaxMapping>();
 
 
             if (tempList.Where(x => x.Id != model.Id).Any())
@@ -108,7 +108,7 @@ namespace API_Gateway.Controllers.Admin
 
                 if (baseResponse.code == 200)
                 {
-                    TaxMapping taxMap = (TaxMapping)baseResponse.Data;
+                    TaxMapping taxMap = baseResponse.Data as TaxMapping;
 
                     taxMap.TaxId = model.TaxId;
                     taxMap.TaxTypeId = model.TaxTypeId;
@@ -131,7 +131,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxMapping + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxMapping> taxMap = (List<TaxMapping>)baseResponse.Data;
+            List<TaxMapping> taxMap = baseResponse.Data as List<TaxMapping> ?? new List<TaxMapping>();
             if (!taxMap.Any())
             {
                 baseResponse = baseResponse.NotExist();

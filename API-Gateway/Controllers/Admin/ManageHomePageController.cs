@@ -4,6 +4,7 @@ using API_Gateway.Models.Entity.Catalogue;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace API_Gateway.Controllers.Admin
 {
@@ -32,8 +33,9 @@ namespace API_Gateway.Controllers.Admin
         public ActionResult<ApiHelper> Create(ManageHomePage model)
         {
             var response = helper.ApiCall(URL, EndPoints.ManageHomePage + "?Status=Active", "GET", null);
-            baseResponse = baseResponse.JsonParseRecord(response);
-            ManageHomePage mhp = (ManageHomePage)baseResponse.Data;
+            baseResponse = baseResponse.JsonParseList(response);
+            List<ManageHomePage> activePages = baseResponse.Data as List<ManageHomePage> ?? new List<ManageHomePage>();
+            ManageHomePage mhp = activePages.FirstOrDefault();
 
             if (mhp != null)
             {
@@ -56,15 +58,23 @@ namespace API_Gateway.Controllers.Admin
         {
             // here i have fetched the active records and made it inactive
             var response = helper.ApiCall(URL, EndPoints.ManageHomePage + "?Status=Active", "GET", null);
-            baseResponse = baseResponse.JsonParseRecord(response);
-            ManageHomePage mhp = (ManageHomePage)baseResponse.Data;
-            mhp.Status = "Inactive";
-            var res = helper.ApiCall(URL, EndPoints.ManageHomePage, "PUT", mhp);
+            baseResponse = baseResponse.JsonParseList(response);
+            List<ManageHomePage> activePages = baseResponse.Data as List<ManageHomePage> ?? new List<ManageHomePage>();
+            ManageHomePage mhp = activePages.FirstOrDefault();
+            if (mhp != null)
+            {
+                mhp.Status = "Inactive";
+                var res = helper.ApiCall(URL, EndPoints.ManageHomePage, "PUT", mhp);
+            }
 
             // here i am updating the inactive home page to active home page 
             var resp = helper.ApiCall(URL, EndPoints.ManageHomePage + "?Id=" + model.Id, "GET", null);
-            baseResponse = baseResponse.JsonParseRecord(response);
-            ManageHomePage hp = (ManageHomePage)baseResponse.Data;
+            baseResponse = baseResponse.JsonParseRecord(resp);
+            ManageHomePage hp = baseResponse.Data as ManageHomePage;
+            if (hp == null)
+            {
+                return Ok(baseResponse.NotExist());
+            }
             hp.Name = model.Name;
             hp.Status = "Active";
             hp.ModifiedAt = DateTime.Now;
@@ -104,6 +114,24 @@ namespace API_Gateway.Controllers.Admin
             var response = helper.ApiCall(URL, EndPoints.ManageHomePage + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
             return Ok(baseResponse);
+        }
+
+        [HttpGet("search")]
+        [Authorize(Roles = "Admin")]
+        public ActionResult<ApiHelper> Search(string? searchtext = null, int? pageIndex = 1, int? pageSize = 10, string? status = null)
+        {
+            string url = $"?PageIndex={pageIndex}&PageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(searchtext))
+            {
+                url += "&Searchtext=" + HttpUtility.UrlEncode(searchtext);
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                url += "&Status=" + HttpUtility.UrlEncode(status);
+            }
+
+            var response = helper.ApiCall(URL, EndPoints.ManageHomePage + url, "GET", null);
+            return Ok(baseResponse.JsonParseList(response));
         }
     }
 

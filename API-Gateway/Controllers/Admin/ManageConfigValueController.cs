@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigValue + "?KeyId=" + model.KeyId + "&Value=" + model.Value, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigValueLibrary> tempList = (List<ManageConfigValueLibrary>)baseResponse.Data;
+            List<ManageConfigValueLibrary> tempList = baseResponse.Data as List<ManageConfigValueLibrary> ?? new List<ManageConfigValueLibrary>();
 
             if (tempList.Any())
             {
@@ -58,7 +58,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigValue + "?KeyId=" + model.KeyId + "&Value=" + model.Value, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigValueLibrary> tempList = (List<ManageConfigValueLibrary>)baseResponse.Data;
+            List<ManageConfigValueLibrary> tempList = baseResponse.Data as List<ManageConfigValueLibrary> ?? new List<ManageConfigValueLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -68,7 +68,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageConfigValue + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageConfigValueLibrary configValue = (ManageConfigValueLibrary)baseResponse.Data;
+                ManageConfigValueLibrary configValue = baseResponse.Data as ManageConfigValueLibrary;
                 configValue.Id = model.Id;
                 configValue.KeyId = model.KeyId;
                 configValue.Value = model.Value;
@@ -87,7 +87,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigValue + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigValueLibrary> tempList = (List<ManageConfigValueLibrary>)baseResponse.Data;
+            List<ManageConfigValueLibrary> tempList = baseResponse.Data as List<ManageConfigValueLibrary> ?? new List<ManageConfigValueLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageConfigValue + "?Id=" + id, "DELETE", null);

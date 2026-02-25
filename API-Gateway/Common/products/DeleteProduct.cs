@@ -26,13 +26,13 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductWareHouse> WarehousebaseResponse = new BaseResponse<ProductWareHouse>();
             var response1 = helper.ApiCall(CatelogueURL, EndPoints.ProductWarehouse + "?SellerProductId=" + SellerProductId, "GET", null);
             WarehousebaseResponse = WarehousebaseResponse.JsonParseList(response1);
-            List<ProductWareHouse> productWarehouses = (List<ProductWareHouse>)WarehousebaseResponse.Data;
+            List<ProductWareHouse> productWarehouses = WarehousebaseResponse.Data as List<ProductWareHouse>;
             List<int> PWIdList = productWarehouses.Select(x => x.Id).ToList();
 
             BaseResponse<ProductPrice> baseResponse = new BaseResponse<ProductPrice>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductPriceMaster + "?SellerProductId=" + SellerProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductPrice> productPrices = (List<ProductPrice>)baseResponse.Data;
+            List<ProductPrice> productPrices = baseResponse.Data as List<ProductPrice>;
             List<int> priceIdList = productPrices.Select(x => x.Id).ToList();
 
             foreach (var i in PWIdList)
@@ -60,13 +60,13 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductWareHouse> WarehousebaseResponse = new BaseResponse<ProductWareHouse>();
             var response1 = helper.ApiCall(CatelogueURL, EndPoints.ProductWarehouse + "?SellerProductId=" + SellerProductId, "GET", null);
             WarehousebaseResponse = WarehousebaseResponse.JsonParseList(response1);
-            List<ProductWareHouse> productWarehouses = (List<ProductWareHouse>)WarehousebaseResponse.Data;
+            List<ProductWareHouse> productWarehouses = WarehousebaseResponse.Data as List<ProductWareHouse>;
             List<int> PWIdList = productWarehouses.Select(x => x.Id).ToList();
 
             BaseResponse<ProductPrice> baseResponse = new BaseResponse<ProductPrice>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductPriceMaster + "?SellerProductId=" + SellerProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductPrice> productPrices = (List<ProductPrice>)baseResponse.Data;
+            List<ProductPrice> productPrices = baseResponse.Data as List<ProductPrice>;
             List<int> priceIdList = productPrices.Select(x => x.Id).ToList();
 
             foreach (var i in PWIdList)
@@ -97,7 +97,7 @@ namespace API_Gateway.Common.products
             baseResponse1 = baseResponse1.JsonParseList(response1);
             if (baseResponse1.code == 204)
             {
-                List<SellerProduct> sellerProductData = (List<SellerProduct>)baseResponse1.Data;
+                List<SellerProduct> sellerProductData = baseResponse1.Data as List<SellerProduct>;
                 try
                 {
                     if (sellerProductData.Count == 0)
@@ -111,13 +111,13 @@ namespace API_Gateway.Common.products
                             baseResponseMaster = baseResponseMaster.JsonParseRecord(responsemaster);
                             if (baseResponseMaster.code == 200)
                             {
-                                Products ProductData = (Products)baseResponseMaster.Data;
+                                Products ProductData = baseResponseMaster.Data as Products;
 
                                 var responsemaster1 = helper.ApiCall(CatelogueURL, EndPoints.Product + "?ParentId=" + ProductData.ParentId, "GET", null);
                                 baseResponseMaster1 = baseResponseMaster1.JsonParseList(responsemaster1);
                                 if (baseResponseMaster1.code == 204)
                                 {
-                                    List<Products> ProductDatalst = (List<Products>)baseResponseMaster1.Data;
+                                    List<Products> ProductDatalst = baseResponseMaster1.Data as List<Products>;
 
                                     if (ProductDatalst.Count == 0)
                                     {

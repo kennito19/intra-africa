@@ -37,7 +37,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?taxTypeId=" + model.TaxTypeID + "&name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeValueLibrary> tempList = (List<TaxTypeValueLibrary>)baseResponse.Data;
+            List<TaxTypeValueLibrary> tempList = baseResponse.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -46,7 +46,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp1 = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?taxTypeId=" + model.TaxTypeID + "&name=" + model.Name + "&isDeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp1);
-                List<TaxTypeValueLibrary> tempList1 = (List<TaxTypeValueLibrary>)baseResponse.Data;
+                List<TaxTypeValueLibrary> tempList1 = baseResponse.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
 
                 TaxTypeValueLibrary taxType = new TaxTypeValueLibrary();
                 if (tempList1.Any())
@@ -91,7 +91,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?taxTypeId=" + model.TaxTypeID + "&name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeValueLibrary> tempList = (List<TaxTypeValueLibrary>)baseResponse.Data;
+            List<TaxTypeValueLibrary> tempList = baseResponse.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -104,7 +104,7 @@ namespace API_Gateway.Controllers.Admin
 
                 if (baseResponse.code == 200)
                 {
-                    TaxTypeValueLibrary taxType = (TaxTypeValueLibrary)baseResponse.Data;
+                    TaxTypeValueLibrary taxType = baseResponse.Data as TaxTypeValueLibrary;
                     taxType.TaxTypeID = model.TaxTypeID;
                     taxType.Value = model.Value;
                     taxType.Name = model.Name;
@@ -124,7 +124,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeValueLibrary> taxType = (List<TaxTypeValueLibrary>)baseResponse.Data;
+            List<TaxTypeValueLibrary> taxType = baseResponse.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
             if (!taxType.Any())
             {
                 baseResponse = baseResponse.NotExist();
@@ -134,7 +134,7 @@ namespace API_Gateway.Controllers.Admin
                 var tempAssignTaxRate = api.ApiCall(CatalogueUrl, EndPoints.AssignTaxRateToHSNCode + "?TaxValueId=" + id, "GET", null);
                 BaseResponse<AssignTaxRateToHSNCode> baseResAssignTaxTypeValue = new BaseResponse<AssignTaxRateToHSNCode>();
                 var TaxTypeValue = baseResAssignTaxTypeValue.JsonParseList(tempAssignTaxRate);
-                List<AssignTaxRateToHSNCode> taxRateToHsnCode = (List<AssignTaxRateToHSNCode>)TaxTypeValue.Data;
+                List<AssignTaxRateToHSNCode> taxRateToHsnCode = TaxTypeValue.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
                 if (taxRateToHsnCode.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("AssignTaxRateToHSNCode", "TaxTypeValue");

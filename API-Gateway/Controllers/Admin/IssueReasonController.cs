@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueReason + "?IssueTypeId=" + model.IssueTypeId + "&Reasons=" + model.Reasons + "&actionId=" + model.ActionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueReasonLibrary> tmp = (List<IssueReasonLibrary>)baseResponse.Data;
+            List<IssueReasonLibrary> tmp = baseResponse.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -41,7 +41,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp1 = helper.ApiCall(URL, EndPoints.IssueReason + "?IssueTypeId=" + model.IssueTypeId + "&Reasons=" + model.Reasons + "&actionId=" + model.ActionId + "&Isdeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<IssueReasonLibrary> tmp1 = (List<IssueReasonLibrary>)baseResponse.Data;
+                List<IssueReasonLibrary> tmp1 = baseResponse.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
                 if (tmp1.Any())
                 {
                     var data = tmp1.FirstOrDefault();
@@ -87,7 +87,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueReason + "?IssueTypeId=" + model.IssueTypeId + "&Reasons=" + model.Reasons + "&actionId=" + model.ActionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueReasonLibrary> tmp = (List<IssueReasonLibrary>)baseResponse.Data;
+            List<IssueReasonLibrary> tmp = baseResponse.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -96,7 +96,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.IssueReason + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                IssueReasonLibrary reason = (IssueReasonLibrary)baseResponse.Data;
+                IssueReasonLibrary reason = baseResponse.Data as IssueReasonLibrary;
 
                 reason.Id = model.Id;
                 reason.IssueTypeId = model.IssueTypeId;
@@ -118,7 +118,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueReason + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueReasonLibrary> templist = (List<IssueReasonLibrary>)baseResponse.Data;
+            List<IssueReasonLibrary> templist = baseResponse.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.IssueReason + "?Id=" + id, "DELETE", null);

@@ -94,7 +94,7 @@ namespace API_Gateway.Controllers.Admin
                         if(userBaseResponse.Data != null)
                         {
                             userBaseResponse = userBaseResponse.JsonParseRecord(res);
-                            UserDetails user = (UserDetails)userBaseResponse.Data;
+                            UserDetails user = userBaseResponse.Data as UserDetails;
                             user.FirstName = model.FirstName;
                             user.LastName = model.LastName;
                             user.Email = model.Email;
@@ -166,7 +166,7 @@ namespace API_Gateway.Controllers.Admin
             if (baseResponse.code == 200)
             {
                 SellerListModel seller = new SellerListModel();
-                seller = (SellerListModel)baseResponse.Data;
+                seller = baseResponse.Data as SellerListModel;
                 seller.Status = "Archived";
                 seller.ModifiedAt = DateTime.Now;
                 seller.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
@@ -228,7 +228,7 @@ namespace API_Gateway.Controllers.Admin
                     if (baseResponse.code == 200)
                     {
                         SellerListModel _seller = new SellerListModel();
-                        _seller = (SellerListModel)baseResponse.Data;
+                        _seller = baseResponse.Data as SellerListModel;
                         _seller.Status = "Deleted";
                         string url = "/delete";
                         var responseData = api.ApiCall(IDServerUrl, EndPoints.SellerList + url, "PUT", seller);
@@ -259,7 +259,7 @@ namespace API_Gateway.Controllers.Admin
             //if (baseResponse.code == 200)
             //{
             //    SellerListModel seller = new SellerListModel();
-            //    seller = (SellerListModel)baseResponse.Data;
+            //    seller = baseResponse.Data as SellerListModel;
             //    seller.Status = "Deleted";
             //    string url = "/delete";
             //    var responseData = api.ApiCall(IDServerUrl, EndPoints.SellerList + url, "PUT", seller);
@@ -346,7 +346,7 @@ namespace API_Gateway.Controllers.Admin
             AssignbaseResponse = AssignbaseResponse.JsonParseList(AssignBrandresponse);
             if (AssignbaseResponse.code == 200)
             {
-                List<AssignBrandToSeller> AssiBrandLists = (List<AssignBrandToSeller>)AssignbaseResponse.Data;
+                List<AssignBrandToSeller> AssiBrandLists = AssignbaseResponse.Data as List<AssignBrandToSeller> ?? new List<AssignBrandToSeller>();
                 sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
                 List<UserDetailsDTO> lst = seller.bindSellerDetails(false);
                 lst = lst.Where(p => p.KycStatus != null && p.KycStatus != "" && p.KycStatus.ToLower() != "deleted" && p.KycStatus.ToLower() != "rejected" && p.KycStatus != "Archived").ToList();
@@ -388,7 +388,8 @@ namespace API_Gateway.Controllers.Admin
         public IActionResult search(string? searchtext = null, string? status = null, string? KycStatus = null, int pageIndex = 1, int pageSize = 10)
         {
             sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
-            baseResponse.Data = seller.bindSellerDetails(true, status, KycStatus,searchtext,null,pageIndex,pageSize);
+            // Manage Seller grid should query active/non-archived sellers by default.
+            baseResponse.Data = seller.bindSellerDetails(false, status, KycStatus, searchtext, null, pageIndex, pageSize);
             baseResponse.code = 200;
             baseResponse.Message = "Seller list bind successfully";
 

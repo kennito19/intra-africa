@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.Staticpages + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageStaticPagesLibrary> tempList = (List<ManageStaticPagesLibrary>)baseResponse.Data;
+            List<ManageStaticPagesLibrary> tempList = baseResponse.Data as List<ManageStaticPagesLibrary> ?? new List<ManageStaticPagesLibrary>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -58,7 +58,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.Staticpages + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageStaticPagesLibrary> tempList = (List<ManageStaticPagesLibrary>)baseResponse.Data;
+            List<ManageStaticPagesLibrary> tempList = baseResponse.Data as List<ManageStaticPagesLibrary> ?? new List<ManageStaticPagesLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -68,7 +68,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.Staticpages + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageStaticPagesLibrary record = (ManageStaticPagesLibrary)baseResponse.Data;
+                ManageStaticPagesLibrary record = baseResponse.Data as ManageStaticPagesLibrary;
                 record.Name = model.Name;
                 record.Link = model.Link;
                 record.PageContent = model.PageContent;
@@ -88,7 +88,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.Staticpages + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageStaticPagesLibrary> tempList = (List<ManageStaticPagesLibrary>)baseResponse.Data;
+            List<ManageStaticPagesLibrary> tempList = baseResponse.Data as List<ManageStaticPagesLibrary> ?? new List<ManageStaticPagesLibrary>();
 
             if (tempList.Any())
             {

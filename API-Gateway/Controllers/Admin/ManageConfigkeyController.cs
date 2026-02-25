@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigKey + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigKeyLibrary> tempList = (List<ManageConfigKeyLibrary>)baseResponse.Data;
+            List<ManageConfigKeyLibrary> tempList = baseResponse.Data as List<ManageConfigKeyLibrary> ?? new List<ManageConfigKeyLibrary>();
 
             if (tempList.Any())
             {
@@ -57,7 +57,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigKey + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigKeyLibrary> tempList = (List<ManageConfigKeyLibrary>)baseResponse.Data;
+            List<ManageConfigKeyLibrary> tempList = baseResponse.Data as List<ManageConfigKeyLibrary> ?? new List<ManageConfigKeyLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageConfigKey + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageConfigKeyLibrary configKey = (ManageConfigKeyLibrary)baseResponse.Data;
+                ManageConfigKeyLibrary configKey = baseResponse.Data as ManageConfigKeyLibrary;
                 configKey.Id = model.Id;
                 configKey.Name = model.Name;
                 configKey.ModifiedAt = DateTime.Now;
@@ -85,7 +85,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageConfigKey + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageConfigKeyLibrary> tempList = (List<ManageConfigKeyLibrary>)baseResponse.Data;
+            List<ManageConfigKeyLibrary> tempList = baseResponse.Data as List<ManageConfigKeyLibrary> ?? new List<ManageConfigKeyLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageConfigKey + "?Id=" + id, "DELETE", null);

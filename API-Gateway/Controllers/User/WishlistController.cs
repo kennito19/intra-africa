@@ -37,7 +37,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(URL, EndPoints.Wishlist + "?UserId=" + model.UserId + "&ProductId=" + model.ProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Wishlist> tmp = (List<Wishlist>)baseResponse.Data;
+            List<Wishlist> tmp = baseResponse.Data as List<Wishlist> ?? new List<Wishlist>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -63,7 +63,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(URL, EndPoints.Wishlist + "?UserId=" + model.UserId + "&ProductId=" + model.ProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Wishlist> tmp = (List<Wishlist>)baseResponse.Data;
+            List<Wishlist> tmp = baseResponse.Data as List<Wishlist> ?? new List<Wishlist>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -72,7 +72,7 @@ namespace API_Gateway.Controllers.User
             {
                 var response = helper.ApiCall(URL, EndPoints.Wishlist + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                Wishlist wish = (Wishlist)baseResponse.Data;
+                Wishlist wish = baseResponse.Data as Wishlist;
 
                 wish.Id = model.Id;
                 wish.UserId = model.UserId;
@@ -93,7 +93,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(URL, EndPoints.Wishlist + "?UserID=" + userId + "&ProductID=" + productId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Wishlist> templist = (List<Wishlist>)baseResponse.Data;
+            List<Wishlist> templist = baseResponse.Data as List<Wishlist> ?? new List<Wishlist>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.Wishlist + "?UserID=" + userId + "&ProductID=" + productId, "DELETE", null);
@@ -130,14 +130,14 @@ namespace API_Gateway.Controllers.User
             
             var response = helper.ApiCall(URL, EndPoints.Wishlist + "?UserID=" + userId + "&pageIndex=0&pageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<Wishlist> lstwish = (List<Wishlist>)baseResponse.Data;
+            List<Wishlist> lstwish = baseResponse.Data as List<Wishlist> ?? new List<Wishlist>();
 
             string productIds = string.Join(",", lstwish.Select(x => x.ProductId));
             BaseResponse<UserProductList> baseResponseProduct = new BaseResponse<UserProductList>();
             var responseProduct = helper.ApiCall(catalougeURL, EndPoints.UserProductList + "?guIds=" + productIds + "&availableProduct=" + true + "&PriceSort=0&pageIndex=0&pageSize=0", "GET", null);
 
             baseResponseProduct = baseResponseProduct.JsonParseList(responseProduct);
-            List<UserProductList> lstUserProduct = (List<UserProductList>)baseResponseProduct.Data;
+            List<UserProductList> lstUserProduct = baseResponseProduct.Data as List<UserProductList> ?? new List<UserProductList>();
 
             List<UserProductList> ss = lstUserProduct.Where(detail => detail.flag == 'p' && detail.Status.ToLower() == "active" && detail.Live == true).ToList();
 

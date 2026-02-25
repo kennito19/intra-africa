@@ -24,7 +24,7 @@ namespace API_Gateway.Common.products
             //baseResponse = new BaseResponse<ExtraChargesLibrary>();
             //baseResponse = baseResponse.JsonParseList(extraCharges);
             //List<ExtraChargesLibrary> lstUniqueExtracharges = new List<ExtraChargesLibrary>();
-            //lstUniqueExtracharges = (List<ExtraChargesLibrary>)baseResponse.Data;
+            //lstUniqueExtracharges = baseResponse.Data as List<ExtraChargesLibrary>;
             //lstUniqueExtracharges = lstUniqueExtracharges.GroupBy(p => p.Name).Select(p => p.First()).ToList();
 
             //List<ExtraChargesLibrary> lstExtracharges = new List<ExtraChargesLibrary>();
@@ -54,7 +54,7 @@ namespace API_Gateway.Common.products
             baseResponse = new BaseResponse<ExtraChargesLibrary>();
             baseResponse = baseResponse.JsonParseList(extraCharges);
 
-            lstExtracharges = (List<ExtraChargesLibrary>)baseResponse.Data;
+            lstExtracharges = baseResponse.Data as List<ExtraChargesLibrary>;
                 
             return lstExtracharges;
         }
@@ -69,7 +69,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseRecord(response);
                 if (baseResponse.code == 200)
                 {
-                    categoryLibrary = (CategoryLibrary)baseResponse.Data;
+                    categoryLibrary = baseResponse.Data as CategoryLibrary;
                 }
             }
             return categoryLibrary;
@@ -85,7 +85,7 @@ namespace API_Gateway.Common.products
                 baseResponse = baseResponse.JsonParseList(response);
                 if (baseResponse.code == 200)
                 {
-                    chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+                    chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
                 }
                 else
                 {
@@ -110,7 +110,7 @@ namespace API_Gateway.Common.products
                                         baseResponse = baseResponse.JsonParseList(Parentresponse);
                                         if (baseResponse.code == 200)
                                         {
-                                            chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+                                            chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
                                             break;
                                         }
                                         else
@@ -158,7 +158,7 @@ namespace API_Gateway.Common.products
                                     baseResponse = baseResponse.JsonParseList(Parentresponse);
                                     if (baseResponse.code == 200)
                                     {
-                                        chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+                                        chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
                                         break;
                                     }
                                     else
@@ -195,7 +195,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseList(response);
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
         //        }
         //    }
 
@@ -212,7 +212,7 @@ namespace API_Gateway.Common.products
         //        baseResponse = baseResponse.JsonParseList(response); 
         //        if (baseResponse.code == 200)
         //        {
-        //            chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+        //            chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
         //        }
         //    }
         //    else
@@ -238,7 +238,7 @@ namespace API_Gateway.Common.products
         //                            baseResponse = baseResponse.JsonParseList(Parentresponse);
         //                            if (baseResponse.code == 200)
         //                            {
-        //                                chargesLibrary = (List<ExtraChargesLibrary>)baseResponse.Data;
+        //                                chargesLibrary = baseResponse.Data as List<ExtraChargesLibrary>;
         //                                break;
         //                            }
         //                        }

@@ -180,7 +180,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
             List<OrderDetails> orders = new List<OrderDetails>();
-            List<Orders> ordersdetail = (List<Orders>)baseResponse.Data;
+            List<Orders> ordersdetail = baseResponse.Data as List<Orders>;
 
             //
             //List<SellerKycList> sellerlist = getsellerKyclst();
@@ -328,7 +328,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
             //List<OrderDetails> orders = new List<OrderDetails>();
-            List<Orders> ordersdetail = (List<Orders>)baseResponse.Data;
+            List<Orders> ordersdetail = baseResponse.Data as List<Orders>;
 
             List<OrderDetails> orders = ordersdetail.Select(details => new OrderDetails
             {
@@ -456,7 +456,7 @@ namespace API_Gateway.Common.orders
             var GetResponse = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?OrderId=" + orderId + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
             List<OrderItemDTO> ordersItem = new List<OrderItemDTO>();
-            List<OrderItems> ordersdetail = (List<OrderItems>)baseResponse.Data;
+            List<OrderItems> ordersdetail = baseResponse.Data as List<OrderItems>;
             if (ordersdetail.Count > 0)
             {
                 BrandLibrary brand = getBrand(Convert.ToInt32(ordersdetail[0].BrandID));
@@ -600,7 +600,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
             List<OrderTaxInfoDTO> ordersItem = new List<OrderTaxInfoDTO>();
-            List<OrderTaxInfoDTO> ordersdetail = (List<OrderTaxInfoDTO>)baseResponse.Data;
+            List<OrderTaxInfoDTO> ordersdetail = baseResponse.Data as List<OrderTaxInfoDTO>;
 
             foreach (var details in ordersdetail)
             {
@@ -639,7 +639,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
             List<OrderWiseExtraChargesDTO> ordersItem = new List<OrderWiseExtraChargesDTO>();
-            List<OrderWiseExtraChargesDTO> ordersdetail = (List<OrderWiseExtraChargesDTO>)baseResponse.Data;
+            List<OrderWiseExtraChargesDTO> ordersdetail = baseResponse.Data as List<OrderWiseExtraChargesDTO>;
 
             foreach (var details in ordersdetail)
             {
@@ -680,7 +680,7 @@ namespace API_Gateway.Common.orders
             var GetResponse = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?Id=" + OrderItemId + url, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
             OrderItemDTO orderItems = new OrderItemDTO();
-            OrderItems details = (OrderItems)baseResponse.Data;
+            OrderItems details = baseResponse.Data as OrderItems;
 
             if (details != null && details.Id != 0 && details.Id != null)
             {
@@ -761,7 +761,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
             OrderDetails orderDetails = new OrderDetails();
-            Orders details = (Orders)baseResponse.Data;
+            Orders details = baseResponse.Data as Orders;
 
             orderDetails.OrderId = details.Id;
             orderDetails.OrderNo = details.OrderNo;
@@ -821,7 +821,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
             List<OrderDetails> lstorderDetails = new List<OrderDetails>();
-            List<Orders> orderList = (List<Orders>)baseResponse.Data;
+            List<Orders> orderList = baseResponse.Data as List<Orders>;
 
             foreach (Orders details in orderList)
             {
@@ -1031,7 +1031,7 @@ namespace API_Gateway.Common.orders
             brandResponse = brandResponse.JsonParseRecord(response);
 
             BrandLibrary brand = new BrandLibrary();
-            brand = (BrandLibrary)brandResponse.Data;
+            brand = brandResponse.Data as BrandLibrary;
 
             return brand;
         }
@@ -1043,7 +1043,7 @@ namespace API_Gateway.Common.orders
             brandResponse = brandResponse.JsonParseList(response);
 
             List<ProductImages> imglist = new List<ProductImages>();
-            imglist = (List<ProductImages>)brandResponse.Data;
+            imglist = brandResponse.Data as List<ProductImages>;
 
             ProductImages Images = new ProductImages();
             if (imglist != null && imglist.Count > 0)
@@ -1062,7 +1062,7 @@ namespace API_Gateway.Common.orders
             baseresponse = baseresponse.JsonParseList(response);
 
             OrderTaxInfo orderTaxInfo = new OrderTaxInfo();
-            orderTaxInfo = (OrderTaxInfo)baseresponse.Data;
+            orderTaxInfo = baseresponse.Data as OrderTaxInfo;
 
             return orderTaxInfo;
 
@@ -1079,7 +1079,7 @@ namespace API_Gateway.Common.orders
             OrderPackageDtoList packlst = new OrderPackageDtoList();
             if (pckgResponse.code == 200)
             {
-                pckg = (OrderPackage)pckgResponse.Data;
+                pckg = pckgResponse.Data as OrderPackage;
 
                 packlst.Id = pckg.Id;
                 packlst.TotalItems = pckg.TotalItems;
@@ -1100,7 +1100,7 @@ namespace API_Gateway.Common.orders
             Warehouse warehouse = new Warehouse();
             if (baseResponse.code == 200)
             {
-                warehouse = (Warehouse)baseResponse.Data;
+                warehouse = baseResponse.Data as Warehouse;
             }
             return warehouse;
         }
@@ -1118,7 +1118,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                Invoice = (List<InvoiceDto>)baseResponse.Data;
+                Invoice = baseResponse.Data as List<InvoiceDto>;
 
                 List<InvoiceProductDTO> InvoiceProduct = BindProduct(Invoice);
 
@@ -1246,7 +1246,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                Invoice = (List<InvoiceDto>)baseResponse.Data;
+                Invoice = baseResponse.Data as List<InvoiceDto>;
 
                 shippingdataDTO = Invoice.Select(x => new ShippingLabelDto
                 {
@@ -1464,7 +1464,7 @@ namespace API_Gateway.Common.orders
             brandResponse = brandResponse.JsonParseList(response);
 
             List<ProductColorMapp> colorlist = new List<ProductColorMapp>();
-            colorlist = (List<ProductColorMapp>)brandResponse.Data;
+            colorlist = brandResponse.Data as List<ProductColorMapp>;
 
             return colorlist;
         }
@@ -1488,7 +1488,7 @@ namespace API_Gateway.Common.orders
             var GetResponse = helper.ApiCall(OrderURL, EndPoints.OrderItems + "/GetOrderDetails" + "?OrderId=" + orderId + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(GetResponse);
             List<OrderItemDTO> ordersItem = new List<OrderItemDTO>();
-            List<OrderItemDetails> ordersdetail = (List<OrderItemDetails>)baseResponse.Data;
+            List<OrderItemDetails> ordersdetail = baseResponse.Data as List<OrderItemDetails>;
             if (ordersdetail.Count > 0)
             {
                 foreach (var details in ordersdetail)
@@ -1591,7 +1591,7 @@ namespace API_Gateway.Common.orders
             var GetResponse = helper.ApiCall(OrderURL, EndPoints.OrderItems + "/GetOrderDetails" + "?OrderItemId =" + OrderItemId + url, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
             OrderItemDTO orderItems = new OrderItemDTO();
-            OrderItemDetails details = (OrderItemDetails)baseResponse.Data;
+            OrderItemDetails details = baseResponse.Data as OrderItemDetails;
 
             if (details != null && details.OrderItemId != 0 && details.OrderItemId != null)
             {

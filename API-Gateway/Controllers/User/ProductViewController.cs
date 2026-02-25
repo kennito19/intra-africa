@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(CatalogueUrl, EndPoints.ProductView + "?ProductId=" + model.ProductId + "&SellerId" + model.SellerId + "&UserId=" + model.UserId + "&SellerProductId=" + model.SellerProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ProductView> tmp = (List<ProductView>)baseResponse.Data;
+            List<ProductView> tmp = baseResponse.Data as List<ProductView> ?? new List<ProductView>();
             if (!tmp.Any())
             {
 

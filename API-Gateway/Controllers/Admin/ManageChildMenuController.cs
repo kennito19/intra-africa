@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Name=" + model.Name + "&getChild=" + true + "&parentId=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageChildMenu> tempList = (List<ManageChildMenu>)baseResponse.Data;
+            List<ManageChildMenu> tempList = baseResponse.Data as List<ManageChildMenu> ?? new List<ManageChildMenu>();
 
             if (tempList.Any())
             {
@@ -76,7 +76,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Name=" + model.Name + "&getChild=" + true + "&parentId=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageChildMenu> tempList = (List<ManageChildMenu>)baseResponse.Data;
+            List<ManageChildMenu> tempList = baseResponse.Data as List<ManageChildMenu> ?? new List<ManageChildMenu>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -86,7 +86,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + model.Id + "&getChild=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageChildMenu record = (ManageChildMenu)baseResponse.Data;
+                ManageChildMenu record = baseResponse.Data as ManageChildMenu;
                 record.MenuType = model.MenuType;
                 record.HeaderId = model.HeaderId;
                 record.ParentId = model.ParentId;
@@ -129,7 +129,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + id + "&getChild=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageChildMenu> tempList = (List<ManageChildMenu>)baseResponse.Data;
+            List<ManageChildMenu> tempList = baseResponse.Data as List<ManageChildMenu> ?? new List<ManageChildMenu>();
             if (tempList.Any())
             {
                 var data = tempList.FirstOrDefault();

@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = api.ApiCall(UserApi, EndPoints.Delivery + "?countryid=" + model.CountryID + "&stateid=" + model.StateID + "&cityid=" + model.CityID + "&locality=" + model.Locality + "&pincode=" + model.Pincode, "GET", null);
 
             baseReponse = baseReponse.JsonParseList(temp);
-            List<DeliveryLibrary> deliveries = (List<DeliveryLibrary>)baseReponse.Data;
+            List<DeliveryLibrary> deliveries = baseReponse.Data as List<DeliveryLibrary> ?? new List<DeliveryLibrary>();
             if (deliveries.Any())
             {
                 baseReponse = baseReponse.AlreadyExists();
@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(UserApi, EndPoints.Delivery + "?countryid=" + model.CountryID + "&stateid=" + model.StateID + "&cityid=" + model.CityID + "&locality=" + model.Locality + "&pincode=" + model.Pincode, "GET", null);
             baseReponse = baseReponse.JsonParseList(temp);
-            List<DeliveryLibrary> deliveries = (List<DeliveryLibrary>)baseReponse.Data;
+            List<DeliveryLibrary> deliveries = baseReponse.Data as List<DeliveryLibrary> ?? new List<DeliveryLibrary>();
             if (deliveries.Where(x => x.Id != model.Id).Any())
             {
                 baseReponse = baseReponse.AlreadyExists();
@@ -77,7 +77,7 @@ namespace API_Gateway.Controllers.Admin
                 temp = api.ApiCall(UserApi, EndPoints.Delivery + "?Id=" + model.Id, "GET", null);
                 baseReponse = baseReponse.JsonParseRecord(temp);
 
-                DeliveryLibrary delivery = (DeliveryLibrary)baseReponse.Data;
+                DeliveryLibrary delivery = baseReponse.Data as DeliveryLibrary;
                 //delivery.Id = model.Id;
                 delivery.CityID = model.CityID;
                 delivery.StateID = model.StateID;
@@ -103,7 +103,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = api.ApiCall(UserApi, EndPoints.Delivery + "?Id=" + id, "GET", null);
 
             baseReponse = baseReponse.JsonParseList(temp);
-            List<DeliveryLibrary> tempList = (List<DeliveryLibrary>)baseReponse.Data;
+            List<DeliveryLibrary> tempList = baseReponse.Data as List<DeliveryLibrary> ?? new List<DeliveryLibrary>();
 
             if (tempList.Any())
             {
@@ -241,7 +241,7 @@ namespace API_Gateway.Controllers.Admin
             var ResCity = api.ApiCall(UserApi, EndPoints.City + "?PageIndex=0", "GET", null);
             BaseResponse<CityLibrary> baseCity = new BaseResponse<CityLibrary>();
             baseCity = baseCity.JsonParseList(ResCity);
-            List<CityLibrary> lstCity = (List<CityLibrary>)baseCity.Data;
+            List<CityLibrary> lstCity = baseCity.Data as List<CityLibrary> ?? new List<CityLibrary>();
 
             List<CityLibrary> lstCountry = lstCity.GroupBy(c => c.CountryID).Select(p => p.FirstOrDefault()).ToList();
             List<CityLibrary> lstState = lstCity.GroupBy(c => c.StateID).Select(p => p.FirstOrDefault()).ToList();
@@ -261,7 +261,7 @@ namespace API_Gateway.Controllers.Admin
             //var ResState = api.ApiCall(UserApi, EndPoints.State + "?PageIndex=1", "GET", null, token);
             //BaseResponse<StateLibrary> baseState = new BaseResponse<StateLibrary>();
             //baseState = baseState.JsonParseList(ResState);
-            //List<StateLibrary> lstState = (List<StateLibrary>)baseState.Data;
+            //List<StateLibrary> lstState = baseState.Data as List<StateLibrary> ?? new List<StateLibrary>();
 
             rowCount = 0;
 

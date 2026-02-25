@@ -26,7 +26,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.Warehouse + "?GSTInfoId=" + model.GSTInfoId + "&UserID=" + model.UserID + "&Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Warehouse> tmp = (List<Warehouse>)baseResponse.Data;
+            List<Warehouse> tmp = baseResponse.Data as List<Warehouse>;
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -61,7 +61,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.Warehouse + "?GSTInfoId=" + model.GSTInfoId + "&UserID=" + model.UserID + "&Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Warehouse> tmp = (List<Warehouse>)baseResponse.Data;
+            List<Warehouse> tmp = baseResponse.Data as List<Warehouse>;
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -70,7 +70,7 @@ namespace API_Gateway.Common
             {
                 var response = helper.ApiCall(_URL, EndPoints.Warehouse + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                Warehouse warehouse = (Warehouse)baseResponse.Data;
+                Warehouse warehouse = baseResponse.Data as Warehouse;
                 warehouse.UserID = model.UserID;
                 warehouse.GSTInfoId = model.GSTInfoId;
                 warehouse.Name = model.Name;
@@ -105,7 +105,7 @@ namespace API_Gateway.Common
                 // here we will not passed Id while get the record. (Insted we used userId only, cause we want only user's record.)
                 var temp = helper.ApiCall(_URL, EndPoints.Warehouse + "?userID=" + userID, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<Warehouse> tmp = (List<Warehouse>)baseResponse.Data;
+                List<Warehouse> tmp = baseResponse.Data as List<Warehouse>;
                 if (tmp.Count == 0)
                 {
                     baseResponse = baseResponse.NotExist();
@@ -122,7 +122,7 @@ namespace API_Gateway.Common
                     var productWarehouse = helper.ApiCall(_cataURL, EndPoints.ProductWarehouse + "?warehouseid=" + id, "GET", null);
                     BaseResponse<ProductWareHouse> baseProductWarehouse = new BaseResponse<ProductWareHouse>();
                     var warehouseBaseresponse = baseProductWarehouse.JsonParseList(productWarehouse);
-                    List<ProductWareHouse> productWareHouses = (List<ProductWareHouse>)warehouseBaseresponse.Data;
+                    List<ProductWareHouse> productWareHouses = warehouseBaseresponse.Data as List<ProductWareHouse>;
                     if (productWareHouses.Any())
                     {
                         baseResponse = baseResponse.ChildAlreadyExists("ProductWareHouse", "WareHouse");
@@ -160,7 +160,7 @@ namespace API_Gateway.Common
 
                 var temp = helper.ApiCall(_URL, EndPoints.Warehouse + "?gstInfoId=" + gstInfoId, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<Warehouse> tmp = (List<Warehouse>)baseResponse.Data;
+                List<Warehouse> tmp = baseResponse.Data as List<Warehouse>;
                 if (tmp.Count == 0)
                 {
                     baseResponse = baseResponse.NotExist();
@@ -177,7 +177,7 @@ namespace API_Gateway.Common
                     var productWarehouse = helper.ApiCall(_cataURL, EndPoints.ProductWarehouse + "?warehouseid=" + id, "GET", null);
                     BaseResponse<ProductWareHouse> baseProductWarehouse = new BaseResponse<ProductWareHouse>();
                     var warehouseBaseresponse = baseProductWarehouse.JsonParseList(productWarehouse);
-                    List<ProductWareHouse> productWareHouses = (List<ProductWareHouse>)warehouseBaseresponse.Data;
+                    List<ProductWareHouse> productWareHouses = warehouseBaseresponse.Data as List<ProductWareHouse>;
                     if (productWareHouses.Any())
                     {
                         baseResponse = baseResponse.ChildAlreadyExists("ProductWareHouse", "WareHouse");
@@ -302,7 +302,7 @@ namespace API_Gateway.Common
                 // here we will not passed Id while get the record. (Insted we used userId only, cause we want only user's record.)
                 var temp = helper.ApiCall(_URL, EndPoints.Warehouse + "?id=" + id, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<Warehouse> tmp = (List<Warehouse>)baseResponse.Data;
+                List<Warehouse> tmp = baseResponse.Data as List<Warehouse>;
                 if (tmp.Count > 0)
                 {
                     var tempdeleteRecord = helper.ApiCall(_URL, EndPoints.Warehouse + "?Id=" + id, "DELETE", null);

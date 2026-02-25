@@ -32,7 +32,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueType + "?Issue=" + model.Issue + "&actionId=" + model.ActionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueTypeLibrary> tmp = (List<IssueTypeLibrary>)baseResponse.Data;
+            List<IssueTypeLibrary> tmp = baseResponse.Data as List<IssueTypeLibrary> ?? new List<IssueTypeLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -42,7 +42,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp1 = helper.ApiCall(URL, EndPoints.IssueType + "?Issue=" + model.Issue + "&actionId=" + model.ActionId + "&Isdeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp1);
-                List<IssueTypeLibrary> tmp1 = (List<IssueTypeLibrary>)baseResponse.Data;
+                List<IssueTypeLibrary> tmp1 = baseResponse.Data as List<IssueTypeLibrary> ?? new List<IssueTypeLibrary>();
                 if (tmp1.Any())
                 {
                     var data = tmp1.FirstOrDefault();
@@ -85,7 +85,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueType + "?Issue=" + model.Issue + "&actionId=" + model.ActionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueTypeLibrary> tmp = (List<IssueTypeLibrary>)baseResponse.Data;
+            List<IssueTypeLibrary> tmp = baseResponse.Data as List<IssueTypeLibrary> ?? new List<IssueTypeLibrary>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -94,7 +94,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.IssueType + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                IssueTypeLibrary issue = (IssueTypeLibrary)baseResponse.Data;
+                IssueTypeLibrary issue = baseResponse.Data as IssueTypeLibrary;
 
                 issue.Id = model.Id;
                 issue.ActionId = model.ActionId;
@@ -113,13 +113,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.IssueType + "?Id=" + id + "&isDeleted=false", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<IssueTypeLibrary> templist = (List<IssueTypeLibrary>)baseResponse.Data;
+            List<IssueTypeLibrary> templist = baseResponse.Data as List<IssueTypeLibrary> ?? new List<IssueTypeLibrary>();
             if (templist.Any())
             {
                 temp = helper.ApiCall(URL, EndPoints.IssueReason + "?IssueTypeId=" + id + "&isDeleted=false", "GET", null);
                 BaseResponse<IssueReasonLibrary> baseresponse1 = new BaseResponse<IssueReasonLibrary>();
                 baseresponse1 = baseresponse1.JsonParseList(temp);
-                List<IssueReasonLibrary> tempList = (List<IssueReasonLibrary>)baseresponse1.Data;
+                List<IssueReasonLibrary> tempList = baseresponse1.Data as List<IssueReasonLibrary> ?? new List<IssueReasonLibrary>();
                 if (tempList.Count > 0)
                 {
                     baseResponse = baseResponse.ChildExists();

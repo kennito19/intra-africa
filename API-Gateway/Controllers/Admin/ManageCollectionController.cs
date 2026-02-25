@@ -35,13 +35,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp1 = helper.ApiCall(URL, EndPoints.ManageCollection + "?Type=" + model.Type + "&date=" + true + "&PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp1);
-            List<ManageCollectionLibrary> tempList1 = (List<ManageCollectionLibrary>)baseResponse.Data;
+            List<ManageCollectionLibrary> tempList1 = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
 
             //List<ManageCollectionLibrary> tempList = tempList1.Where(x => x.Name == HttpUtility.UrlEncode(model.Name)).ToList();
 
             //var temp = helper.ApiCall(URL, EndPoints.ManageCollection + "?Name=" + model.Name + "&Type=" + model.Type, "GET", null);
             //baseResponse = baseResponse.JsonParseList(temp);
-            //List<ManageCollectionLibrary> tempList = (List<ManageCollectionLibrary>)baseResponse.Data;
+            //List<ManageCollectionLibrary> tempList = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
             ManageCollectionLibrary manageCollection = new ManageCollectionLibrary();
 
             //if (tempList1.Any())
@@ -135,18 +135,18 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp1 = helper.ApiCall(URL, EndPoints.ManageCollection + "?Type=" + model.Type + "&date=" + true + "&PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp1);
-            List<ManageCollectionLibrary> tempList1 = (List<ManageCollectionLibrary>)baseResponse.Data;
+            List<ManageCollectionLibrary> tempList1 = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
 
             //List<ManageCollectionLibrary> tempList = tempList1.Where(x => x.Name == HttpUtility.UrlEncode(model.Name)).ToList();
 
             //var temp = helper.ApiCall(URL, EndPoints.ManageCollection + "?Name=" + HttpUtility.UrlEncode(model.Name) + "&Type=" + model.Type, "GET", null);
             //baseResponse = baseResponse.JsonParseList(temp);
-            //List<ManageCollectionLibrary> tempList = (List<ManageCollectionLibrary>)baseResponse.Data;
+            //List<ManageCollectionLibrary> tempList = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
             ManageCollectionLibrary manageCollection = new ManageCollectionLibrary();
 
             var recordCall = helper.ApiCall(URL, EndPoints.ManageCollection + "?Id=" + model.Id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(recordCall);
-            ManageCollectionLibrary record = (ManageCollectionLibrary)baseResponse.Data;
+            ManageCollectionLibrary record = baseResponse.Data as ManageCollectionLibrary;
 
 
             //if (tempList1.Where(x => x.Id != model.Id).Any())
@@ -228,13 +228,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageCollection + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageCollectionLibrary> tempList = (List<ManageCollectionLibrary>)baseResponse.Data;
+            List<ManageCollectionLibrary> tempList = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?CollectionId=" + id, "GET", null);
                 BaseResponse<ManageCollectionMappingLibrary> baseResponse1 = new BaseResponse<ManageCollectionMappingLibrary>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageCollectionMappingLibrary> tempList1 = (List<ManageCollectionMappingLibrary>)baseResponse1.Data;
+                List<ManageCollectionMappingLibrary> tempList1 = baseResponse1.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();
@@ -260,7 +260,7 @@ namespace API_Gateway.Controllers.Admin
             var response = helper.ApiCall(URL, EndPoints.ManageCollection + "?PageIndex=" + pageindex + "&PageSize=" + pageSize, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageCollectionLibrary> ManageCollectionLibrary = (List<ManageCollectionLibrary>)baseResponse.Data;
+            List<ManageCollectionLibrary> ManageCollectionLibrary = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
             if (IsLive != null && IsLive == true)
             {
                 baseResponse.Data = ManageCollectionLibrary.Where(p => p.Type.ToString().ToLower() == "product collection" || (p.EndDate >= DateTime.Today && p.Type.ToString().ToLower() == "flashsale")).ToList();
@@ -287,7 +287,7 @@ namespace API_Gateway.Controllers.Admin
             }
             var response = helper.ApiCall(URL, EndPoints.ManageCollection + "?Type=" + type + "&PageIndex=" + pageindex + "&PageSize=" + pageSize + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageCollectionLibrary> ManageCollectionLibrary = (List<ManageCollectionLibrary>)baseResponse.Data;
+            List<ManageCollectionLibrary> ManageCollectionLibrary = baseResponse.Data as List<ManageCollectionLibrary> ?? new List<ManageCollectionLibrary>();
 
             if (IsLive != null && IsLive == true)
             {

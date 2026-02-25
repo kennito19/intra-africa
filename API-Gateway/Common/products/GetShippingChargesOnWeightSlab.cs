@@ -24,7 +24,7 @@ namespace API_Gateway.Common.products
             {
                 baseResponse = new BaseResponse<WeightSlabLibrary>();
                 baseResponse = baseResponse.JsonParseRecord(response);
-                Shippingcharges = (WeightSlabLibrary)baseResponse.Data;
+                Shippingcharges = baseResponse.Data as WeightSlabLibrary;
             }
             else
             {

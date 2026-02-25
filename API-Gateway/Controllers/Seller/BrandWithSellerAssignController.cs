@@ -54,7 +54,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse = brands.SaveBrand(brand, userID, true);
             if (baseResponse.code == 200)
             {
-                var brandId = (int)baseResponse.Data;
+                var brandId = Convert.ToInt32(baseResponse.Data);
 
                 AssignBrandToSellerDTO abts = new AssignBrandToSellerDTO();
                 abts.SellerID = model.SellerId;
@@ -92,7 +92,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse = brands.UpdateBrand(brand, userID);
             if (baseResponse.code == 200)
             {
-                var brandId = (int)baseResponse.Data;
+                var brandId = Convert.ToInt32(baseResponse.Data);
 
                 AssignBrandToSellerDTO abts = new AssignBrandToSellerDTO();
 

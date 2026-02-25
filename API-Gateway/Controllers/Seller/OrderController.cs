@@ -109,7 +109,7 @@ namespace API_Gateway.Controllers.Seller
             SellerbaseResponse = SellerbaseResponse.JsonParseRecord(getresponse);
             if (SellerbaseResponse.code == 200)
             {
-                SellerListModel seller = (SellerListModel)SellerbaseResponse.Data;
+                SellerListModel seller = SellerbaseResponse.Data as SellerListModel;
                 if (seller != null)
                 {
                     if (seller.Status.ToLower() == "active")
@@ -118,7 +118,7 @@ namespace API_Gateway.Controllers.Seller
                         baseResponse = baseResponse.JsonParseList(response);
                         if (baseResponse.code == 200)
                         {
-                            Warehouselst = (List<Warehouse>)baseResponse.Data;
+                            Warehouselst = baseResponse.Data as List<Warehouse> ?? new List<Warehouse>();
                         }
                         bool AllowWarehouseManagement = Convert.ToBoolean(_configuration.GetValue<string>("Allow_warehouse_management"));
                         if (AllowWarehouseManagement)
@@ -131,7 +131,7 @@ namespace API_Gateway.Controllers.Seller
 
                             if (productWarehouse.code == 200)
                             {
-                                ProductWarehouselst = (List<SizeWiseWarehouse>)productWarehouse.Data;
+                                ProductWarehouselst = productWarehouse.Data as List<SizeWiseWarehouse> ?? new List<SizeWiseWarehouse>();
                                 if (ProductWarehouselst.Count > 0)
                                 {
                                     ProductWarehouselst = ProductWarehouselst.Where(p => p.Quantity >= quantity).ToList();

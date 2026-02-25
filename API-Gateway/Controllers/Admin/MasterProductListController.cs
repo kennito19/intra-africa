@@ -68,8 +68,10 @@ namespace API_Gateway.Controllers.Admin
             }
 
             var response = helper.ApiCall(URL, EndPoints.MasterProductListDetail + "?PageIndex=" + pageindex + "&PageSize=" + pageSize + url + "&IsDeleted=false", "GET", null);
-            baseResponse = baseResponse.JsonParseList(response);
-            List<ProductListLibrary> tempList = (List<ProductListLibrary>)baseResponse.Data;
+            baseResponse = baseResponse.JsonParseList(response) ?? new BaseResponse<ProductListLibrary>();
+            List<ProductListLibrary> tempList = (baseResponse.Data as List<ProductListLibrary> ?? new List<ProductListLibrary>())
+                .Where(p => p != null)
+                .ToList();
 
             List<ProductListLibrary> parentList = tempList.Where(p => p.ParentId == null || p.ParentId == 0).ToList();
 
@@ -127,6 +129,11 @@ namespace API_Gateway.Controllers.Admin
                 }).ToList();
 
             baseResponse.Data = parentList;
+            if (baseResponse.code == 0)
+            {
+                baseResponse.code = 200;
+                baseResponse.Message = "Records bind successfully";
+            }
             return Ok(baseResponse);
         }
 
@@ -145,16 +152,28 @@ namespace API_Gateway.Controllers.Admin
                     productListLibrary = item;
                     productListLibrary.totalSellerCount = dr.Where(x => x.Id == item.Id).ToList().Count;
                     productListLibrary.BrandId = item.BrandId;
-                    productListLibrary.BrandName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails : null;
+                    JObject? extraDetailsObj = null;
+                    if (!string.IsNullOrEmpty(item.ExtraDetails))
+                    {
+                        try
+                        {
+                            extraDetailsObj = JObject.Parse(item.ExtraDetails);
+                        }
+                        catch
+                        {
+                            extraDetailsObj = null;
+                        }
+                    }
 
-                    productListLibrary.BrandName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails : null;
-
-                    productListLibrary.SellerName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["SellerDetails"]?["Display"]?.ToString() ?? JObject.Parse(item.ExtraDetails)["SellerDetails"]?["FullName"]?.ToString() ?? "Unknown Seller" : null;
+                    productListLibrary.BrandName = extraDetailsObj?["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails;
+                    productListLibrary.SellerName = extraDetailsObj?["SellerDetails"]?["Display"]?.ToString()
+                        ?? extraDetailsObj?["SellerDetails"]?["FullName"]?.ToString()
+                        ?? "Unknown Seller";
 
                     //var tempColor = helper.ApiCall(URL, EndPoints.ProductColorMapping + "?ProductId=" + item.Id, "Get", null);
                     //BaseResponse<ProductColorMapp> baseResponse = new BaseResponse<ProductColorMapp>();
                     //var ColorResponse = baseResponse.JsonParseList(tempColor);
-                    //List<ProductColorMapp> ProductColorMapp = (List<ProductColorMapp>)ColorResponse.Data;
+                    //List<ProductColorMapp> ProductColorMapp = ColorResponse.Data as List<ProductColorMapp> ?? new List<ProductColorMapp>();
                     //if (ProductColorMapp.Count > 0)
                     //{
                     //    productListLibrary.Color = ProductColorMapp;
@@ -163,7 +182,7 @@ namespace API_Gateway.Controllers.Admin
                     //var tempSize = helper.ApiCall(URL, EndPoints.ProductPriceMaster + "?SellerProductId=" + item.SellerProductId, "Get", null);
                     //BaseResponse<ProductPrice> baseResponse1 = new BaseResponse<ProductPrice>();
                     //var SizeResponse = baseResponse1.JsonParseList(tempSize);
-                    //List<ProductPrice> sellerProducts = (List<ProductPrice>)SizeResponse.Data;
+                    //List<ProductPrice> sellerProducts = SizeResponse.Data as List<ProductPrice> ?? new List<ProductPrice>();
                     //if (sellerProducts.Count > 0)
                     //{
                     //    productListLibrary.Size = sellerProducts;
@@ -180,16 +199,28 @@ namespace API_Gateway.Controllers.Admin
                         productListLibrary = item;
                         productListLibrary.totalSellerCount = dr.Where(x => x.Id == item.Id).ToList().Count;
                         productListLibrary.BrandId = item.BrandId;
-                        productListLibrary.BrandName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails : null;
+                        JObject? extraDetailsObj = null;
+                        if (!string.IsNullOrEmpty(item.ExtraDetails))
+                        {
+                            try
+                            {
+                                extraDetailsObj = JObject.Parse(item.ExtraDetails);
+                            }
+                            catch
+                            {
+                                extraDetailsObj = null;
+                            }
+                        }
 
-                        productListLibrary.BrandName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails : null;
-
-                        productListLibrary.SellerName = !string.IsNullOrEmpty(item.ExtraDetails) ? JObject.Parse(item.ExtraDetails)["SellerDetails"]?["Display"]?.ToString() ?? JObject.Parse(item.ExtraDetails)["SellerDetails"]?["FullName"]?.ToString() ?? "Unknown Seller" : null;
+                        productListLibrary.BrandName = extraDetailsObj?["BrandDetails"]?["Name"]?.ToString() ?? item.ExtraDetails;
+                        productListLibrary.SellerName = extraDetailsObj?["SellerDetails"]?["Display"]?.ToString()
+                            ?? extraDetailsObj?["SellerDetails"]?["FullName"]?.ToString()
+                            ?? "Unknown Seller";
 
                         //var tempColor = helper.ApiCall(URL, EndPoints.ProductColorMapping + "?ProductId=" + item.Id, "Get", null);
                         //BaseResponse<ProductColorMapp> baseResponse = new BaseResponse<ProductColorMapp>();
                         //var ColorResponse = baseResponse.JsonParseList(tempColor);
-                        //List<ProductColorMapp> ProductColorMapp = (List<ProductColorMapp>)ColorResponse.Data;
+                        //List<ProductColorMapp> ProductColorMapp = ColorResponse.Data as List<ProductColorMapp> ?? new List<ProductColorMapp>();
                         //if (ProductColorMapp.Count > 0)
                         //{
                         //    productListLibrary.Color = ProductColorMapp;
@@ -198,7 +229,7 @@ namespace API_Gateway.Controllers.Admin
                         //var tempSize = helper.ApiCall(URL, EndPoints.ProductPriceMaster + "?SellerProductId=" + item.SellerProductId, "Get", null);
                         //BaseResponse<ProductPrice> baseResponse1 = new BaseResponse<ProductPrice>();
                         //var SizeResponse = baseResponse1.JsonParseList(tempSize);
-                        //List<ProductPrice> sellerProducts = (List<ProductPrice>)SizeResponse.Data;
+                        //List<ProductPrice> sellerProducts = SizeResponse.Data as List<ProductPrice> ?? new List<ProductPrice>();
                         //if (sellerProducts.Count > 0)
                         //{
                         //    productListLibrary.Size = sellerProducts;
@@ -219,7 +250,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<ProductCounts> baseResponse = new BaseResponse<ProductCounts>();
             var response = helper.ApiCall(URL, EndPoints.GetProductCounts, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            ProductCounts productCounts = (ProductCounts)baseResponse.Data;
+            ProductCounts productCounts = baseResponse.Data as ProductCounts;
             return Ok(productCounts);
         }
 
@@ -230,7 +261,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<ProductCounts> baseResponse = new BaseResponse<ProductCounts>();
             var response = helper.ApiCall(URL, EndPoints.GetProductCounts + "?sellerId=" + sellerId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            ProductCounts productCounts = (ProductCounts)baseResponse.Data;
+            ProductCounts productCounts = baseResponse.Data as ProductCounts;
             return Ok(productCounts);
         }
 

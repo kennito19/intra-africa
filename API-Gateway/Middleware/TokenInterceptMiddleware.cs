@@ -79,7 +79,6 @@ namespace API_Gateway.Middleware
 
         public async Task Invoke(HttpContext httpContext)
         {
-            
             var authHeader = httpContext.Request.Headers["Authorization"];
             ApiHelper api = new ApiHelper(httpContext);
             if (authHeader.Count == 0)
@@ -88,32 +87,37 @@ namespace API_Gateway.Middleware
                 return;
             }
 
+            var authValue = authHeader[0].ToString();
+            if (string.IsNullOrWhiteSpace(authValue) || !authValue.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                httpContext.Response.StatusCode = 401;
+                await httpContext.Response.WriteAsync("Token Invalid");
+                return;
+            }
+
+            string token = authValue.Substring("Bearer ".Length).Trim();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                httpContext.Response.StatusCode = 401;
+                await httpContext.Response.WriteAsync("Token Invalid");
+                return;
+            }
+
             var deviceId = httpContext.Request.Headers["device_id"];
-            if (deviceId.Count == 0)
+            if (deviceId.Count > 0)
             {
-                httpContext.Response.StatusCode = 401;
-                await httpContext.Response.WriteAsync("Token Invalid");
-                return;
-            }
+                UserSessions userSessions = new UserSessions();
+                userSessions.AccessToken = token;
+                userSessions.DeviceId = deviceId[0].ToString();
 
-            string token = authHeader[0].Substring("Bearer ".Length).Trim();
+                var response = api.ApiCall(IDServerUrl, EndPoints.userSession, "POST", userSessions);
+                if (!response.IsSuccessStatusCode)
+                {
+                    httpContext.Response.StatusCode = 401;
+                    await httpContext.Response.WriteAsync("Token Invalid");
+                    return;
+                }
 
-            UserSessions userSessions = new UserSessions();
-            userSessions.AccessToken = token;
-            userSessions.DeviceId = deviceId[0].ToString();
-
-            var response = api.ApiCall(IDServerUrl, EndPoints.userSession, "POST", userSessions);
-            if (response.IsSuccessStatusCode)
-            {
-                await _next(httpContext);
-                return;
-
-            }
-            else if (!response.IsSuccessStatusCode)
-            {
-                httpContext.Response.StatusCode = 401;
-                await httpContext.Response.WriteAsync("Token Invalid");
-                return;
             }
 
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));

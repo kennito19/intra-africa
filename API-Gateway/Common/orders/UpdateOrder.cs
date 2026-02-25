@@ -33,7 +33,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
 
-            Orders order = (Orders)baseResponse.Data;
+            Orders order = baseResponse.Data as Orders;
 
             order.OrderNo = model.OrderNo;
             order.PaymentMode = model.PaymentMode;
@@ -53,7 +53,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?OrderId=" + OrderId, "GET", null);
             orderItemBaseRes = orderItemBaseRes.JsonParseList(temp);
-            List<OrderItems> tempList = (List<OrderItems>)orderItemBaseRes.Data;
+            List<OrderItems> tempList = orderItemBaseRes.Data as List<OrderItems>;
 
             if (tempList.Where(x => x.Id != OrderId).Any())
             {
@@ -63,7 +63,7 @@ namespace API_Gateway.Common.orders
             {
                 var OrderItem = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?OrderId=" + OrderId, "GET", null);
                 orderItemBaseRes = orderItemBaseRes.JsonParseRecord(OrderItem);
-                OrderItems orderItem = (OrderItems)orderItemBaseRes.Data;
+                OrderItems orderItem = orderItemBaseRes.Data as OrderItems;
                 orderItem.OrderID = OrderId;
                 orderItem.Status = orderStatus;
                 orderItem.ModifiedAt = DateTime.Now;
@@ -85,7 +85,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.Orders + "?Id=" + OrderId, "GET", null);
             orderBaseRes = orderBaseRes.JsonParseList(temp);
-            List<Orders> tempList = (List<Orders>)orderBaseRes.Data;
+            List<Orders> tempList = orderBaseRes.Data as List<Orders>;
 
             if (tempList.Where(x => x.Id != OrderId).Any())
             {
@@ -95,7 +95,7 @@ namespace API_Gateway.Common.orders
             {
                 var OrderItem = helper.ApiCall(OrderURL, EndPoints.Orders + "?Id=" + OrderId, "GET", null);
                 orderBaseRes = orderBaseRes.JsonParseRecord(OrderItem);
-                Orders orders = (Orders)orderBaseRes.Data;
+                Orders orders = orderBaseRes.Data as Orders;
                 orders.Id = OrderId;
                 orders.Status = orderStatus;
                 orders.ModifiedAt = DateTime.Now;

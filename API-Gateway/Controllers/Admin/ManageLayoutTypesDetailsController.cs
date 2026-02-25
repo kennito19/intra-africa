@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
             baseResponse = baseResponse.JsonParseList(temp);
             if (baseResponse.code == 200)
             {
-                tempList = (List<ManageLayoutTypesDetails>)baseResponse.Data;
+                tempList = baseResponse.Data as List<ManageLayoutTypesDetails> ?? new List<ManageLayoutTypesDetails>();
             }
             if (tempList.Any())
             {
@@ -83,7 +83,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypesDetails + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesDetails> tempList = (List<ManageLayoutTypesDetails>)baseResponse.Data;
+            List<ManageLayoutTypesDetails> tempList = baseResponse.Data as List<ManageLayoutTypesDetails> ?? new List<ManageLayoutTypesDetails>();
 
             if (tempList.Where(x => x.Id != model.Id && x.SectionType == model.SectionType).Any())
             {
@@ -93,7 +93,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageLayoutTypesDetails record = (ManageLayoutTypesDetails)baseResponse.Data;
+                ManageLayoutTypesDetails record = baseResponse.Data as ManageLayoutTypesDetails;
                 record.LayoutId = model.LayoutId;
                 record.LayoutTypeId = model.LayoutTypeId;
                 record.Name = model.Name;
@@ -114,7 +114,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypesDetails + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesDetails> tempList = (List<ManageLayoutTypesDetails>)baseResponse.Data;
+            List<ManageLayoutTypesDetails> tempList = baseResponse.Data as List<ManageLayoutTypesDetails> ?? new List<ManageLayoutTypesDetails>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLayoutTypesDetails + "?Id=" + id, "DELETE", null);

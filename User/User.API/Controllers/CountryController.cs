@@ -46,7 +46,7 @@ namespace User.API.Controllers
         [Authorize(Policy = "Accessable")]
         public async Task<BaseResponse<long>> Delete(int id)
         {
-            string DeletedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
+            string DeletedBy = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type.Equals("UserID"))?.Value ?? "system";
             CountryLibrary country = new CountryLibrary();
             country.Id = id;
             country.DeletedBy = DeletedBy;

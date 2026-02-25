@@ -97,7 +97,7 @@ namespace API_Gateway.Controllers.Admin
 
             //if (baseResponse2.code == 200)
             //{
-            List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse2.Data;
+            List<SellerListModel> sellerLists = baseResponse2.Data as List<SellerListModel> ?? new List<SellerListModel>();
             sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
             GetOrders sellerr = new GetOrders(_configuration, _httpContext,null);
             //sellerLists = sellerLists.Where(x => x.Status.ToLower() != "archived").ToList();
@@ -217,8 +217,8 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse2.code == 200 && baseResponse3.code == 200)
             {
-                List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse2.Data;
-                List<GSTReport> lst = (List<GSTReport>)baseResponse3.Data;
+                List<SellerListModel> sellerLists = baseResponse2.Data as List<SellerListModel> ?? new List<SellerListModel>();
+                List<GSTReport> lst = baseResponse3.Data as List<GSTReport> ?? new List<GSTReport>();
 
                 if (lst.Count > 0)
                 {
@@ -328,8 +328,8 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse2.code == 200 && baseResponse3.code == 200)
             {
-                List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse2.Data;
-                List<WarehouseReport> lst = (List<WarehouseReport>)baseResponse3.Data;
+                List<SellerListModel> sellerLists = baseResponse2.Data as List<SellerListModel> ?? new List<SellerListModel>();
+                List<WarehouseReport> lst = baseResponse3.Data as List<WarehouseReport> ?? new List<WarehouseReport>();
 
                 if (lst.Count > 0)
                 {
@@ -430,7 +430,7 @@ namespace API_Gateway.Controllers.Admin
             //if (ExbaseResponse.code == 200)
             //{
             //    List<OrderWiseExtraCharges> extraChargesLibraries = new List<OrderWiseExtraCharges>();
-            //    extraChargesLibraries = (List<OrderWiseExtraCharges>)ExbaseResponse.Data;
+            //    extraChargesLibraries = ExbaseResponse.Data as List<OrderWiseExtraCharges> ?? new List<OrderWiseExtraCharges>();
             //    var UniqueName = extraChargesLibraries.Where(e => !string.IsNullOrEmpty(e.ChargesType)).DistinctBy(e => e.ChargesType).ToList();
             //    if (UniqueName.Count > 0)
             //    {
@@ -477,7 +477,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse3.code == 200)
             {
-                List<OrderReports> lst = (List<OrderReports>)baseResponse3.Data;
+                List<OrderReports> lst = baseResponse3.Data as List<OrderReports> ?? new List<OrderReports>();
                 GetOrders seller = new GetOrders(_configuration, _httpContext, null);
                 List<SellerKycList> SellerDetailslst = seller.getsellerKyclst();
                 List<BrandLibrary> brandlst = getBrand();
@@ -530,7 +530,7 @@ namespace API_Gateway.Controllers.Admin
                         if (ExbaseResponse.code == 200)
                         {
                             List<OrderWiseExtraCharges> extraChargesLibraries = new List<OrderWiseExtraCharges>();
-                            extraChargesLibraries = (List<OrderWiseExtraCharges>)ExbaseResponse.Data;
+                            extraChargesLibraries = ExbaseResponse.Data as List<OrderWiseExtraCharges> ?? new List<OrderWiseExtraCharges>();
                             var UniqueName = extraChargesLibraries.Where(e => e.OrderItemID == item.OrderItemId && e.OrderID == item.OrderId && !string.IsNullOrEmpty(e.ChargesType)).ToList();
                             if (UniqueName.Count > 0)
                             {
@@ -643,7 +643,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponseProduct.code == 200)
             {
-                List<ProductReports> ProductLists = (List<ProductReports>)baseResponseProduct.Data;
+                List<ProductReports> ProductLists = baseResponseProduct.Data as List<ProductReports> ?? new List<ProductReports>();
 
                 if (ProductLists.Count > 0)
                 {
@@ -759,7 +759,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse3.code == 200)
             {
-                List<CommissionReports> lst = (List<CommissionReports>)baseResponse3.Data;
+                List<CommissionReports> lst = baseResponse3.Data as List<CommissionReports> ?? new List<CommissionReports>();
                 GetOrders sellerr = new GetOrders(_configuration, _httpContext, null);
                 List<SellerKycList> SellerDetailslst = sellerr.getsellerKyclst();
                 List<BrandLibrary> brandlst = getBrand();
@@ -835,7 +835,7 @@ namespace API_Gateway.Controllers.Admin
 
         //    if (baseResponse.code == 200)
         //    {
-        //        List<SellerListModel> sellerLists = (List<SellerListModel>)baseResponse.Data;
+        //        List<SellerListModel> sellerLists = baseResponse.Data as List<SellerListModel> ?? new List<SellerListModel>();
         //        sellerKycListDetail seller = new sellerKycListDetail(_configuration, _httpContext);
         //        List<SellerKycList> lst = seller.bindSellerDetails(sellerLists);
         //        sellerKycList = lst.ToList();
@@ -851,7 +851,7 @@ namespace API_Gateway.Controllers.Admin
             brandResponse = brandResponse.JsonParseList(response);
 
             List<BrandLibrary> brand = new List<BrandLibrary>();
-            brand = (List<BrandLibrary>)brandResponse.Data;
+            brand = brandResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
 
             return brand;
         }

@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
                 var response = api.ApiCall(UserAPI, EndPoints.AssignSellerHyperlocal + "?sellerId=" + model.SellerId + "&isDeleted=false", "GET", "");
                 baseResponse = baseResponse.JsonParseList(response);
 
-                List<AssignSellerHyperlocal> assignSellerHyperlocals = (List<AssignSellerHyperlocal>)baseResponse.Data;
+                List<AssignSellerHyperlocal> assignSellerHyperlocals = baseResponse.Data as List<AssignSellerHyperlocal> ?? new List<AssignSellerHyperlocal>();
                 if (!assignSellerHyperlocals.Where(x => x.BrandId == (model.BrandId) && x.CityID == model.CityID).Any())
                 {
                     AssignSellerHyperlocal assignSeller = new AssignSellerHyperlocal();
@@ -72,13 +72,13 @@ namespace API_Gateway.Controllers.Admin
                 var response = api.ApiCall(UserAPI, EndPoints.AssignSellerHyperlocal + "?sellerId=" + model.SellerId + "&isDeleted=false", "GET", "");
                 baseResponse = baseResponse.JsonParseList(response);
 
-                List<AssignSellerHyperlocal> assignSellerHyperlocals = (List<AssignSellerHyperlocal>)baseResponse.Data;
+                List<AssignSellerHyperlocal> assignSellerHyperlocals = baseResponse.Data as List<AssignSellerHyperlocal> ?? new List<AssignSellerHyperlocal>();
                 if (!assignSellerHyperlocals.Where(x => x.BrandId == (model.BrandId ?? 0) && x.CityID == model.CityID).Any())
                 {
 
                     var temp = api.ApiCall(UserAPI, EndPoints.AssignSellerHyperlocal + "?id=" + model.Id + "&isDeleted=false&Mode=check", "GET", null);
                     baseResponse = baseResponse.JsonParseRecord(response);
-                    AssignSellerHyperlocal assignSeller = (AssignSellerHyperlocal)baseResponse.Data;
+                    AssignSellerHyperlocal assignSeller = baseResponse.Data as AssignSellerHyperlocal;
                     assignSeller.SellerId = model.SellerId;
                     assignSeller.CountryID = model.CountryID;
                     assignSeller.StateID = model.StateID;
@@ -108,7 +108,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = api.ApiCall(UserAPI, EndPoints.AssignSellerHyperlocal + "?id=" + Id + "&isDeleted=false", "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            AssignSellerHyperlocal assignSeller = (AssignSellerHyperlocal)baseResponse.Data;
+            AssignSellerHyperlocal assignSeller = baseResponse.Data as AssignSellerHyperlocal;
             if (assignSeller != null)
             {
                 var res = api.ApiCall(UserAPI, EndPoints.AssignSellerHyperlocal + "?id=" + Id, "DELETE", null);

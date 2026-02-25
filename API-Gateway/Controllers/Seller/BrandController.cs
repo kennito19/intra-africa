@@ -50,7 +50,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse = brands.SaveBrand(brand, userID, false);
             if (baseResponse.code == 200)
             {
-                var brandId = (int)baseResponse.Data;
+                var brandId = Convert.ToInt32(baseResponse.Data);
 
                 AssignBrandToSellerDTO abts = new AssignBrandToSellerDTO();
                 abts.SellerID = userID;
@@ -117,13 +117,13 @@ namespace API_Gateway.Controllers.Seller
         public ActionResult<ApiHelper> GetSellerBrands(string SellerID, int pageIndex = 1, int pageSize = 10, string? searchtext = null, string? status = null)
         {
             baseResponse = brands.GetBrand(0, 0);
-            List<BrandLibrary> brandLists = (List<BrandLibrary>)baseResponse.Data;
+            List<BrandLibrary> brandLists = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
 
 
             BaseResponse<AssignBrandToSeller> assignmentResponse = new BaseResponse<AssignBrandToSeller>();
 
             assignmentResponse = AssignBrands.GetAssignBrands(0, 0);
-            List<AssignBrandToSeller> SellerBrandLists = (List<AssignBrandToSeller>)assignmentResponse.Data;
+            List<AssignBrandToSeller> SellerBrandLists = assignmentResponse.Data as List<AssignBrandToSeller> ?? new List<AssignBrandToSeller>();
 
             var response = (from b in brandLists
                             join ab in SellerBrandLists on b.ID equals ab.BrandId
@@ -173,10 +173,10 @@ namespace API_Gateway.Controllers.Seller
             baseResponse = brands.GetBrand(0, 0);
             assignmentResponse = AssignBrands.GetAssignBrands(0, 0);
 
-            List<BrandLibrary> brandLists = (List<BrandLibrary>)baseResponse.Data;
+            List<BrandLibrary> brandLists = baseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
             brandLists = brandLists.OrderByDescending(p => p.CreatedAt).ToList();
 
-            List<AssignBrandToSeller> SellerBrandLists = (List<AssignBrandToSeller>)assignmentResponse.Data;
+            List<AssignBrandToSeller> SellerBrandLists = assignmentResponse.Data as List<AssignBrandToSeller> ?? new List<AssignBrandToSeller>();
             SellerBrandLists = SellerBrandLists.OrderByDescending(p => p.CreatedAt).ToList();
 
             _SellerBrandLists = SellerBrandLists.Where(p => p.SellerID == SellerID && p.Status.ToLower() != "rejected").ToList();

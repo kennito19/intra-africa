@@ -83,7 +83,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var recordCall = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + "?Id=" + model.Id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(recordCall);
-            ManageHomePageDetailsLibrary mhpd = (ManageHomePageDetailsLibrary)baseResponse.Data;
+            ManageHomePageDetailsLibrary mhpd = baseResponse.Data as ManageHomePageDetailsLibrary;
             mhpd.SectionId = model.SectionId;
             mhpd.LayoutTypeDetailsId = model.LayoutTypeDetailsId;
             mhpd.OptionId = model.OptionId;
@@ -135,7 +135,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageDetailsLibrary> tempList = (List<ManageHomePageDetailsLibrary>)baseResponse.Data;
+            List<ManageHomePageDetailsLibrary> tempList = baseResponse.Data as List<ManageHomePageDetailsLibrary> ?? new List<ManageHomePageDetailsLibrary>();
             if (tempList.Any())
             {
                 var data = tempList.FirstOrDefault();
@@ -162,6 +162,42 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + "?Id=" + id, "GET", null);
             return Ok(baseResponse.JsonParseRecord(response));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, Seller")]
+        public ActionResult<ApiHelper> Get(int? pageIndex = 1, int? pageSize = 10, int? sectionId = null)
+        {
+            string url = "?PageIndex=" + pageIndex + "&PageSize=" + pageSize;
+            if (sectionId.HasValue && sectionId.Value > 0)
+            {
+                url += "&SectionId=" + sectionId.Value;
+            }
+
+            var response = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + url, "GET", null);
+            return Ok(baseResponse.JsonParseList(response));
+        }
+
+        [HttpGet("search")]
+        [Authorize(Roles = "Admin, Seller")]
+        public ActionResult<ApiHelper> Search(string? searchtext = null, string? status = null, int? pageIndex = 1, int? pageSize = 10, int? sectionId = null)
+        {
+            string url = "?PageIndex=" + pageIndex + "&PageSize=" + pageSize;
+            if (!string.IsNullOrWhiteSpace(searchtext))
+            {
+                url += "&SearchText=" + HttpUtility.UrlEncode(searchtext);
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                url += "&Status=" + HttpUtility.UrlEncode(status);
+            }
+            if (sectionId.HasValue && sectionId.Value > 0)
+            {
+                url += "&SectionId=" + sectionId.Value;
+            }
+
+            var response = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + url, "GET", null);
+            return Ok(baseResponse.JsonParseList(response));
         }
 
         [HttpGet("layoutTypeDetailsId&sectionId")]

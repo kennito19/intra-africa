@@ -70,8 +70,8 @@ namespace API_Gateway.Controllers.User
 
                     if (baseResponse1.code != 200)
                     {
-                        UserDetailsDTO userDetails = (UserDetailsDTO)baseResponse1.Data;
-                        if (userDetails.UserId == null && userDetails == null)
+                        UserDetailsDTO userDetails = baseResponse1.Data as UserDetailsDTO;
+                        if (userDetails == null || userDetails.UserId == null)
                         {
                             #region UserDetail Table Entry
                             string[] fullname = rsf.CurrentUser.FullName.Split(" ");
@@ -84,8 +84,8 @@ namespace API_Gateway.Controllers.User
                             ud.UserId = rsf.CurrentUser.UserId;
                             ud.Phone = rsf.CurrentUser.Phone;
                             ud.Gender = rsf.CurrentUser.Gender;
-                            ud.IsEmailConfirmed = (bool)rsf.CurrentUser.IsEmailConfirmed;
-                            ud.IsPhoneConfirmed = (bool)rsf.CurrentUser.IsPhoneConfirmed;
+                            ud.IsEmailConfirmed = rsf.CurrentUser.IsEmailConfirmed == true;
+                            ud.IsPhoneConfirmed = rsf.CurrentUser.IsPhoneConfirmed == true;
                             ud.UserType = "customer";
                             ud.CreatedBy = null;
                             ud.CreatedAt = DateTime.Now;
@@ -279,7 +279,7 @@ namespace API_Gateway.Controllers.User
                 var response = api.ApiCall(IDServerUrl, EndPoints.CustomerForgotPassword, "POST", model);
                 baseResponse = baseResponse.JsonParseList(response);
 
-                List<ResetModel> Resetdata = (List<ResetModel>)baseResponse.Data;
+                List<ResetModel> Resetdata = baseResponse.Data as List<ResetModel> ?? new List<ResetModel>();
 
                 if (Resetdata.Count >0)
                 {
@@ -389,7 +389,7 @@ namespace API_Gateway.Controllers.User
 
                 if(userBaseResponse.Data != null)
                 {
-                    UserDetails ud = (UserDetails)userBaseResponse.Data;
+                    UserDetails ud = userBaseResponse.Data as UserDetails;
                     ud.FirstName = model.FirstName;
                     ud.LastName = model.LastName;
                     ud.Email = model.UserName;

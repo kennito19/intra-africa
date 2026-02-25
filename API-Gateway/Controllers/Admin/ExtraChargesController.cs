@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ExtraCharges + "?CatID=" + model.CatID + "&Name=" + model.Name.Replace("'", "''"), "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ExtraChargesLibrary> extrachar = (List<ExtraChargesLibrary>)baseResponse.Data;
+            List<ExtraChargesLibrary> extrachar = baseResponse.Data as List<ExtraChargesLibrary> ?? new List<ExtraChargesLibrary>();
             if (extrachar.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -65,7 +65,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ExtraCharges + "?isDeleted=false&PageIndex=0&PageSize=0&Mode=get", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ExtraChargesLibrary> templist = (List<ExtraChargesLibrary>)baseResponse.Data;
+            List<ExtraChargesLibrary> templist = baseResponse.Data as List<ExtraChargesLibrary> ?? new List<ExtraChargesLibrary>();
             if (templist.Where(x => x.Id != model.Id && x.CatID == model.CatID && x.Name == model.Name.Replace("'", "''")).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -74,7 +74,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var Getrecord = helper.ApiCall(URL, EndPoints.ExtraCharges + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(Getrecord);
-                var record = (ExtraChargesLibrary)baseResponse.Data;
+                var record = baseResponse.Data as ExtraChargesLibrary;
                 record.CatID = model.CatID;
                 record.Name = model.Name;
                 record.ChargesPaidByID = model.ChargesPaidByID;
@@ -98,7 +98,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ExtraCharges + "?id=" + id + "&isDeleted=false", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ExtraChargesLibrary> templist = (List<ExtraChargesLibrary>)baseResponse.Data;
+            List<ExtraChargesLibrary> templist = baseResponse.Data as List<ExtraChargesLibrary> ?? new List<ExtraChargesLibrary>();
 
             if (templist.Any())
             {

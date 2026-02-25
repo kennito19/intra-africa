@@ -1,67 +1,47 @@
-using Catalogue.Application.IRepositories;
+﻿using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
-using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogue.Infrastructure.Repository
 {
     public class ManageLayoutsRepository : IManageLayoutsRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
 
         public ManageLayoutsRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(ManageLayoutsLibrary layouts)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
-                    new MySqlParameter("@name", layouts.Name),
-                    new MySqlParameter("@image", layouts.ImageUrl),
-                    new MySqlParameter("@createdby", layouts.CreatedBy),
-                new MySqlParameter("@createdat", layouts.CreatedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+INSERT INTO managelayouts (Name, ImageUrl, CreatedBy, CreatedAt)
+VALUES (@name, @imageUrl, @createdBy, @createdAt);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@name", (object?)layouts.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@imageUrl", (object?)layouts.ImageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)layouts.CreatedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@createdAt", layouts.CreatedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageLayouts, output, newid, message, sqlParams.ToArray());
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -69,36 +49,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "update"),
-                new MySqlParameter("@id", layouts.Id),
-                new MySqlParameter("@name", layouts.Name),
-                new MySqlParameter("@image", layouts.ImageUrl),
-                new MySqlParameter("@modifiedby", layouts.ModifiedBy),
-                new MySqlParameter("@modifiedat", layouts.ModifiedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE managelayouts
+SET Name = @name,
+    ImageUrl = @imageUrl,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", layouts.Id);
+                cmd.Parameters.AddWithValue("@name", (object?)layouts.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@imageUrl", (object?)layouts.ImageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)layouts.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", layouts.ModifiedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageLayouts, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = layouts.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -106,32 +85,24 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "delete"),
-                new MySqlParameter("@id", layouts.Id),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = "DELETE FROM managelayouts WHERE Id = @id;";
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", layouts.Id);
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageLayouts, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = layouts.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -139,54 +110,81 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", layouts.Id),
-                new MySqlParameter("@name", layouts.Name),
-                new MySqlParameter("@searchtext", layouts.Searchtext),
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var where = new List<string>();
+                if (layouts.Id > 0)
+                {
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", layouts.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(layouts.Name))
+                {
+                    where.Add("Name LIKE @name");
+                    cmd.Parameters.AddWithValue("@name", $"%{layouts.Name}%");
+                }
+                if (!string.IsNullOrWhiteSpace(layouts.Searchtext))
+                {
+                    where.Add("Name LIKE @search");
+                    cmd.Parameters.AddWithValue("@search", $"%{layouts.Searchtext}%");
+                }
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageLayouts, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $"SELECT COUNT(1) FROM managelayouts{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
+
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var offset = (safePageIndex - 1) * safePageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+
+                var items = new List<ManageLayoutsLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT Id, Name, ImageUrl, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt
+FROM managelayouts
+{whereClause}
+ORDER BY Id DESC
+LIMIT @offset, @pageSize;";
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new ManageLayoutsLibrary
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.IsDBNull(reader.GetOrdinal("Name")) ? string.Empty : reader.GetString(reader.GetOrdinal("Name")),
+                            ImageUrl = reader.IsDBNull(reader.GetOrdinal("ImageUrl")) ? null : reader.GetString(reader.GetOrdinal("ImageUrl")),
+                            CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? null : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                            ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<ManageLayoutsLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<ManageLayoutsLibrary>> { code = 400, message = ex.Message, data = new List<ManageLayoutsLibrary>() };
             }
         }
-
-        private async Task<List<ManageLayoutsLibrary>> LayoutParserAsync(DbDataReader reader)
-        {
-            List<ManageLayoutsLibrary> lstLayouts = new List<ManageLayoutsLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new ManageLayoutsLibrary()
-                {
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    Name = Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    ImageUrl = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageUrl")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageUrl"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                });
-            }
-            return lstLayouts;
-        }
-
     }
 }

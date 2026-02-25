@@ -172,18 +172,19 @@ export const fetchServerSideApi = async ({
 
   switch (typeof queryParams) {
     case 'object':
-      queryString =
-        '?' +
-        Object.keys(queryParams)
-          .map((key) => `${key}=${queryParams[key]}`)
-          .join('&')
+      {
+        const entries = Object.keys(queryParams).map(
+          (key) => `${key}=${queryParams[key]}`
+        )
+        queryString = entries.length > 0 ? `?${entries.join('&')}` : ''
+      }
 
       break
     case 'string':
       queryString = queryParams
       break
     default: {
-      throw error
+      queryString = ''
     }
   }
   const headers = {
@@ -195,6 +196,13 @@ export const fetchServerSideApi = async ({
   try {
     const response = await axios.get(`${endpoint}${queryString}`, { headers })
     if (response?.status == 200 && response?.data) {
+      if (typeof response.data === 'string') {
+        try {
+          return JSON.parse(response.data)
+        } catch (e) {
+          return []
+        }
+      }
       return response?.data
     } else {
       return []

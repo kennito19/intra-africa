@@ -1,7 +1,10 @@
 import Image from 'next/image'
 import React from 'react'
 import Slider from '../Slider'
-import { reactImageUrl } from '../../lib/GetBaseUrl'
+import {
+  buildResourceImageUrl,
+  imagePlaceholderUrl
+} from '../../lib/GetBaseUrl'
 import { _homePageImg_ } from '../../lib/ImagePath'
 
 const Testimonial = ({ card }) => {
@@ -33,14 +36,14 @@ const Testimonial = ({ card }) => {
         > */}
         <div className='pv-testimonial-inner'>
           <Image
-            src={
-              card &&
-              encodeURI(`${reactImageUrl}${_homePageImg_}${card?.image}`)
-            }
+            src={buildResourceImageUrl(card?.image, _homePageImg_)}
             alt={card?.image_alt ? card?.image_alt : 'image'}
             className='testimonial_box-img'
             width={300}
             height={300}
+            onError={(event) => {
+              event.currentTarget.src = imagePlaceholderUrl
+            }}
           />
           <div
             className='testimonial_box-name'

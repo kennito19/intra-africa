@@ -44,13 +44,13 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<SellerListModel> baseResponse = new BaseResponse<SellerListModel>();
             var response = helper.ApiCall(IDServerUrl, EndPoints.SellerList + "?pageIndex=0&pageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<SellerListModel> lstSeller = (List<SellerListModel>)baseResponse.Data;
+            List<SellerListModel> lstSeller = baseResponse.Data as List<SellerListModel> ?? new List<SellerListModel>();
             lstSeller = lstSeller.Where(seller => seller.Status.ToLower() != "archived").ToList();
 
             //BaseResponse<KYCDetails> kycbaseResponse = new BaseResponse<KYCDetails>();
             //var Kycresponse = helper.ApiCall(UserUrl, EndPoints.KYCDetails + "?pageIndex=0&pageSize=0", "GET", null);
             //kycbaseResponse = kycbaseResponse.JsonParseList(Kycresponse);
-            //List<KYCDetails> lstKyc = (List<KYCDetails>)kycbaseResponse.Data;
+            //List<KYCDetails> lstKyc = kycbaseResponse.Data as List<KYCDetails> ?? new List<KYCDetails>();
 
             int totalSellerCount = 0;
             int newSellerCount = 0;
@@ -154,7 +154,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<SellerListModel> baseResponse = new BaseResponse<SellerListModel>();
             var response = helper.ApiCall(IDServerUrl, EndPoints.SellerList + "?pageIndex=0&pageSize=0" + "&fromDate=" + fromDate + "&toDate=" + toDate, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<SellerListModel> lstSeller = (List<SellerListModel>)baseResponse.Data;
+            List<SellerListModel> lstSeller = baseResponse.Data as List<SellerListModel> ?? new List<SellerListModel>();
 
             int DayRange = 0;
             if (ReportDays == "7") { DayRange = 1; }
@@ -216,7 +216,7 @@ namespace API_Gateway.Controllers.Admin
 
             var response = helper.ApiCall(URL, EndPoints.SellerProduct + "?fromDate=" + Convert.ToDateTime(fromDate).ToString("dd'-'MM'-'yyyy") + "&toDate=" + Convert.ToDateTime(toDate).ToString("dd'-'MM'-'yyyy") + "&pageIndex=" + 0 + "&pageSize=" + 0 + "&isDeleted=false", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<SellerProduct> sellerProducts = baseResponse.Data as List<SellerProduct>;
+            List<SellerProduct> sellerProducts = baseResponse.Data as List<SellerProduct> ?? new List<SellerProduct>();
 
             int DayRange = 0;
             if (ReportDays == "7") { DayRange = 1; }
@@ -272,7 +272,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<KycCounts> baseResponse = new BaseResponse<KycCounts>();
             var response = helper.ApiCall(UserUrl, EndPoints.GetKycCounts + "?days=" + days, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            KycCounts kycCounts = (KycCounts)baseResponse.Data;
+            KycCounts kycCounts = baseResponse.Data as KycCounts;
             return Ok(baseResponse);
         }
 
@@ -283,7 +283,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<BrandCounts> baseResponse = new BaseResponse<BrandCounts>();
             var response = helper.ApiCall(UserUrl, EndPoints.GetBrandCounts + "?days=" + days, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            BrandCounts brandCounts = (BrandCounts)baseResponse.Data;
+            BrandCounts brandCounts = baseResponse.Data as BrandCounts;
             return Ok(baseResponse);
         }
 
@@ -294,7 +294,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<ProductCounts> baseResponse = new BaseResponse<ProductCounts>();
             var response = helper.ApiCall(URL, EndPoints.GetProductCounts + "?days=" + days, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            ProductCounts productCounts = (ProductCounts)baseResponse.Data;
+            ProductCounts productCounts = baseResponse.Data as ProductCounts;
             return Ok(baseResponse);
         }
 
@@ -305,7 +305,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<OrdersCount> baseResponse = new BaseResponse<OrdersCount>();
             var response = helper.ApiCall(OrderUrl, EndPoints.OrderCount + "?days=" + days, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            OrdersCount ordersCount = (OrdersCount)baseResponse.Data;
+            OrdersCount ordersCount = baseResponse.Data as OrdersCount;
             return Ok(baseResponse);
         }
 
@@ -331,8 +331,8 @@ namespace API_Gateway.Controllers.Admin
             baseResponse = baseResponse.JsonParseList(GetResponse);
 
 
-            List<OrderItems> orders = (List<OrderItems>)baseResponse.Data;
-            orders = orders.Where(p => p.Status.ToLower() != "replaced" && p.Status.ToLower() != "returned" && p.Status.ToLower() != "exchanged" && p.Status.ToLower() != "initiate" && p.Status.ToLower() != "cancelled").ToList();
+            List<OrderItems> orders = baseResponse.Data as List<OrderItems> ?? new List<OrderItems>();
+            orders = orders.Where(p => p.Status != null && p.Status.ToLower() != "replaced" && p.Status.ToLower() != "returned" && p.Status.ToLower() != "exchanged" && p.Status.ToLower() != "initiate" && p.Status.ToLower() != "cancelled").ToList();
             int DayRange = 0;
             if (ReportDays == "7") { DayRange = 1; }
             else if (ReportDays == "1") { DayRange = 1; }
@@ -398,7 +398,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse.code == 200)
             {
-                List<TopSellingProductsDto> TopSellingProductslst = (List<TopSellingProductsDto>)baseResponse.Data;
+                List<TopSellingProductsDto> TopSellingProductslst = baseResponse.Data as List<TopSellingProductsDto> ?? new List<TopSellingProductsDto>();
                 if (TopSellingProductslst.Count > 0)
                 {
                     string productIds = string.Join(",", TopSellingProductslst.Select(p => p.ProductID));
@@ -406,7 +406,7 @@ namespace API_Gateway.Controllers.Admin
                     BaseResponse<ProductDetailsReport> productbaseResponse = new BaseResponse<ProductDetailsReport>();
                     var productresponse = helper.ApiCall(URL, EndPoints.Reports + "/getProductDetailsReport" + "?productIds=" + productIds, "GET", null);
                     productbaseResponse = productbaseResponse.JsonParseList(productresponse);
-                    List<ProductDetailsReport> productlst = (List<ProductDetailsReport>)productbaseResponse.Data;
+                    List<ProductDetailsReport> productlst = productbaseResponse.Data as List<ProductDetailsReport> ?? new List<ProductDetailsReport>();
 
 
                     var DTOList = TopSellingProductslst.Select(x => new TopSellingProductsDto
@@ -415,9 +415,9 @@ namespace API_Gateway.Controllers.Admin
                         ProductGUID = x.ProductGUID,
                         TotalOrders = x.TotalOrders,
                         TotalSell = x.TotalSell,
-                        ProductName = productlst.Where(p=>p.ProductId == x.ProductID).FirstOrDefault().ProductName,
-                        ProductSKU = productlst.Where(p => p.ProductId == x.ProductID).FirstOrDefault().ProductSKU,
-                        ProductImage = productlst.Where(p => p.ProductId == x.ProductID).FirstOrDefault().ProductImage,
+                        ProductName = productlst?.Where(p=>p.ProductId == x.ProductID).FirstOrDefault()?.ProductName,
+                        ProductSKU = productlst?.Where(p => p.ProductId == x.ProductID).FirstOrDefault()?.ProductSKU,
+                        ProductImage = productlst?.Where(p => p.ProductId == x.ProductID).FirstOrDefault()?.ProductImage,
                     }).ToList();
 
                     baseResponse.Data = DTOList;
@@ -437,7 +437,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse.code == 200)
             {
-                List<TopSellingSellersDto> TopSellingSellerslst = (List<TopSellingSellersDto>)baseResponse.Data;
+                List<TopSellingSellersDto> TopSellingSellerslst = baseResponse.Data as List<TopSellingSellersDto> ?? new List<TopSellingSellersDto>();
                 if (TopSellingSellerslst.Count > 0)
                 {
                     string sellerIds = string.Join(",", TopSellingSellerslst.Select(p => p.SellerID));
@@ -445,7 +445,7 @@ namespace API_Gateway.Controllers.Admin
                     BaseResponse<KYCDetails> productbaseResponse = new BaseResponse<KYCDetails>();
                     var productresponse = helper.ApiCall(UserUrl, EndPoints.KYCDetails + "?UserID=" + sellerIds + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                     productbaseResponse = productbaseResponse.JsonParseList(productresponse);
-                    List<KYCDetails> kyclst = (List<KYCDetails>)productbaseResponse.Data;
+                    List<KYCDetails> kyclst = productbaseResponse.Data as List<KYCDetails> ?? new List<KYCDetails>();
 
 
                     var DTOList = TopSellingSellerslst.Select(x => new TopSellingSellersDto
@@ -453,8 +453,8 @@ namespace API_Gateway.Controllers.Admin
                         SellerID = x.SellerID,
                         TotalOrders = x.TotalOrders,
                         TotalSell = x.TotalSell,
-                        SellerName = kyclst.Where(p => p.UserID == x.SellerID).FirstOrDefault().DisplayName,
-                        SellerLogo = kyclst.Where(p => p.UserID == x.SellerID).FirstOrDefault().Logo,
+                        SellerName = kyclst?.Where(p => p.UserID == x.SellerID).FirstOrDefault()?.DisplayName,
+                        SellerLogo = kyclst?.Where(p => p.UserID == x.SellerID).FirstOrDefault()?.Logo,
                     }).ToList();
 
                     baseResponse.Data = DTOList;
@@ -480,7 +480,7 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse.code == 200)
             {
-                List<TopSellingBrandsDto> TopSellingBrandslst = (List<TopSellingBrandsDto>)baseResponse.Data;
+                List<TopSellingBrandsDto> TopSellingBrandslst = baseResponse.Data as List<TopSellingBrandsDto> ?? new List<TopSellingBrandsDto>();
                 if (TopSellingBrandslst.Count > 0)
                 {
                     string brandIds = string.Join(",", TopSellingBrandslst.Select(p => p.BrandID));
@@ -488,7 +488,7 @@ namespace API_Gateway.Controllers.Admin
                     BaseResponse<BrandLibrary> productbaseResponse = new BaseResponse<BrandLibrary>();
                     var productresponse = helper.ApiCall(UserUrl, EndPoints.Brand + "?brandIds=" + brandIds + "&pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                     productbaseResponse = productbaseResponse.JsonParseList(productresponse);
-                    List<BrandLibrary> brandlst = (List<BrandLibrary>)productbaseResponse.Data;
+                    List<BrandLibrary> brandlst = productbaseResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
 
 
                     var DTOList = TopSellingBrandslst.Select(x => new TopSellingBrandsDto
@@ -497,8 +497,8 @@ namespace API_Gateway.Controllers.Admin
                         BrandID = x.BrandID,
                         TotalOrders = x.TotalOrders,
                         TotalSell = x.TotalSell,
-                        BrandName = brandlst.Where(p => p.ID == x.BrandID).FirstOrDefault().Name,
-                        BrandLogo = brandlst.Where(p => p.ID == x.BrandID).FirstOrDefault().Logo,
+                        BrandName = brandlst?.Where(p => p.ID == x.BrandID).FirstOrDefault()?.Name,
+                        BrandLogo = brandlst?.Where(p => p.ID == x.BrandID).FirstOrDefault()?.Logo,
                     }).ToList();
 
                     baseResponse.Data = DTOList;

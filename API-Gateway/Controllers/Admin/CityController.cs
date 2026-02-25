@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(UserApi, EndPoints.City + "?name=" + model.Name + "&countryId=" + model.CountryID + "&stateId=" + model.StateID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CityLibrary> tempList = (List<CityLibrary>)baseResponse.Data;
+            List<CityLibrary> tempList = baseResponse.Data as List<CityLibrary> ?? new List<CityLibrary>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -64,7 +64,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(UserApi, EndPoints.City + "?Name=" + model.Name + "&countryId=" + model.CountryID + "&stateId=" + model.StateID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CityLibrary> tempList = (List<CityLibrary>)baseResponse.Data;
+            List<CityLibrary> tempList = baseResponse.Data as List<CityLibrary> ?? new List<CityLibrary>();
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -73,7 +73,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var responseMessage = api.ApiCall(UserApi, EndPoints.City + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(responseMessage);
-                var record = (CityLibrary)baseResponse.Data;
+                var record = baseResponse.Data as CityLibrary;
                 record.Name = model.Name;
                 record.Status = model.Status;
                 record.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
@@ -92,7 +92,7 @@ namespace API_Gateway.Controllers.Admin
             var tempCity = api.ApiCall(UserApi, EndPoints.City + "?id=" + Id, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(tempCity);
-            List<CityLibrary> tempList = (List<CityLibrary>)baseResponse.Data;
+            List<CityLibrary> tempList = baseResponse.Data as List<CityLibrary> ?? new List<CityLibrary>();
 
             if (tempList.Any())
             {
@@ -217,13 +217,13 @@ namespace API_Gateway.Controllers.Admin
             //var ResCountry = api.ApiCall(UserApi, EndPoints.Country + "?PageIndex=1", "GET", null, token);
             //BaseResponse<CountryLibrary> baseCountry = new BaseResponse<CountryLibrary>();
             //baseCountry = baseCountry.JsonParseList(ResCountry);
-            //List<CountryLibrary> lstCountry = (List<CountryLibrary>)baseCountry.Data;
+            //List<CountryLibrary> lstCountry = baseCountry.Data as List<CountryLibrary> ?? new List<CountryLibrary>();
 
             // Get state data
             var ResState = api.ApiCall(UserApi, EndPoints.State + "?PageIndex=1", "GET", null);
             BaseResponse<StateLibrary> baseState = new BaseResponse<StateLibrary>();
             baseState = baseState.JsonParseList(ResState);
-            List<StateLibrary> lstState = (List<StateLibrary>)baseState.Data;
+            List<StateLibrary> lstState = baseState.Data as List<StateLibrary> ?? new List<StateLibrary>();
 
             List<StateLibrary> lstCountry = lstState.GroupBy(c => c.CountryID).Select(p => p.FirstOrDefault()).ToList();
 

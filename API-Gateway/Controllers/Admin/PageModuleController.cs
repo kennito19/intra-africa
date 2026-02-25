@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
             pagebaseResponse = pagebaseResponse.JsonParseList(pageresponse);
 
             List<PageRoleModule> pageRoleModules = new List<PageRoleModule>();
-            pageRoleModules = (List<PageRoleModule>)pagebaseResponse.Data;
+            pageRoleModules = pagebaseResponse.Data as List<PageRoleModule> ?? new List<PageRoleModule>();
             var data = pageRoleModules.Where(x => x.Name.ToLower() == module.Name.ToLower()).ToList();
             if (data.Count > 0)
             {
@@ -54,7 +54,7 @@ namespace API_Gateway.Controllers.Admin
                     RolebaseResponse = RolebaseResponse.JsonParseList(getresponse);
 
                     List<RoleType> roleTypes = new List<RoleType>();
-                    roleTypes = (List<RoleType>)RolebaseResponse.Data;
+                    roleTypes = RolebaseResponse.Data as List<RoleType> ?? new List<RoleType>();
                     var data1 = roleTypes.Where(x => x.Name.ToLower() == "super admin").FirstOrDefault();
                     if (data1.Id != null && data1.Id != 0)
                     {
@@ -91,7 +91,7 @@ namespace API_Gateway.Controllers.Admin
             pagebaseResponse = pagebaseResponse.JsonParseList(pageresponse);
 
             List<PageRoleModule> pageRoleModules = new List<PageRoleModule>();
-            pageRoleModules = (List<PageRoleModule>)pagebaseResponse.Data;
+            pageRoleModules = pagebaseResponse.Data as List<PageRoleModule> ?? new List<PageRoleModule>();
             var data = pageRoleModules.Where(x => x.Name.ToLower() == module.Name.ToLower() && x.Id != module.Id).ToList();
             if (data.Count > 0)
             {
@@ -108,7 +108,7 @@ namespace API_Gateway.Controllers.Admin
                     if (rolebaseResponse.code == 200)
                     {
                         List<RoleType> roleTypes = new List<RoleType>();
-                        roleTypes = (List<RoleType>)rolebaseResponse.Data;
+                        roleTypes = rolebaseResponse.Data as List<RoleType> ?? new List<RoleType>();
                         RoleType _roleType = new RoleType();
                         _roleType = roleTypes.Where(p => p.Name.ToLower() == "super admin").FirstOrDefault();
                         AssignPageRole role = new AssignPageRole();

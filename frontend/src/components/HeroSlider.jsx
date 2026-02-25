@@ -3,7 +3,7 @@ import Slider from './Slider'
 import Link from 'next/link'
 import Image from 'next/image'
 import { _homePageImg_, _lendingPageImg_ } from '../lib/ImagePath'
-import { checkCase, reactImageUrl } from '../lib/GetBaseUrl'
+import { buildResourceImageUrl, checkCase, imagePlaceholderUrl } from '../lib/GetBaseUrl'
 import DynamicPositionComponent from './DynamicPositionComponent'
 
 const Heroslider = ({ layoutsInfo, section, fromLendingPage = false }) => {
@@ -56,21 +56,18 @@ const Heroslider = ({ layoutsInfo, section, fromLendingPage = false }) => {
                         key={Math.floor(Math.random() * 1000000)}
                       >
                         <Image
-                          src={
-                            imageObj &&
-                            encodeURI(
-                              `${reactImageUrl}${
-                                fromLendingPage
-                                  ? _lendingPageImg_
-                                  : _homePageImg_
-                              }${imageObj?.image}`
-                            )
-                          }
+                          src={buildResourceImageUrl(
+                            imageObj?.image,
+                            fromLendingPage ? _lendingPageImg_ : _homePageImg_
+                          )}
                           alt={imageObj?.image_alt ?? 'image-alt'}
                           className='hero-slider-img'
                           width='0'
                           height='0'
                           sizes='100vw'
+                          onError={(event) => {
+                            event.currentTarget.src = imagePlaceholderUrl
+                          }}
                         />
                       </Link>
                     )

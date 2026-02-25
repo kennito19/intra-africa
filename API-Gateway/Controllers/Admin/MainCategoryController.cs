@@ -39,97 +39,132 @@ namespace API_Gateway.Controllers.Admin
         [Authorize(Roles = "Admin")]
         public ActionResult<ApiHelper> Create([FromForm] MainCategoryDTO model)
         {
-             
-            var temp = helper.ApiCall(URL, EndPoints.Category + "?Name=" + HttpUtility.UrlEncode(model.Name.Replace("'", "''")) + "&GetParent=" + true, "GET", null);
-            baseResponse = baseResponse.JsonParseList(temp);
-            List<CategoryLibrary> categories = (List<CategoryLibrary>)baseResponse.Data;
-            if (categories.Any())
+            try
             {
-                baseResponse = baseResponse.AlreadyExists();
-            }
-            else
-            {
-                bool AllowColorInCategory = Convert.ToBoolean(_configuration.GetValue<string>("Allow_Color_In_Category"));
+                if (model == null || string.IsNullOrWhiteSpace(model.Name))
+                {
+                    return Ok(baseResponse.InvalidInput("Category name is required."));
+                }
 
-                CategoryLibrary cat = new CategoryLibrary();
-                cat.Name = model.Name;
-                cat.CurrentLevel = 1;
-                cat.Image = UploadDoc(model.Name, model.FileName);
-                cat.MetaTitles = model.MetaTitles;
-                cat.MetaDescription = model.MetaDescription;
-                cat.MetaKeywords = model.MetaKeywords;
-                cat.Status = model.Status;
-                if (AllowColorInCategory == true)
+                var temp = helper.ApiCall(URL, EndPoints.Category + "?Name=" + HttpUtility.UrlEncode(model.Name.Replace("'", "''")) + "&GetParent=" + true, "GET", null);
+                baseResponse = baseResponse.JsonParseList(temp);
+                List<CategoryLibrary> categories = baseResponse.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>();
+                if (categories.Any())
                 {
-                    cat.Color = model.Color;
+                    baseResponse = baseResponse.AlreadyExists();
                 }
-                cat.Title = model.Title;
-                cat.SubTitle = model.SubTitle;
-                cat.Description = model.Description;
-                cat.CreatedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
-                var response = helper.ApiCall(URL, EndPoints.Category, "POST", cat);
-                baseResponse = baseResponse.JsonParseInputResponse(response);
-                int i = (int)baseResponse.Data;
-                if (i != 0)
+                else
                 {
-                    UpdatePathId(i);
+                    bool AllowColorInCategory = Convert.ToBoolean(_configuration.GetValue<string>("Allow_Color_In_Category"));
+
+                    CategoryLibrary cat = new CategoryLibrary();
+                    cat.Name = model.Name;
+                    cat.CurrentLevel = 1;
+                    cat.Image = UploadDoc(model.Name, model.FileName);
+                    cat.MetaTitles = model.MetaTitles;
+                    cat.MetaDescription = model.MetaDescription;
+                    cat.MetaKeywords = model.MetaKeywords;
+                    cat.Status = string.IsNullOrWhiteSpace(model.Status) ? "Active" : model.Status;
+                    if (AllowColorInCategory == true)
+                    {
+                        cat.Color = model.Color;
+                    }
+                    cat.Title = model.Title;
+                    cat.SubTitle = model.SubTitle;
+                    cat.Description = model.Description;
+                    cat.CreatedBy = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type.Equals("UserID"))?.Value ?? "system";
+                    var response = helper.ApiCall(URL, EndPoints.Category, "POST", cat);
+                    baseResponse = baseResponse.JsonParseInputResponse(response);
+                    int insertedId = 0;
+                    try
+                    {
+                        insertedId = Convert.ToInt32(baseResponse.Data);
+                    }
+                    catch
+                    {
+                        insertedId = 0;
+                    }
+
+                    if (insertedId != 0)
+                    {
+                        UpdatePathId(insertedId);
+                    }
                 }
+                return Ok(baseResponse);
             }
-            return Ok(baseResponse);
+            catch (Exception ex)
+            {
+                return Ok(baseResponse.InvalidInput(ex.Message));
+            }
         }
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public ActionResult<ApiHelper> Update([FromForm] MainCategoryDTO model)
         {
-             
-            var temp = helper.ApiCall(URL, EndPoints.Category + "?Name=" + HttpUtility.UrlEncode(model.Name.Replace("'", "''")) + "&Getparent=" + true, "GET", null);
-            baseResponse = baseResponse.JsonParseList(temp);
-            List<CategoryLibrary> templist = (List<CategoryLibrary>)baseResponse.Data;
-            if (templist.Where(x => x.Id != model.Id).Any())
+            try
             {
-                baseResponse = baseResponse.AlreadyExists();
-            }
-            else
-            {
-                bool AllowColorInCategory = Convert.ToBoolean(_configuration.GetValue<string>("Allow_Color_In_Category"));
-
-                var imagedoc = helper.ApiCall(URL, EndPoints.Category + "?Id=" + model.Id, "GET", null);
-                baseResponse = baseResponse.JsonParseRecord(imagedoc);
-                CategoryLibrary cat = (CategoryLibrary)baseResponse.Data;
-                string OldName = cat.Image;
-                string? PathIds = model.Id.ToString();
-                cat.Name = model.Name;
-                cat.CurrentLevel = 1;
-                cat.MetaTitles = model.MetaTitles;
-                cat.MetaDescription = model.MetaDescription;
-                cat.MetaKeywords = model.MetaKeywords;
-                cat.Status = model.Status;
-                if (AllowColorInCategory == true)
+                if (model == null || model.Id <= 0 || string.IsNullOrWhiteSpace(model.Name))
                 {
-                    cat.Color = model.Color;
+                    return Ok(baseResponse.InvalidInput("Category id and name are required."));
                 }
-                cat.Title = model.Title;
-                cat.SubTitle = model.SubTitle;
-                cat.Description = model.Description;
-                cat.PathIds = PathIds;
-                cat.PathNames = model.Name;
-                if (model.IsImageAvailable)
+
+                var temp = helper.ApiCall(URL, EndPoints.Category + "?Name=" + HttpUtility.UrlEncode(model.Name.Replace("'", "''")) + "&Getparent=" + true, "GET", null);
+                baseResponse = baseResponse.JsonParseList(temp);
+                List<CategoryLibrary> templist = baseResponse.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>();
+                if (templist.Where(x => x.Id != model.Id).Any())
                 {
-                    cat.Image = UpdateDocFile(OldName, model.Name, model.FileName);
+                    baseResponse = baseResponse.AlreadyExists();
                 }
                 else
                 {
-                    ImageUpload imageUpload = new ImageUpload(_configuration);
-                    imageUpload.RemoveDocFile(OldName, "CategoryImage");
-                    cat.Image = null;
+                    bool AllowColorInCategory = Convert.ToBoolean(_configuration.GetValue<string>("Allow_Color_In_Category"));
+
+                    var imagedoc = helper.ApiCall(URL, EndPoints.Category + "?Id=" + model.Id, "GET", null);
+                    baseResponse = baseResponse.JsonParseRecord(imagedoc);
+                    CategoryLibrary cat = baseResponse.Data as CategoryLibrary;
+                    if (cat == null)
+                    {
+                        return Ok(baseResponse.NotExist());
+                    }
+                    string OldName = cat.Image;
+                    string? PathIds = model.Id.ToString();
+                    cat.Name = model.Name;
+                    cat.CurrentLevel = 1;
+                    cat.MetaTitles = model.MetaTitles;
+                    cat.MetaDescription = model.MetaDescription;
+                    cat.MetaKeywords = model.MetaKeywords;
+                    cat.Status = string.IsNullOrWhiteSpace(model.Status) ? "Active" : model.Status;
+                    if (AllowColorInCategory == true)
+                    {
+                        cat.Color = model.Color;
+                    }
+                    cat.Title = model.Title;
+                    cat.SubTitle = model.SubTitle;
+                    cat.Description = model.Description;
+                    cat.PathIds = PathIds;
+                    cat.PathNames = model.Name;
+                    if (model.IsImageAvailable)
+                    {
+                        cat.Image = UpdateDocFile(OldName, model.Name, model.FileName);
+                    }
+                    else
+                    {
+                        ImageUpload imageUpload = new ImageUpload(_configuration);
+                        imageUpload.RemoveDocFile(OldName, "CategoryImage");
+                        cat.Image = null;
+                    }
+                    cat.ModifiedBy = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type.Equals("UserID"))?.Value ?? "system";
+                    var response = helper.ApiCall(URL, EndPoints.Category, "PUT", cat);
+                    baseResponse = baseResponse.JsonParseInputResponse(response);
+                    UpdateSubPath(cat.Id);
                 }
-                cat.ModifiedBy = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
-                var response = helper.ApiCall(URL, EndPoints.Category, "PUT", cat);
-                baseResponse = baseResponse.JsonParseInputResponse(response);
-                UpdateSubPath(cat.Id);
+                return Ok(baseResponse);
             }
-            return Ok(baseResponse);
+            catch (Exception ex)
+            {
+                return Ok(baseResponse.InvalidInput(ex.Message));
+            }
         }
 
         [HttpDelete]
@@ -140,29 +175,49 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp = helper.ApiCall(URL, EndPoints.Category + "?ParentID=" + id, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<CategoryLibrary> tmpList = (List<CategoryLibrary>)baseResponse.Data;
+                List<CategoryLibrary> tmpList = baseResponse.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>();
                 if (!tmpList.Any())
                 {
+                    List<AssignSpecificationToCategoryLibrary> assignSpecToCat = new List<AssignSpecificationToCategoryLibrary>();
+                    List<AssignSizeValueToCategory> assignSizeValToCat = new List<AssignSizeValueToCategory>();
+                    List<AssignReturnPolicyToCatagoryLibrary> assignReturnPolicyToCat = new List<AssignReturnPolicyToCatagoryLibrary>();
+                    List<Products> product = new List<Products>();
 
-                    var tempAssignSpecToCat = helper.ApiCall(URL, EndPoints.AssignSpecToCat + "?CategoryID=" + id, "GET", null);
-                    BaseResponse<AssignSpecificationToCategoryLibrary> baseAssignSpecToCat = new BaseResponse<AssignSpecificationToCategoryLibrary>();
-                    var AssignSpecToCat = baseAssignSpecToCat.JsonParseList(tempAssignSpecToCat);
-                    List<AssignSpecificationToCategoryLibrary> assignSpecToCat = (List<AssignSpecificationToCategoryLibrary>)AssignSpecToCat.Data;
+                    try
+                    {
+                        var tempAssignSpecToCat = helper.ApiCall(URL, EndPoints.AssignSpecToCat + "?CategoryID=" + id, "GET", null);
+                        BaseResponse<AssignSpecificationToCategoryLibrary> baseAssignSpecToCat = new BaseResponse<AssignSpecificationToCategoryLibrary>();
+                        var assignSpecResp = baseAssignSpecToCat.JsonParseList(tempAssignSpecToCat);
+                        assignSpecToCat = assignSpecResp.Data as List<AssignSpecificationToCategoryLibrary> ?? new List<AssignSpecificationToCategoryLibrary>();
+                    }
+                    catch { }
 
-                    var tempAssignSizeValToCat = helper.ApiCall(URL, EndPoints.AssignSizeValueToCategory + "?CategoryID=" + id, "GET", null);
-                    BaseResponse<AssignSizeValueToCategory> baseAssignSizeValToCat = new BaseResponse<AssignSizeValueToCategory>();
-                    var AssignSizeValToCat = baseAssignSizeValToCat.JsonParseList(tempAssignSizeValToCat);
-                    List<AssignSizeValueToCategory> assignSizeValToCat = (List<AssignSizeValueToCategory>)AssignSizeValToCat.Data;
+                    try
+                    {
+                        var tempAssignSizeValToCat = helper.ApiCall(URL, EndPoints.AssignSizeValueToCategory + "?CategoryID=" + id, "GET", null);
+                        BaseResponse<AssignSizeValueToCategory> baseAssignSizeValToCat = new BaseResponse<AssignSizeValueToCategory>();
+                        var assignSizeResp = baseAssignSizeValToCat.JsonParseList(tempAssignSizeValToCat);
+                        assignSizeValToCat = assignSizeResp.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
+                    }
+                    catch { }
 
-                    var tempReturnPolicyToCat = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?CategoryID=" + id, "GET", null);
-                    BaseResponse<AssignReturnPolicyToCatagoryLibrary> baseReturnPolicyToCat = new BaseResponse<AssignReturnPolicyToCatagoryLibrary>();
-                    var returnPolicyToCat = baseReturnPolicyToCat.JsonParseList(tempReturnPolicyToCat);
-                    List<AssignReturnPolicyToCatagoryLibrary> assignReturnPolicyToCat = (List<AssignReturnPolicyToCatagoryLibrary>)returnPolicyToCat.Data;
+                    try
+                    {
+                        var tempReturnPolicyToCat = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?CategoryID=" + id, "GET", null);
+                        BaseResponse<AssignReturnPolicyToCatagoryLibrary> baseReturnPolicyToCat = new BaseResponse<AssignReturnPolicyToCatagoryLibrary>();
+                        var returnPolicyToCat = baseReturnPolicyToCat.JsonParseList(tempReturnPolicyToCat);
+                        assignReturnPolicyToCat = returnPolicyToCat.Data as List<AssignReturnPolicyToCatagoryLibrary> ?? new List<AssignReturnPolicyToCatagoryLibrary>();
+                    }
+                    catch { }
 
-                    var tempProduct = helper.ApiCall(URL, EndPoints.Product + "?CategoryId=" + id, "GET", null);
-                    BaseResponse<Products> baseProducts = new BaseResponse<Products>();
-                    var products = baseProducts.JsonParseList(tempProduct);
-                    List<Products> product = (List<Products>)products.Data;
+                    try
+                    {
+                        var tempProduct = helper.ApiCall(URL, EndPoints.Product + "?CategoryId=" + id, "GET", null);
+                        BaseResponse<Products> baseProducts = new BaseResponse<Products>();
+                        var products = baseProducts.JsonParseList(tempProduct);
+                        product = products.Data as List<Products> ?? new List<Products>();
+                    }
+                    catch { }
 
                     if (assignSpecToCat.Any() || assignSizeValToCat.Any() || assignReturnPolicyToCat.Any() || product.Any())
                     {
@@ -218,8 +273,10 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = helper.ApiCall(URL, EndPoints.Category + "?PageIndex=" + 0 + "&PageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            var categories = (List<CategoryLibrary>)baseResponse.Data;
-            var bindcategories = (List<CategoryLibrary>)baseResponse.Data;
+            var categories = (baseResponse?.Data as List<CategoryLibrary> ?? new List<CategoryLibrary>())
+                .Where(c => c != null)
+                .ToList();
+            var bindcategories = categories;
 
             var result = categories
                 .Where(c => c.IsDeleted == false)
@@ -235,6 +292,7 @@ namespace API_Gateway.Controllers.Admin
                 baseResponse.code = 200;
                 baseResponse.Data = jsoncategory;
                 baseResponse.Message = "Category Bind Successfully";
+                baseResponse.pagination ??= new Pagination();
                 baseResponse.pagination.RecordCount = result.Count;
                 return Ok(baseResponse);
             }
@@ -273,7 +331,12 @@ namespace API_Gateway.Controllers.Admin
             if (response.IsSuccessStatusCode)
             {
                 res = JsonDeserialize(response);
-                tmp = res.data.FirstOrDefault();
+                var data = res?.data ?? new List<CategoryLibrary>();
+                tmp = data.FirstOrDefault();
+                if (tmp == null)
+                {
+                    return Ok(res);
+                }
                 if (tmp.ParentId == null)
                 {
                     tmp.PathIds = tmp.Id.ToString();
@@ -370,8 +433,7 @@ namespace API_Gateway.Controllers.Admin
             if (response.IsSuccessStatusCode)
             {
                 res = JsonDeserialize(response);
-                List<CategoryLibrary> spec = new List<CategoryLibrary>();
-                spec = res.data;
+                List<CategoryLibrary> spec = res?.data ?? new List<CategoryLibrary>();
                 foreach (var item in spec)
                 {
                     UpdatePathId(item.Id);

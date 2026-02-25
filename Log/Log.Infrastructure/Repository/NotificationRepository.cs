@@ -1,178 +1,238 @@
 using Log.Application.IRepositories;
 using Log.Domain;
 using Log.Domain.Entity;
-using Log.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using MySqlConnector;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Data.Common;
 
 namespace Log.Infrastructure.Repository
 {
     public class NotificationRepository : INotificationRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
+        private readonly string _connectionString;
 
         public NotificationRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(Notification notification)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                    new MySqlParameter("@sender_id", notification.SenderId),
-                    new MySqlParameter("@receiverId", notification.ReceiverId),
-                    new MySqlParameter("@usertype", notification.UserType),
-                    new MySqlParameter("@notification_title", notification.NotificationTitle),
-                    new MySqlParameter("@notification_description", notification.NotificationDescription),
-                    new MySqlParameter("@url", notification.Url),
-                    new MySqlParameter("@imagr_url", notification.ImageUrl),
-                    new MySqlParameter("@notificationsOf", notification.NotificationsOf),
-                    new MySqlParameter("@is_read", notification.IsRead),
-                    new MySqlParameter("@createdat", notification.CreatedAt),
-                    new MySqlParameter("@updatedat", notification.UpdatedAt),
+                const string sql = @"
+INSERT INTO Notification
+(SenderId, ReceiverId, UserType, NotificationTitle, NotificationDescription, Url, ImageUrl, NotificationsOf, IsRead, CreatedAt, UpdatedAt)
+VALUES
+(@senderId, @receiverId, @userType, @notificationTitle, @notificationDescription, @url, @imageUrl, @notificationsOf, @isRead, @createdAt, @updatedAt);
+SELECT LAST_INSERT_ID();";
 
-            };
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@senderId", (object?)notification.SenderId ?? string.Empty);
+                cmd.Parameters.AddWithValue("@receiverId", (object?)notification.ReceiverId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@userType", (object?)notification.UserType ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@notificationTitle", (object?)notification.NotificationTitle ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@notificationDescription", (object?)notification.NotificationDescription ?? string.Empty);
+                cmd.Parameters.AddWithValue("@url", (object?)notification.Url ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@imageUrl", (object?)notification.ImageUrl ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@notificationsOf", (object?)notification.NotificationsOf ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@isRead", notification.IsRead ?? false);
+                cmd.Parameters.AddWithValue("@createdAt", notification.CreatedAt ?? DateTime.Now);
+                cmd.Parameters.AddWithValue("@updatedAt", notification.UpdatedAt ?? DateTime.Now);
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                var newIdObj = await cmd.ExecuteScalarAsync();
+                var newId = Convert.ToInt64(newIdObj ?? 0);
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Notification, output, newid, message, sqlParams.ToArray());
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record added successfully.",
+                    data = newId
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
-
 
         public async Task<BaseResponse<long>> Update(Notification notification)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    //new MySqlParameter("@mode", "update"),
-                    new MySqlParameter("@mode", "MarkAllRead"),
-                    new MySqlParameter("@id", notification.Id),
-                    new MySqlParameter("@receiverId", notification.ReceiverId),
-                    new MySqlParameter("@notificationsOf", notification.NotificationsOf),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                    new MySqlParameter("@updatedat", DateTime.Now),
+                await using var cmd = new MySqlCommand { Connection = con };
+
+                if (notification.Id.HasValue && notification.Id.Value > 0)
+                {
+                    cmd.CommandText = @"
+UPDATE Notification
+SET IsRead = 1,
+    UpdatedAt = @updatedAt
+WHERE Id = @id;";
+                    cmd.Parameters.AddWithValue("@id", notification.Id.Value);
+                    cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now);
+                }
+                else
+                {
+                    cmd.CommandText = @"
+UPDATE Notification
+SET IsRead = 1,
+    UpdatedAt = @updatedAt
+WHERE (@receiverId IS NULL OR ReceiverId = @receiverId)
+  AND (@notificationsOf IS NULL OR NotificationsOf = @notificationsOf)
+  AND IFNULL(IsRead, 0) = 0;";
+                    cmd.Parameters.AddWithValue("@receiverId", (object?)notification.ReceiverId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@notificationsOf", (object?)notification.NotificationsOf ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now);
+                }
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record updated successfully.",
+                    data = affected
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Notification, output, newid: null, message, sqlParams.ToArray());
- 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
+
         public async Task<BaseResponse<List<Notification>>> get(Notification notification, int PageIndex, int PageSize, string Mode)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
+                var where = new List<string>();
+                if (notification.Id.HasValue && notification.Id.Value > 0)
+                {
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", notification.Id.Value);
+                }
+                if (!string.IsNullOrWhiteSpace(notification.SenderId))
+                {
+                    where.Add("SenderId = @senderId");
+                    cmd.Parameters.AddWithValue("@senderId", notification.SenderId);
+                }
+                if (!string.IsNullOrWhiteSpace(notification.ReceiverId))
+                {
+                    where.Add("ReceiverId = @receiverId");
+                    cmd.Parameters.AddWithValue("@receiverId", notification.ReceiverId);
+                }
+                if (notification.IsRead.HasValue)
+                {
+                    where.Add("IFNULL(IsRead, 0) = @isRead");
+                    cmd.Parameters.AddWithValue("@isRead", notification.IsRead.Value);
+                }
+                if (!string.IsNullOrWhiteSpace(notification.NotificationsOf))
+                {
+                    where.Add("NotificationsOf = @notificationsOf");
+                    cmd.Parameters.AddWithValue("@notificationsOf", notification.NotificationsOf);
+                }
+                if (!string.IsNullOrWhiteSpace(notification.Searchtext))
+                {
+                    where.Add("(NotificationTitle LIKE @search OR NotificationDescription LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{notification.Searchtext}%");
+                }
 
-                new MySqlParameter("@id", notification.Id),
-                new MySqlParameter("@sender_id", notification.SenderId),
-                new MySqlParameter("@receiverId", notification.ReceiverId),
-                new MySqlParameter("@is_read", notification.IsRead),
-                new MySqlParameter("@notificationsOf", notification.NotificationsOf),
-                new MySqlParameter("@searchtext", notification.Searchtext),
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
 
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                cmd.CommandText = $"SELECT COUNT(1) FROM Notification{whereClause};";
+                var totalObj = await cmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
 
+                // Keep unread count available for the UI in each row.
+                cmd.CommandText = @"SELECT COUNT(1) FROM Notification
+WHERE (@receiverForUnread IS NULL OR ReceiverId = @receiverForUnread)
+  AND IFNULL(IsRead, 0) = 0;";
+                cmd.Parameters.AddWithValue("@receiverForUnread", (object?)notification.ReceiverId ?? DBNull.Value);
+                var unreadObj = await cmd.ExecuteScalarAsync();
+                var unreadCount = Convert.ToInt32(unreadObj ?? 0);
 
+                var safePageIndex = PageIndex < 1 ? 1 : PageIndex;
+                var safePageSize = PageSize < 1 ? 10 : PageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+                var offset = (safePageIndex - 1) * safePageSize;
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var items = new List<Notification>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT Id, SenderId, ReceiverId, UserType, NotificationTitle, NotificationDescription, Url, ImageUrl, IsRead, NotificationsOf, CreatedAt, UpdatedAt
+FROM Notification
+{whereClause}
+ORDER BY Id DESC
+LIMIT @offset, @pageSize;";
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetNotification, NotificationParserAsync, output, newid: null, message, sqlParams.ToArray());
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new Notification
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            UnreadCount = unreadCount,
+                            Id = reader.IsDBNull(reader.GetOrdinal("Id")) ? null : reader.GetInt32(reader.GetOrdinal("Id")),
+                            SenderId = reader.IsDBNull(reader.GetOrdinal("SenderId")) ? null : reader.GetString(reader.GetOrdinal("SenderId")),
+                            ReceiverId = reader.IsDBNull(reader.GetOrdinal("ReceiverId")) ? null : reader.GetString(reader.GetOrdinal("ReceiverId")),
+                            UserType = reader.IsDBNull(reader.GetOrdinal("UserType")) ? null : reader.GetString(reader.GetOrdinal("UserType")),
+                            NotificationTitle = reader.IsDBNull(reader.GetOrdinal("NotificationTitle")) ? null : reader.GetString(reader.GetOrdinal("NotificationTitle")),
+                            NotificationDescription = reader.IsDBNull(reader.GetOrdinal("NotificationDescription")) ? null : reader.GetString(reader.GetOrdinal("NotificationDescription")),
+                            Url = reader.IsDBNull(reader.GetOrdinal("Url")) ? null : reader.GetString(reader.GetOrdinal("Url")),
+                            ImageUrl = reader.IsDBNull(reader.GetOrdinal("ImageUrl")) ? null : reader.GetString(reader.GetOrdinal("ImageUrl")),
+                            IsRead = reader.IsDBNull(reader.GetOrdinal("IsRead")) ? null : reader.GetBoolean(reader.GetOrdinal("IsRead")),
+                            NotificationsOf = reader.IsDBNull(reader.GetOrdinal("NotificationsOf")) ? null : reader.GetString(reader.GetOrdinal("NotificationsOf")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<Notification>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
-            }
-        }
-
-
-        private async Task<List<Notification>> NotificationParserAsync(DbDataReader reader)
-        {
-            List<Notification> lstnotification = new List<Notification>();
-
-            while (await reader.ReadAsync())
-            {
-                lstnotification.Add(new Notification()
+                return new BaseResponse<List<Notification>>
                 {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    UnreadCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("UnreadCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    SenderId = Convert.ToString(reader.GetValue(reader.GetOrdinal("SenderId"))),
-                    ReceiverId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ReceiverId")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ReceiverId"))),
-                    UserType = Convert.ToString(reader.GetValue(reader.GetOrdinal("UserType"))),
-                    NotificationTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationTitle"))),
-                    NotificationDescription = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationDescription")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationDescription"))),
-                    Url = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Url")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Url"))),
-                    ImageUrl = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageUrl")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageUrl"))),
-                    NotificationsOf = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationsOf")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("NotificationsOf"))),
-                    IsRead = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsRead"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    UpdatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("UpdatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("UpdatedAt"))),
-
-
-                });
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<Notification>()
+                };
             }
-
-            return lstnotification;
         }
     }
 }

@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
             baseResponse1 = baseResponse1.JsonParseList(GetResponse);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (List<CollectionProductsList>)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as List<CollectionProductsList> ?? new List<CollectionProductsList>();
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
                 baseResponse.pagination = baseResponse1.pagination;

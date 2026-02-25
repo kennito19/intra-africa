@@ -1,139 +1,128 @@
 using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
-using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogue.Infrastructure.Repository
 {
     public class ManageHomePageRepository : IManageHomePageRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
+
         public ManageHomePageRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
+
+        private async Task EnsureTableAsync(MySqlConnection con)
+        {
+            const string sql = @"
+CREATE TABLE IF NOT EXISTS ManageHomePage (
+    Id INT AUTO_INCREMENT NOT NULL,
+    Name VARCHAR(250) NULL,
+    Status VARCHAR(50) NULL,
+    CreatedBy VARCHAR(500) NULL,
+    CreatedAt DATETIME NULL,
+    ModifiedBy VARCHAR(500) NULL,
+    ModifiedAt DATETIME NULL,
+    PRIMARY KEY (Id)
+);";
+            await using var cmd = new MySqlCommand(sql, con);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         public async Task<BaseResponse<long>> Create(ManageHomePage manageHomePage)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>()
-                {
-                   new MySqlParameter("@mode","add"),
-                   new MySqlParameter("@name",manageHomePage.Name),
-                   new MySqlParameter("@status",manageHomePage.Status),
-                   new MySqlParameter("@createdat", manageHomePage.CreatedAt),
-                   new MySqlParameter("@createdby", manageHomePage.CreatedBy)
-                };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await EnsureTableAsync(con);
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                const string sql = @"
+INSERT INTO ManageHomePage (Name, Status, CreatedBy, CreatedAt)
+VALUES (@name, @status, @createdBy, @createdAt);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@name", (object?)manageHomePage.Name ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@status", (object?)manageHomePage.Status ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)manageHomePage.CreatedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@createdAt", manageHomePage.CreatedAt ?? DateTime.Now);
 
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePage, output, newid, message, sqlParams.ToArray());
-
-
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
         public async Task<BaseResponse<long>> Update(ManageHomePage manageHomePage)
         {
-
             try
             {
-                var sqlParams = new List<MySqlParameter>()
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await EnsureTableAsync(con);
+
+                const string sql = @"
+UPDATE ManageHomePage
+SET Name = @name,
+    Status = @status,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", manageHomePage.Id);
+                cmd.Parameters.AddWithValue("@name", (object?)manageHomePage.Name ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@status", (object?)manageHomePage.Status ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)manageHomePage.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", manageHomePage.ModifiedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
                 {
-                   new MySqlParameter("@mode","update"),
-                   new MySqlParameter("@id",manageHomePage.Id),
-                   new MySqlParameter("@name",manageHomePage.Name),
-                   new MySqlParameter("@status",manageHomePage.Status),
-                   new MySqlParameter("@modifiedat", manageHomePage.ModifiedAt),
-                   new MySqlParameter("@modifiedby", manageHomePage.ModifiedBy),
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = manageHomePage.Id ?? 0
                 };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePage, output, newid, message, sqlParams.ToArray());
-
-
             }
             catch (Exception ex)
             {
-
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
+
         public async Task<BaseResponse<long>> Delete(ManageHomePage manageHomePage)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "delete"),
-                new MySqlParameter("@id", manageHomePage.Id)
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await EnsureTableAsync(con);
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = "DELETE FROM ManageHomePage WHERE Id = @id;";
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", manageHomePage.Id);
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePage, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = manageHomePage.Id ?? 0
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -141,52 +130,63 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                //new MySqlParameter("@mode", "get"),
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", manageHomePage.Id),
-                new MySqlParameter("@name", manageHomePage.Name),
-                new MySqlParameter("@status", manageHomePage.Status)
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await EnsureTableAsync(con);
+                await using var cmd = new MySqlCommand { Connection = con };
 
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                var where = new List<string>();
+                if (manageHomePage.Id.HasValue && manageHomePage.Id.Value > 0)
+                {
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", manageHomePage.Id.Value);
+                }
+                if (!string.IsNullOrWhiteSpace(manageHomePage.Name))
+                {
+                    where.Add("Name LIKE @name");
+                    cmd.Parameters.AddWithValue("@name", $"%{manageHomePage.Name}%");
+                }
+                if (!string.IsNullOrWhiteSpace(manageHomePage.Status))
+                {
+                    where.Add("Status = @status");
+                    cmd.Parameters.AddWithValue("@status", manageHomePage.Status);
+                }
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageHomePage, ManageHomePageParserAsync, output, newid: null, message, sqlParams.ToArray());
+                cmd.CommandText = $@"
+SELECT Id, Name, Status, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt
+FROM ManageHomePage
+{whereClause}
+ORDER BY Id DESC;";
+
+                var items = new List<ManageHomePage>();
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    items.Add(new ManageHomePage
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Name = reader.IsDBNull(reader.GetOrdinal("Name")) ? null : reader.GetString(reader.GetOrdinal("Name")),
+                        Status = reader.IsDBNull(reader.GetOrdinal("Status")) ? null : reader.GetString(reader.GetOrdinal("Status")),
+                        CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? null : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                        CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                        ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                        ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt"))
+                    });
+                }
+
+                return new BaseResponse<List<ManageHomePage>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<ManageHomePage>> { code = 400, message = ex.Message, data = new List<ManageHomePage>() };
             }
         }
-
-        private async Task<List<ManageHomePage>> ManageHomePageParserAsync(DbDataReader reader)
-        {
-            List<ManageHomePage> manageHomePages = new List<ManageHomePage>();
-            while (await reader.ReadAsync())
-            {
-                manageHomePages.Add(new ManageHomePage()
-                {
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    Name = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Name")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    Status = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Status")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Status"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-
-                });
-            }
-            return manageHomePages;
-        }
-
     }
 }

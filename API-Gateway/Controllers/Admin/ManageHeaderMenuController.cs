@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHeaderMenu + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHeaderMenu> tempList = (List<ManageHeaderMenu>)baseResponse.Data;
+            List<ManageHeaderMenu> tempList = baseResponse.Data as List<ManageHeaderMenu> ?? new List<ManageHeaderMenu>();
 
             if (tempList.Any())
             {
@@ -76,7 +76,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHeaderMenu + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHeaderMenu> tempList = (List<ManageHeaderMenu>)baseResponse.Data;
+            List<ManageHeaderMenu> tempList = baseResponse.Data as List<ManageHeaderMenu> ?? new List<ManageHeaderMenu>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -88,7 +88,7 @@ namespace API_Gateway.Controllers.Admin
 
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageHeaderMenu + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageHeaderMenu record = (ManageHeaderMenu)baseResponse.Data;
+                ManageHeaderMenu record = baseResponse.Data as ManageHeaderMenu;
                 string OldName = record.Image;
                 record.Name = model.Name;
                 if (model.IsImageAvailable)
@@ -129,13 +129,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHeaderMenu + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHeaderMenu> tempList = (List<ManageHeaderMenu>)baseResponse.Data;
+            List<ManageHeaderMenu> tempList = baseResponse.Data as List<ManageHeaderMenu> ?? new List<ManageHeaderMenu>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?headerId=" + id + "&getParent=" + true, "GET", null);
                 BaseResponse<ManageSubMenu> baseResponse1 = new BaseResponse<ManageSubMenu>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageSubMenu> tempList1 = (List<ManageSubMenu>)baseResponse1.Data;
+                List<ManageSubMenu> tempList1 = baseResponse1.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();

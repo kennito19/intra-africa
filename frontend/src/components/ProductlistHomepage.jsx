@@ -4,7 +4,7 @@ import DynamicPositionComponent from './DynamicPositionComponent'
 import Slider from './Slider'
 import ProductList from './ProductList'
 import { useSelector } from 'react-redux'
-import { getUserToken, showToast } from '../lib/GetBaseUrl'
+import { showToast } from '../lib/GetBaseUrl'
 import { _exception } from '../lib/exceptionMessage'
 import LoginSignup from './LoginSignup'
 import { handleWishlistClick } from '../lib/AllGlobalFunction'
@@ -16,13 +16,26 @@ const ProductlistHomepage = ({
   toast,
   setToast
 }) => {
-  const [data, setData] = useState()
+  const [data, setData] = useState({ data: [] })
   const { user } = useSelector((state) => state?.user)
   const [modalShow, setModalShow] = useState({
     show: false,
     data: null
   })
-  const token = getUserToken()
+
+  const fetchFallbackProducts = async () => {
+    const fallbackResponse = await axiosProvider({
+      method: 'GET',
+      endpoint: 'ManageHomePageSection/GetFeaturedProducts',
+      queryString: `?topProduct=${section?.top_products || 8}`
+    })
+    if (fallbackResponse?.status === 200) {
+      const fallbackData = fallbackResponse?.data?.data ?? []
+      setData({ data: Array.isArray(fallbackData) ? fallbackData : [] })
+      return true
+    }
+    return false
+  }
 
   const fetchProduct = async (isWishlistClicked) => {
     try {
@@ -51,8 +64,21 @@ const ProductlistHomepage = ({
           wishListRes?.wishlistResponse &&
             showToast(toast, setToast, wishListRes?.wishlistResponse)
         }
+      } else {
+        const isFallbackLoaded = await fetchFallbackProducts()
+        if (!isFallbackLoaded) {
+          setData({ data: [] })
+        }
       }
     } catch (error) {
+      try {
+        const isFallbackLoaded = await fetchFallbackProducts()
+        if (!isFallbackLoaded) {
+          setData({ data: [] })
+        }
+      } catch {
+        setData({ data: [] })
+      }
       showToast(toast, setToast)
     }
   }
@@ -63,15 +89,15 @@ const ProductlistHomepage = ({
     if (user?.userId) {
       setTimeout(() => {
         fetchProduct(modalShow?.data)
-      }, [500])
+      }, 500)
     }
   }
 
   useEffect(() => {
     setTimeout(() => {
       fetchProduct()
-    }, [500])
-  }, [token])
+    }, 500)
+  }, [])
 
   const withoutPrice = layoutsInfo?.layout_class === 'without-price'
 

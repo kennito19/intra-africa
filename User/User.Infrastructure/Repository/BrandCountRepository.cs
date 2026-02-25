@@ -16,60 +16,76 @@ namespace User.Infrastructure.Repository
 {
     public class BrandCountRepository : IBrandCountRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
         public BrandCountRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<List<BrandCounts>>> get(string? sellerId, string? days)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>()
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                await using var cmd = new MySqlCommand();
+                cmd.Connection = con;
+
+                var dateFilter = string.Empty;
+                if (int.TryParse(days, out var dayCount) && dayCount > 0)
                 {
-                    new MySqlParameter("@date", DateTime.Now.ToString()),
-                    new MySqlParameter("@days", days),
-                    new MySqlParameter("@sellerid", sellerId),
+                    dateFilter = " AND b.CreatedAt >= DATE_SUB(NOW(), INTERVAL @days DAY) ";
+                    cmd.Parameters.AddWithValue("@days", dayCount);
+                }
+
+                var sellerJoin = string.Empty;
+                if (!string.IsNullOrWhiteSpace(sellerId))
+                {
+                    sellerJoin = " INNER JOIN AssignBrandToSeller abs ON abs.BrandId = b.ID AND abs.IsDeleted = 0 AND abs.SellerID = @sellerId ";
+                    cmd.Parameters.AddWithValue("@sellerId", sellerId);
+                }
+
+                cmd.CommandText = $@"
+SELECT
+    COUNT(DISTINCT b.ID) AS TotalBrands,
+    COUNT(DISTINCT CASE WHEN LOWER(COALESCE(b.Status,'')) = 'active' THEN b.ID END) AS ActiveBrands,
+    COUNT(DISTINCT CASE WHEN LOWER(COALESCE(b.Status,'')) = 'inactive' THEN b.ID END) AS InactiveBrands,
+    COUNT(DISTINCT CASE WHEN LOWER(COALESCE(b.Status,'')) IN ('request for approval','requested','in request') THEN b.ID END) AS RequestedBrands
+FROM Brand b
+{sellerJoin}
+WHERE b.IsDeleted = 0
+{dateFilter};";
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+                var result = new List<BrandCounts>();
+                if (await reader.ReadAsync())
+                {
+                    result.Add(new BrandCounts
+                    {
+                        Total = reader.IsDBNull("TotalBrands") ? 0 : reader.GetInt32("TotalBrands"),
+                        Active = reader.IsDBNull("ActiveBrands") ? 0 : reader.GetInt32("ActiveBrands"),
+                        Inactive = reader.IsDBNull("InactiveBrands") ? 0 : reader.GetInt32("InactiveBrands"),
+                        InRequest = reader.IsDBNull("RequestedBrands") ? 0 : reader.GetInt32("RequestedBrands")
+                    });
+                }
+
+                return new BaseResponse<List<BrandCounts>>
+                {
+                    code = 200,
+                    message = "Record bind successfully.",
+                    data = result
                 };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetBrandCount, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        private async Task<List<BrandCounts>> LayoutParserAsync(DbDataReader reader)
-        {
-            List<BrandCounts> lstLayouts = new List<BrandCounts>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new BrandCounts()
+                return new BaseResponse<List<BrandCounts>>
                 {
-                    Total = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TotalBrands")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("TotalBrands"))),
-                    Active = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ActiveBrands")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("ActiveBrands"))),
-                    Inactive = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("InactiveBrands")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("InactiveBrands"))),
-                    InRequest = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("RequestedBrands")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RequestedBrands"))),
-                });
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<BrandCounts>()
+                };
             }
-            return lstLayouts;
         }
     }
 }

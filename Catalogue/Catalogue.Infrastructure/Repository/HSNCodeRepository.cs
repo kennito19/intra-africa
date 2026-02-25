@@ -1,73 +1,47 @@
 using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
-using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogue.Infrastructure.Repository
 {
-    public class HSNCodeRepository:IHSNCodeRepository
+    public class HSNCodeRepository : IHSNCodeRepository
     {
-        private readonly MySqlConnection con;
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
+        private readonly string _connectionString;
 
         public HSNCodeRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> addHSNCode(HSNCodeLibrary hSNCodeLibrary)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>()
-                {
-                    new MySqlParameter("@mode","add"),
-                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new MySqlParameter("@description",hSNCodeLibrary.Description),
-                    new MySqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
-                    new MySqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
-                    new MySqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
-                    new MySqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
-                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
-                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
-                };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+INSERT INTO hsncodelibrary (HSNCode, Description, CreatedBy, CreatedAt, IsDeleted)
+VALUES (@hsncode, @description, @createdBy, @createdAt, 0);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@hsncode", (object?)hSNCodeLibrary.HSNCode ?? string.Empty);
+                cmd.Parameters.AddWithValue("@description", (object?)hSNCodeLibrary.Description ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)hSNCodeLibrary.CreatedBy ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", hSNCodeLibrary.CreatedAt == default ? DateTime.Now : hSNCodeLibrary.CreatedAt);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid, message, sqlParams.ToArray());
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -75,37 +49,35 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "update"),
-                    new MySqlParameter("@id", hSNCodeLibrary.Id),
-                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new MySqlParameter("@description",hSNCodeLibrary.Description),
-                    new MySqlParameter("@createdBy", hSNCodeLibrary.CreatedBy),
-                    new MySqlParameter("@createdAt", hSNCodeLibrary.CreatedAt),
-                    new MySqlParameter("@modifiedBy", hSNCodeLibrary.ModifiedBy),
-                    new MySqlParameter("@modifiedAt", hSNCodeLibrary.ModifiedAt),
-                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt),
-                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted)
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+UPDATE hsncodelibrary
+SET HSNCode = @hsncode,
+    Description = @description,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", hSNCodeLibrary.Id);
+                cmd.Parameters.AddWithValue("@hsncode", (object?)hSNCodeLibrary.HSNCode ?? string.Empty);
+                cmd.Parameters.AddWithValue("@description", (object?)hSNCodeLibrary.Description ?? string.Empty);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)hSNCodeLibrary.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", (object?)hSNCodeLibrary.ModifiedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = hSNCodeLibrary.Id
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -113,30 +85,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "delete"),
-                    new MySqlParameter("@id", hSNCodeLibrary.Id),
-                    new MySqlParameter("@deletedBy", hSNCodeLibrary.DeletedBy),
-                    new MySqlParameter("@deletedAt", hSNCodeLibrary.DeletedAt)
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+UPDATE hsncodelibrary
+SET IsDeleted = 1,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE Id = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", hSNCodeLibrary.Id);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)hSNCodeLibrary.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)hSNCodeLibrary.DeletedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = hSNCodeLibrary.Id
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.HSNCode, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -144,61 +118,87 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", Mode),
-                    new MySqlParameter("@id", hSNCodeLibrary.Id),
-                    new MySqlParameter("@hsncode",hSNCodeLibrary.HSNCode),
-                    new MySqlParameter("@isDeleted", hSNCodeLibrary.IsDeleted),
-                    new MySqlParameter("@searchtext", hSNCodeLibrary.Searchtext),
-                    new MySqlParameter("@pageIndex", PageIndex),
-                    new MySqlParameter("@PageSize", PageSize),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-                };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetHSNCode, HSNCodeParserAsync, output, newid: null, message, sqlParams.ToArray());
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private async Task<List<HSNCodeLibrary>> HSNCodeParserAsync(DbDataReader reader)
-        {
-            List<HSNCodeLibrary> lstHSNCodeLibrary  = new List<HSNCodeLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstHSNCodeLibrary.Add(new HSNCodeLibrary()
+                var where = new List<string>();
+                if (hSNCodeLibrary.Id > 0)
                 {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    HSNCode = Convert.ToString(reader.GetValue(reader.GetOrdinal("HSNCode"))),
-                    Description = Convert.ToString(reader.GetValue(reader.GetOrdinal("Description"))),
-                    CreatedBy = Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    DeletedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy"))),
-                    DeletedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("DeletedAt"))),
-                    IsDeleted = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsDeleted"))),
-                });
-            }
-            return lstHSNCodeLibrary;
-        }
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", hSNCodeLibrary.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(hSNCodeLibrary.HSNCode))
+                {
+                    where.Add("HSNCode LIKE @hsnCode");
+                    cmd.Parameters.AddWithValue("@hsnCode", $"%{hSNCodeLibrary.HSNCode}%");
+                }
+                where.Add("IsDeleted = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", hSNCodeLibrary.IsDeleted);
+                if (!string.IsNullOrWhiteSpace(hSNCodeLibrary.Searchtext))
+                {
+                    where.Add("(HSNCode LIKE @search OR Description LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{hSNCodeLibrary.Searchtext}%");
+                }
 
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $"SELECT COUNT(1) FROM hsncodelibrary{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
+
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+                var offset = (safePageIndex - 1) * safePageSize;
+
+                var items = new List<HSNCodeLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT Id, HSNCode, Description, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeletedBy, DeletedAt, IsDeleted
+FROM hsncodelibrary
+{whereClause}
+ORDER BY Id DESC
+LIMIT @offset, @pageSize;";
+
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new HSNCodeLibrary
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            HSNCode = reader.IsDBNull(reader.GetOrdinal("HSNCode")) ? string.Empty : reader.GetString(reader.GetOrdinal("HSNCode")),
+                            Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? string.Empty : reader.GetString(reader.GetOrdinal("Description")),
+                            CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? string.Empty : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                            ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt")),
+                            DeletedBy = reader.IsDBNull(reader.GetOrdinal("DeletedBy")) ? null : reader.GetString(reader.GetOrdinal("DeletedBy")),
+                            DeletedAt = reader.IsDBNull(reader.GetOrdinal("DeletedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("DeletedAt")),
+                            IsDeleted = !reader.IsDBNull(reader.GetOrdinal("IsDeleted")) && reader.GetBoolean(reader.GetOrdinal("IsDeleted"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<HSNCodeLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<HSNCodeLibrary>> { code = 400, message = ex.Message, data = new List<HSNCodeLibrary>() };
+            }
+        }
     }
 }

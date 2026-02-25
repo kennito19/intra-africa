@@ -41,7 +41,7 @@ namespace API_Gateway.Common.products
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "?Id=" + model.productId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
-            Products product = (Products)baseResponse.Data;
+            Products product = baseResponse.Data as Products;
 
             product.CategoryId = model.CategoryId;
             product.CompanySKUCode = model.CompanySKUCode;
@@ -87,7 +87,7 @@ namespace API_Gateway.Common.products
 
             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?id=" + item.Id + url, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
-            sellerProduct = (SellerProduct)baseResponse.Data;
+            sellerProduct = baseResponse.Data as SellerProduct;
 
             sellerProduct.ProductID = ProductId;
             sellerProduct.SellerID = item.SellerID;
@@ -117,7 +117,7 @@ namespace API_Gateway.Common.products
             AssibaseResponse = AssignbrandDetails.GetAssignBrandsByUserIDandBrandId(item.SellerID, BrandId, null);
 
             AssignBrandToSeller brandLibrary = new AssignBrandToSeller();
-            brandLibrary = (AssignBrandToSeller)AssibaseResponse.Data;
+            brandLibrary = AssibaseResponse.Data as AssignBrandToSeller;
 
             string legalName = string.Empty;
             string tradeName = string.Empty;
@@ -192,7 +192,7 @@ namespace API_Gateway.Common.products
             AssibaseResponse = AssignbrandDetails.GetAssignBrandsByUserIDandBrandId(model.SellerId, model.BrandId, null);
 
             AssignBrandToSeller brandLibrary = new AssignBrandToSeller();
-            brandLibrary = (AssignBrandToSeller)AssibaseResponse.Data;
+            brandLibrary = AssibaseResponse.Data as AssignBrandToSeller;
 
             string legalName = string.Empty;
             string tradeName = string.Empty;
@@ -236,7 +236,7 @@ namespace API_Gateway.Common.products
             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
             SellerProduct sellerProduct = new SellerProduct();
-            sellerProduct = (SellerProduct)baseResponse.Data;
+            sellerProduct = baseResponse.Data as SellerProduct;
 
             sellerProduct.ProductID = ProductId;
             sellerProduct.SellerID = sellerProducts.SellerID;
@@ -260,7 +260,7 @@ namespace API_Gateway.Common.products
             AssibaseResponse = AssignbrandDetails.GetAssignBrandsByUserIDandBrandId(sellerProducts.SellerID, BrandId, null);
 
             AssignBrandToSeller brandLibrary = new AssignBrandToSeller();
-            brandLibrary = (AssignBrandToSeller)AssibaseResponse.Data;
+            brandLibrary = AssibaseResponse.Data as AssignBrandToSeller;
 
             string legalName = string.Empty;
             string tradeName = string.Empty;
@@ -330,7 +330,7 @@ namespace API_Gateway.Common.products
                 }
                 if (baseResponse.code == 200)
                 {
-                    productPrice = (ProductPrice)baseResponse.Data;
+                    productPrice = baseResponse.Data as ProductPrice;
 
 
                     productPrice.SellerProductID = SellerProductId;
@@ -391,7 +391,7 @@ namespace API_Gateway.Common.products
                 }
                 if (baseResponse.code == 200)
                 {
-                    productWareHouse = (ProductWareHouse)baseResponse.Data;
+                    productWareHouse = baseResponse.Data as ProductWareHouse;
 
 
                     productWareHouse.ProductID = ProductId;
@@ -811,7 +811,7 @@ namespace API_Gateway.Common.products
             {
                 //var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "?CategoryID=" + model.CategoryId + "&Getparent=" + true, "GET", null);
                 //baseResponse = baseResponse.JsonParseList(GetResponse);
-                //List<Products> tempList = (List<Products>)baseResponse.Data;
+                //List<Products> tempList = baseResponse.Data as List<Products>;
                 //if (tempList.Where(x => x.CompanySKUCode == model.CompanySKUCode && x.Id != model.ParentId).Any())
                 //{
                 //    baseResponse = baseResponse.AlreadyExists();
@@ -905,20 +905,20 @@ namespace API_Gateway.Common.products
                 SellerbaseResponse = SellerbaseResponse.JsonParseRecord(_GetResponse);
                 if (SellerbaseResponse.code == 200)
                 {
-                    sellerProduct = (SellerProduct)SellerbaseResponse.Data;
+                    sellerProduct = SellerbaseResponse.Data as SellerProduct;
                     BaseResponse<SellerListModel> sellerdetailsbaseResponse = new BaseResponse<SellerListModel>();
                     var sellerresponse = helper.ApiCall(IdserverURL, EndPoints.SellerById + "?Id=" + sellerProduct.SellerID, "GET", null);
                     sellerdetailsbaseResponse = sellerdetailsbaseResponse.JsonParseRecord(sellerresponse);
                     SellerListModel sellerListModel = new SellerListModel();
                     if (sellerdetailsbaseResponse.code == 200)
                     {
-                        sellerListModel = (SellerListModel)sellerdetailsbaseResponse.Data;
+                        sellerListModel = sellerdetailsbaseResponse.Data as SellerListModel;
                         if (sellerListModel.Status.ToLower() != "archived")
                         {
                             var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "?Id=" + ProductId, "GET", null);
                             baseResponse = baseResponse.JsonParseRecord(GetResponse);
 
-                            Products product = (Products)baseResponse.Data;
+                            Products product = baseResponse.Data as Products;
 
                             product.ProductName = model.ProductName;
                             product.ModifiedAt = DateTime.Now;
@@ -1042,7 +1042,7 @@ namespace API_Gateway.Common.products
                             //    throw new Exception("ProductPrice didn't bind successfully" + baseResponse.code);
                             //}
 
-                            //List<ProductPrice> productPrices = (List<ProductPrice>)baseResponse.Data;
+                            //List<ProductPrice> productPrices = baseResponse.Data as List<ProductPrice>;
 
                             //foreach (var item in model.ProductPrice)
                             //{
@@ -1061,7 +1061,7 @@ namespace API_Gateway.Common.products
                             //    {
                             //        throw new Exception("ProductWarehouse List didn't bind successfully" + baseResponse.code);
                             //    }
-                            //    List<ProductWareHouse> productWareHouses = (List<ProductWareHouse>)baseResponse1.Data;
+                            //    List<ProductWareHouse> productWareHouses = baseResponse1.Data as List<ProductWareHouse>;
 
                             //    foreach (var data in item.ProductWarehouses)
                             //    {
@@ -1146,7 +1146,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductPrice> productDeletable = new BaseResponse<ProductPrice>();
             var resp = helper.ApiCall(CatelogueURL, EndPoints.ProductPriceMaster + "?SellerProductID=" + SellerProductId, "GET", null);
             productDeletable = productDeletable.JsonParseList(resp);
-            List<ProductPrice> deleteProductPrice = (List<ProductPrice>)productDeletable.Data;
+            List<ProductPrice> deleteProductPrice = productDeletable.Data as List<ProductPrice>;
 
             List<int> deletePrices = deleteProductPrice.Select(x => x.Id).ToList();
 
@@ -1167,7 +1167,7 @@ namespace API_Gateway.Common.products
                     BaseResponse<OrderItems> OrderbaseResponse = new BaseResponse<OrderItems>();
                     var GetResponse = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?SellerProductID=" + pp.SellerProductID + "&Status=Placed", "GET", null);
                     OrderbaseResponse = OrderbaseResponse.JsonParseList(GetResponse);
-                    List<OrderItems> ordersdetail = (List<OrderItems>)OrderbaseResponse.Data;
+                    List<OrderItems> ordersdetail = OrderbaseResponse.Data as List<OrderItems>;
                     if (ordersdetail != null && ordersdetail.Count > 0)
                     {
                         int ss = ordersdetail.Select(p => p.Qty).Sum();
@@ -1237,7 +1237,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductWareHouse> productDeletable = new BaseResponse<ProductWareHouse>();
             var resp = helper.ApiCall(CatelogueURL, EndPoints.ProductWarehouse + "?sellerwiseproductpricemasterid=" + ProductPriceId, "GET", null);
             productDeletable = productDeletable.JsonParseList(resp);
-            List<ProductWareHouse> deleteProductWarehouse = (List<ProductWareHouse>)productDeletable.Data;
+            List<ProductWareHouse> deleteProductWarehouse = productDeletable.Data as List<ProductWareHouse>;
 
             List<int> deleteProductWarehouses = deleteProductWarehouse.Select(x => x.Id).ToList();
 
@@ -1283,7 +1283,7 @@ namespace API_Gateway.Common.products
             {
                 var response = helper.ApiCall(CatelogueURL, EndPoints.ProductsImage + "?ProductID=" + productId, "GET", null);
                 baseResponse = baseResponse.JsonParseList(response);
-                List<ProductImages> tempList = (List<ProductImages>)baseResponse.Data;
+                List<ProductImages> tempList = baseResponse.Data as List<ProductImages>;
                 List<ProductImages> productImages = BindProductImage(model, productId);
 
                 if (tempList.Any())
@@ -1327,7 +1327,7 @@ namespace API_Gateway.Common.products
         //    BaseResponse<ProductVideoLink> baseResponse = new BaseResponse<ProductVideoLink>();
         //    var temp = helper.ApiCall(CatelogueURL, EndPoints.ProductsVideoLinks + "?productID=" + ProductId, "GET", null);
         //    baseResponse = baseResponse.JsonParseList(temp);
-        //    List<ProductVideoLink> tempList = (List<ProductVideoLink>)baseResponse.Data;
+        //    List<ProductVideoLink> tempList = baseResponse.Data as List<ProductVideoLink>;
 
         //    if (tempList.Any())
         //    {
@@ -1364,7 +1364,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductColorMapp> baseResponse = new BaseResponse<ProductColorMapp>();
             var temp = helper.ApiCall(CatelogueURL, EndPoints.ProductColorMapping + "?productID=" + ProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ProductColorMapp> tempList = (List<ProductColorMapp>)baseResponse.Data;
+            List<ProductColorMapp> tempList = baseResponse.Data as List<ProductColorMapp>;
 
             try
             {
@@ -1411,7 +1411,7 @@ namespace API_Gateway.Common.products
 
             //var GetResponse = helper.ApiCall(CatelogueURL, EndPoints.Product + "?CategoryID=" + model.CategoryId + "&Getparent=" + true, "GET", null);
             //ProductbaseResponse = ProductbaseResponse.JsonParseList(GetResponse);
-            //List<Products> tempList = (List<Products>)ProductbaseResponse.Data;
+            //List<Products> tempList = ProductbaseResponse.Data as List<Products>;
             //if (tempList.Where(x => x.CompanySKUCode == model.CompanySKUCode && x.Id != model.ParentId).Any())
             //{
             //    count = 1 + count;
@@ -1425,7 +1425,7 @@ namespace API_Gateway.Common.products
 
             var GetResponse1 = helper.ApiCall(CatelogueURL, EndPoints.SellerProduct + "?categoryId=" + model.CategoryId + "&brandId=" + model.SellerProducts.BrandID + "&isProductExist=" + false, "GET", null);
             SellerProductbaseResponse = SellerProductbaseResponse.JsonParseList(GetResponse1);
-            List<SellerProduct> tempList1 = (List<SellerProduct>)SellerProductbaseResponse.Data;
+            List<SellerProduct> tempList1 = SellerProductbaseResponse.Data as List<SellerProduct>;
 
             if (tempList1.Where(x => x.CompanySKUCode == model.CompanySKUCode && x.Id != model.SellerProducts.Id).Any())
             {
@@ -1477,7 +1477,7 @@ namespace API_Gateway.Common.products
             BaseResponse<ProductSpecificationMapping> baseResponse = new BaseResponse<ProductSpecificationMapping>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ProductSpecificationMapping + "?ProductID=" + productId + "&PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ProductSpecificationMapping> tempList = (List<ProductSpecificationMapping>)baseResponse.Data;
+            List<ProductSpecificationMapping> tempList = baseResponse.Data as List<ProductSpecificationMapping>;
 
             if (tempList.Any())
             {

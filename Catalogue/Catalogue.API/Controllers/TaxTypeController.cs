@@ -56,7 +56,7 @@ namespace Catalogue.API.Controllers
 
         [HttpGet]
         [Authorize(Policy = "General")]
-        public async Task<BaseResponse<List<TaxTypeLibrary>>> getTaxType(int? id = null, string? taxType = null, int? ParentID = 0, bool? isDeleted = false, bool Getparent = false, bool Getchild = false, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Searchtext = null)
+        public async Task<BaseResponse<List<TaxTypeLibrary>>> getTaxType(int? id = null, string? taxType = null, int? ParentID = null, bool? isDeleted = false, bool Getparent = false, bool Getchild = false, int PageIndex = 1, int PageSize = 10, string? Mode = "get", string? Searchtext = null)
         {
             TaxTypeLibrary taxTypeLibrary = new TaxTypeLibrary();
             if (id != null)
@@ -64,7 +64,7 @@ namespace Catalogue.API.Controllers
                 taxTypeLibrary.Id = Convert.ToInt32(id);
             }
             taxTypeLibrary.TaxType = taxType;
-            taxTypeLibrary.ParentId = ParentID;
+            taxTypeLibrary.ParentId = (ParentID.HasValue && ParentID.Value > 0) ? ParentID : null;
             taxTypeLibrary.IsDeleted = Convert.ToBoolean(isDeleted);
             taxTypeLibrary.Searchtext = Searchtext;
             var data = await _taxTypeService.GetTaxType(taxTypeLibrary, Getparent, Getchild, PageIndex, PageSize, Mode);

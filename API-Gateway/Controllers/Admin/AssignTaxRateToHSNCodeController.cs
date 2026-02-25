@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignTaxRateToHSNCode + "?HsnCodeId=" + model.HsnCodeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignTaxRateToHSNCode> tempList = (List<AssignTaxRateToHSNCode>)baseResponse.Data;
+            List<AssignTaxRateToHSNCode> tempList = baseResponse.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
             if (tempList.Count > 0)
             {
                 tempList = tempList.Where(p => p.HsnCodeId == model.HsnCodeId).ToList();
@@ -62,7 +62,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignTaxRateToHSNCode + "?HsnCodeId=" + model.HsnCodeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignTaxRateToHSNCode> tempList = (List<AssignTaxRateToHSNCode>)baseResponse.Data;
+            List<AssignTaxRateToHSNCode> tempList = baseResponse.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -72,7 +72,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.AssignTaxRateToHSNCode + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                AssignTaxRateToHSNCode rateToHSNCode = (AssignTaxRateToHSNCode)baseResponse.Data;
+                AssignTaxRateToHSNCode rateToHSNCode = baseResponse.Data as AssignTaxRateToHSNCode;
                 rateToHSNCode.Id = model.Id;
                 rateToHSNCode.HsnCodeId = model.HsnCodeId;
                 rateToHSNCode.TaxValueId = model.TaxValueId;
@@ -91,13 +91,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignTaxRateToHSNCode + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(temp);
-            AssignTaxRateToHSNCode tempList = (AssignTaxRateToHSNCode)baseResponse.Data;
+            AssignTaxRateToHSNCode tempList = baseResponse.Data as AssignTaxRateToHSNCode;
             if (tempList != null)
             {
                 var tempTaxRateToHsnCode = helper.ApiCall(URL, EndPoints.Product + "?HsnCode=" + tempList.HsnCode + "&TaxValueId=" + tempList.TaxValueId, "GET", null);
                 BaseResponse<Products> checkproductBaseresponse = new BaseResponse<Products>();
                 var assignTaxRateToHsnCode = checkproductBaseresponse.JsonParseList(tempTaxRateToHsnCode);
-                List<Products> taxRateToHsnCode = (List<Products>)assignTaxRateToHsnCode.Data;
+                List<Products> taxRateToHsnCode = assignTaxRateToHsnCode.Data as List<Products> ?? new List<Products>();
                 if (taxRateToHsnCode.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("Product", "AssignTaxRateToHsnCode");

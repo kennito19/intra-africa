@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = helper.ApiCall(URL, EndPoints.ChargesPaidBy + "?Name=" + model.Name, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ChargesPaidByLibrary> tempList = (List<ChargesPaidByLibrary>)baseResponse.Data;
+            List<ChargesPaidByLibrary> tempList = baseResponse.Data as List<ChargesPaidByLibrary> ?? new List<ChargesPaidByLibrary>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -56,7 +56,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ChargesPaidBy + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ChargesPaidByLibrary> chargesPaidBy = (List<ChargesPaidByLibrary>)baseResponse.Data;
+            List<ChargesPaidByLibrary> chargesPaidBy = baseResponse.Data as List<ChargesPaidByLibrary> ?? new List<ChargesPaidByLibrary>();
             if (chargesPaidBy.Where(X => X.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -79,7 +79,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ChargesPaidBy + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ChargesPaidByLibrary> chargesPaidBy = (List<ChargesPaidByLibrary>)baseResponse.Data;
+            List<ChargesPaidByLibrary> chargesPaidBy = baseResponse.Data as List<ChargesPaidByLibrary> ?? new List<ChargesPaidByLibrary>();
 
             if (chargesPaidBy.Any())
             {

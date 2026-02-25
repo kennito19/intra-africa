@@ -28,7 +28,7 @@ namespace API_Gateway.Common
 
             var response = helper.ApiCall(CatelogueURL, EndPoints.WeightSlab + "?PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<WeightSlabLibrary> details = (List<WeightSlabLibrary>)baseResponse.Data;
+            List<WeightSlabLibrary> details = baseResponse.Data as List<WeightSlabLibrary>;
             Regex regex = new Regex(@"(\d+(\.\d+)?)\s*[-|to]\s*(\d+(\.\d+)?)");
             decimal preValue = 0;
             foreach (var items in details)

@@ -6,7 +6,7 @@ import { _exception } from './exceptionMessage'
 import { generateDeviceId } from './nookieProvider'
 
 export const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_API_URL || 'https://api.intra-africa.com/'
+  return process.env.NEXT_PUBLIC_API_URL || 'https://api.intra-africa.com/api/'
 }
 
 export const getUserToken = () => {
@@ -104,6 +104,36 @@ export const changeHandler = (fieldName, value, setFieldValue) => {
 export const currencyIcon = 'R '
 export const reactImageUrl =
   process.env.NEXT_PUBLIC_IMG_URL || 'https://api.intra-africa.com/Resources/'
+export const imagePlaceholderUrl =
+  'https://placehold.co/1200x600/f1f5f9/334155?text=Image+Unavailable'
+
+export const buildResourceImageUrl = (rawPath, folder = '') => {
+  const value = typeof rawPath === 'string' ? rawPath.trim() : ''
+  if (!value) {
+    return imagePlaceholderUrl
+  }
+
+  const base = reactImageUrl.endsWith('/') ? reactImageUrl : `${reactImageUrl}/`
+  const origin = base.replace(/\/resources\/?$/i, '/')
+  const normalizedFolder = folder
+    ? folder.endsWith('/')
+      ? folder
+      : `${folder}/`
+    : ''
+  let imageUrl = ''
+
+  if (/^https?:\/\//i.test(value)) {
+    imageUrl = value
+  } else if (/^\/?resources\//i.test(value)) {
+    imageUrl = `${origin}${value.replace(/^\/+/, '')}`
+  } else if (normalizedFolder && !value.startsWith(normalizedFolder)) {
+    imageUrl = `${base}${normalizedFolder}${value.replace(/^\/+/, '')}`
+  } else {
+    imageUrl = `${base}${value.replace(/^\/+/, '')}`
+  }
+
+  return encodeURI(imageUrl)
+}
 
 export const productStatus = [
   { value: 'Active', label: 'Active' },

@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
             RolebaseResponse = RolebaseResponse.JsonParseList(getresponse);
 
             List<RoleType> roleTypes = new List<RoleType>();
-            roleTypes = (List<RoleType>)RolebaseResponse.Data;
+            roleTypes = RolebaseResponse.Data as List<RoleType> ?? new List<RoleType>();
             var data = roleTypes.Where(x => x.Name.ToLower() == model.Name.ToLower()).ToList();
             if (data.Count > 0)
             {
@@ -61,7 +61,7 @@ namespace API_Gateway.Controllers.Admin
             RolebaseResponse = RolebaseResponse.JsonParseList(getresponse);
 
             List<RoleType> roleTypes = new List<RoleType>();
-            roleTypes = (List<RoleType>)RolebaseResponse.Data;
+            roleTypes = RolebaseResponse.Data as List<RoleType> ?? new List<RoleType>();
 
             var data = roleTypes.Where(x => x.Name.ToLower() == model.Name.ToLower() && x.Id != model.Id).ToList();
             if (data.Count > 0)
@@ -100,7 +100,7 @@ namespace API_Gateway.Controllers.Admin
                 var Assiresponse = api.ApiCall(IDServerUrl, EndPoints.GetAssignedPageByUserId + "?Id=" + model.UserID, "GET", null);
                 AssibaseResponse = AssibaseResponse.JsonParseList(Assiresponse);
                 List<AssignPageRole> assignPageRoles = new List<AssignPageRole>();
-                assignPageRoles = (List<AssignPageRole>)AssibaseResponse.Data;
+                assignPageRoles = AssibaseResponse.Data as List<AssignPageRole> ?? new List<AssignPageRole>();
                 var data = assignPageRoles.Where(x => x.PageRoleId == model.PageRoleId && x.UserID == model.UserID).ToList();
                 if (data.Count > 0)
                 {
@@ -114,7 +114,7 @@ namespace API_Gateway.Controllers.Admin
                 var Assiresponse = api.ApiCall(IDServerUrl, EndPoints.GetAssignedPageByRoleType + "?Id=" + model.RoleTypeId, "GET", null);
                 AssibaseResponse = AssibaseResponse.JsonParseList(Assiresponse);
                 List<AssignPageRole> assignPageRoles = new List<AssignPageRole>();
-                assignPageRoles = (List<AssignPageRole>)AssibaseResponse.Data;
+                assignPageRoles = AssibaseResponse.Data as List<AssignPageRole> ?? new List<AssignPageRole>();
                 var data = assignPageRoles.Where(x => x.PageRoleId == model.PageRoleId && x.RoleTypeId == model.RoleTypeId).ToList();
                 if (data.Count > 0)
                 {

@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?taxType=" + model.TaxType + "&Getparent=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> taxTypes = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> taxTypes = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
             if (taxTypes.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -60,7 +60,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?taxType=" + model.TaxType + "&Getparent=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> taxTypes = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> taxTypes = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
 
             if (taxTypes.Where(x => x.Id != model.Id).Any())
             {
@@ -86,14 +86,14 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?Id=" + Id + "&Getparent=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> tmp = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> tmp = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.NotExist();
             }
             temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?ParentID=" + Id + "&Getchild=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> tempList = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> tempList = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
 
             if (tempList.Any())
             {

@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?TypeName=" + model.TypeName, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)baseResponse.Data;
+            List<SizeLibrary> sizeLibraries = baseResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
             if (sizeLibraries.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -59,7 +59,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?TypeName=" + model.TypeName, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)baseResponse.Data;
+            List<SizeLibrary> sizeLibraries = baseResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
             if (sizeLibraries.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -83,13 +83,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var tempSizeType = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?Id=" + id + "&Getparent=true&Getchild=false", "GET", null);
             var tempResponse = baseResponse.JsonParseList(tempSizeType);
-            List<SizeLibrary> sizeTypeLibraries = (List<SizeLibrary>)tempResponse.Data;
+            List<SizeLibrary> sizeTypeLibraries = tempResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
 
             if (sizeTypeLibraries.Any())
             {
                 var tempSize = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?parentId=" + id + "&Getparent=false&Getchild=true", "GET", null);
                 tempResponse = baseResponse.JsonParseList(tempSize);
-                List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)tempResponse.Data;
+                List<SizeLibrary> sizeLibraries = tempResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
 
                 if (sizeLibraries.Any())
                 {

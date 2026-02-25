@@ -38,7 +38,7 @@ namespace API_Gateway.Controllers.Catalogue
         {
             var temp = helper.ApiCall(URL, EndPoints.Specification + "?Name=" + model.Name.Replace("'", "''") + "&ParentID=" + model.ParentId + "&Getchild=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SpecificationLibrary> tempList = (List<SpecificationLibrary>)baseResponse.Data;
+            List<SpecificationLibrary> tempList = baseResponse.Data as List<SpecificationLibrary> ?? new List<SpecificationLibrary>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -53,7 +53,7 @@ namespace API_Gateway.Controllers.Catalogue
 
                 var response = helper.ApiCall(URL, EndPoints.Specification, "POST", spec);
                 baseResponse = baseResponse.JsonParseInputResponse(response);
-                int i = (int)baseResponse.Data;
+                int i = Convert.ToInt32(baseResponse.Data);
                 if (i != null || i != 0)
                 {
                     UpdatePathId(i);
@@ -69,7 +69,7 @@ namespace API_Gateway.Controllers.Catalogue
         {
             var temp = helper.ApiCall(URL, EndPoints.Specification + "?Name=" + model.Name.Replace("'", "''") + "&ParentID=" + model.ParentId + "&Getchild=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SpecificationLibrary> tempList = (List<SpecificationLibrary>)baseResponse.Data;
+            List<SpecificationLibrary> tempList = baseResponse.Data as List<SpecificationLibrary> ?? new List<SpecificationLibrary>();
             if (tempList.Where(x => x.ID != model.ID && x.Name == model.Name).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -79,7 +79,7 @@ namespace API_Gateway.Controllers.Catalogue
                 var response = helper.ApiCall(URL, EndPoints.Specification + "?Id=" + model.ID + "&Getchild=" + true, "GET", null);
                 var tempResponse = baseResponse.JsonParseRecord(response);
 
-                SpecificationLibrary spec = (SpecificationLibrary)tempResponse.Data;
+                SpecificationLibrary spec = tempResponse.Data as SpecificationLibrary;
                 spec.Name = model.Name;
                 spec.ParentId = model.ParentId;
                 spec.FieldType = model.FieldType;
@@ -101,13 +101,13 @@ namespace API_Gateway.Controllers.Catalogue
         {
             var temp = helper.ApiCall(URL, EndPoints.Specification + "?Id=" + id + "&Getchild=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SpecificationLibrary> tempRecord = (List<SpecificationLibrary>)baseResponse.Data;
+            List<SpecificationLibrary> tempRecord = baseResponse.Data as List<SpecificationLibrary> ?? new List<SpecificationLibrary>();
             if (tempRecord.Any())
             {
                 var tempAssignSpecValue = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecId=" + id, "Get", null);
                 BaseResponse<AssignSpecValuesToCategoryLibrary> baseAssignSpecValues = new BaseResponse<AssignSpecValuesToCategoryLibrary>();
                 var ResSpecValuesToCat = baseAssignSpecValues.JsonParseList(tempAssignSpecValue);
-                List<AssignSpecValuesToCategoryLibrary> SpecValuesToCatValues = (List<AssignSpecValuesToCategoryLibrary>)ResSpecValuesToCat.Data;
+                List<AssignSpecValuesToCategoryLibrary> SpecValuesToCatValues = ResSpecValuesToCat.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
 
                 if (SpecValuesToCatValues.Any())
                 {

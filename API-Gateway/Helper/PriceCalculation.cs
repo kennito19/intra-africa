@@ -465,7 +465,7 @@ namespace API_Gateway.Helper
 
             if (TaxbaseResponse.code == 200)
             {
-                taxTypeValuelst = (List<TaxTypeValueLibrary>)TaxbaseResponse.Data;
+                taxTypeValuelst = TaxbaseResponse.Data as List<TaxTypeValueLibrary>;
             }
 
             return taxTypeValuelst;

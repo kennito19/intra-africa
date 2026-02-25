@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(UserApi, EndPoints.Country + "?name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CountryLibrary> countries = (List<CountryLibrary>)baseResponse.Data;
+            List<CountryLibrary> countries = baseResponse.Data as List<CountryLibrary> ?? new List<CountryLibrary>();
 
             if (countries.Any())
             {
@@ -58,7 +58,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(UserApi, EndPoints.Country + "?name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CountryLibrary> countries = (List<CountryLibrary>)baseResponse.Data;
+            List<CountryLibrary> countries = baseResponse.Data as List<CountryLibrary> ?? new List<CountryLibrary>();
             if (countries.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = api.ApiCall(UserApi, EndPoints.Country + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                CountryLibrary record = (CountryLibrary)baseResponse.Data;
+                CountryLibrary record = baseResponse.Data as CountryLibrary;
                 record.Id = model.Id;
                 record.Name = model.Name;
                 record.Status = model.Status;
@@ -85,14 +85,14 @@ namespace API_Gateway.Controllers.Admin
         {
             var tempCountry = api.ApiCall(UserApi, EndPoints.Country + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(tempCountry);
-            List<CountryLibrary> country = (List<CountryLibrary>)baseResponse.Data;
+            List<CountryLibrary> country = baseResponse.Data as List<CountryLibrary> ?? new List<CountryLibrary>();
 
             if (country.Any())
             {
                 var tempCity = api.ApiCall(UserApi, EndPoints.City + "?countryId=" + id, "GET", null);
                 BaseResponse<CityLibrary> baseResCity = new BaseResponse<CityLibrary>();
                 var CityResponse = baseResCity.JsonParseList(tempCity);
-                List<CityLibrary> City = (List<CityLibrary>)CityResponse.Data;
+                List<CityLibrary> City = CityResponse.Data as List<CityLibrary> ?? new List<CityLibrary>();
 
                 if (City.Any())
                 {
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
                 var tempStates = api.ApiCall(UserApi, EndPoints.State + "?countryId=" + id, "GET", null);
                 BaseResponse<StateLibrary> baseResState = new BaseResponse<StateLibrary>();
                 var StateResponse = baseResState.JsonParseList(tempStates);
-                List<StateLibrary> State = (List<StateLibrary>)StateResponse.Data;
+                List<StateLibrary> State = StateResponse.Data as List<StateLibrary> ?? new List<StateLibrary>();
 
                 if (State.Any())
                 {

@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?TypeName=" + model.TypeName + "&parentId=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)baseResponse.Data;
+            List<SizeLibrary> sizeLibraries = baseResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
             if (sizeLibraries.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -59,7 +59,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?TypeName=" + model.TypeName + "&parentId=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)baseResponse.Data;
+            List<SizeLibrary> sizeLibraries = baseResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
 
             if (sizeLibraries.Where(x => x.Id != model.Id).Any())
             {
@@ -85,14 +85,14 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = api.ApiCall(CatalogueUrl, EndPoints.SizeLibrary + "?Id=" + id + "&Getparent=false&Getchild=true", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<SizeLibrary> sizeLibraries = (List<SizeLibrary>)baseResponse.Data;
+            List<SizeLibrary> sizeLibraries = baseResponse.Data as List<SizeLibrary> ?? new List<SizeLibrary>();
 
             if (sizeLibraries.Any())
             {
                 var tempSizeValueToCategory = api.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?SizeId=" + id, "GET", null);
                 BaseResponse<AssignSizeValueToCategory> baseResTaxRateToHsnCode = new BaseResponse<AssignSizeValueToCategory>();
                 var SizeValueTOCategory = baseResTaxRateToHsnCode.JsonParseList(tempSizeValueToCategory);
-                List<AssignSizeValueToCategory> assignSizeValues = (List<AssignSizeValueToCategory>)SizeValueTOCategory.Data;
+                List<AssignSizeValueToCategory> assignSizeValues = SizeValueTOCategory.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
 
                 if (assignSizeValues.Any())
                 {
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
                 var productPriceMaster = api.ApiCall(CatalogueUrl, EndPoints.ProductPriceMaster + "?SizeID=" + id, "Get", null);
                 BaseResponse<ProductPrice> baseProductPriceResponse = new BaseResponse<ProductPrice>();
                 var ProudctPriceBaseresponse = baseProductPriceResponse.JsonParseList(productPriceMaster);
-                List<ProductPrice> productsPrice = (List<ProductPrice>)ProudctPriceBaseresponse.Data;
+                List<ProductPrice> productsPrice = ProudctPriceBaseresponse.Data as List<ProductPrice> ?? new List<ProductPrice>();
                 if (productsPrice.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("ProductPrice", "SizeValue");

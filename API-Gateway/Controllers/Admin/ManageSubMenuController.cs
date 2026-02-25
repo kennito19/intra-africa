@@ -40,7 +40,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Name=" + model.Name + "&headerId=" + model.HeaderId + "&getParent=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageSubMenu> tempList = (List<ManageSubMenu>)baseResponse.Data;
+            List<ManageSubMenu> tempList = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
 
             if (tempList.Any())
             {
@@ -100,7 +100,7 @@ namespace API_Gateway.Controllers.Admin
 
                 var category = helper.ApiCall(URL, EndPoints.Category + "?Id=" + CategoryId, "GET", null);
                 var categorybaseResponse = CatbaseResponse.JsonParseRecord(category);
-                CategoryLibrary categoryDetails = (CategoryLibrary)categorybaseResponse.Data;
+                CategoryLibrary categoryDetails = categorybaseResponse.Data as CategoryLibrary;
                 manageSubMenu.ImageAlt = categoryDetails.Name;
                 manageSubMenu.Image = categoryDetails.Image;
                 manageSubMenu.Sequence = i + 1;
@@ -137,7 +137,7 @@ namespace API_Gateway.Controllers.Admin
 
                 var brand = helper.ApiCall(UserURL, EndPoints.Brand + "?Id=" + brandId, "GET", null);
                 var brandbaseResponse = BrandbaseResponse.JsonParseRecord(brand);
-                BrandLibrary brandDetails = (BrandLibrary)brandbaseResponse.Data;
+                BrandLibrary brandDetails = brandbaseResponse.Data as BrandLibrary;
                 manageSubMenu.Sequence = i + 1;
                 manageSubMenu.Brands = Convert.ToString(brandId);
                 manageSubMenu.Name = brandDetails.Name;
@@ -154,7 +154,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Name=" + model.Name + "&headerId=" + model.HeaderId + "&getParent=" + true, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageSubMenu> tempList = (List<ManageSubMenu>)baseResponse.Data;
+            List<ManageSubMenu> tempList = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -164,7 +164,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageSubMenu record = (ManageSubMenu)baseResponse.Data;
+                ManageSubMenu record = baseResponse.Data as ManageSubMenu;
                 record.MenuType = model.MenuType;
                 record.HeaderId = model.HeaderId;
                 record.ParentId = null;
@@ -207,13 +207,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageSubMenu> tempList = (List<ManageSubMenu>)baseResponse.Data;
+            List<ManageSubMenu> tempList = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?parentId=" + id + "&getChild=" + true, "GET", null);
                 BaseResponse<ManageChildMenu> baseResponse1 = new BaseResponse<ManageChildMenu>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageChildMenu> tempList1 = (List<ManageChildMenu>)baseResponse1.Data;
+                List<ManageChildMenu> tempList1 = baseResponse1.Data as List<ManageChildMenu> ?? new List<ManageChildMenu>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();
@@ -254,7 +254,7 @@ namespace API_Gateway.Controllers.Admin
             var response = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?headerId=" + headerId + "&pageIndex=" + pageIndex + "&pageSize=" + pageSize , "GET", null);
             //return Ok(baseResponse.JsonParseList(response));
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageSubMenu> subMenus = (List<ManageSubMenu>)baseResponse.Data;
+            List<ManageSubMenu> subMenus = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
 
             var result = subMenus.Where(x => x.ParentId == null).Select(x => new
             {
@@ -393,7 +393,7 @@ namespace API_Gateway.Controllers.Admin
                 {
                     var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?CategoryId=" + categoryId + "&headerId=" + headerId, "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp);
-                    List<ManageSubMenu> tempList = (List<ManageSubMenu>)baseResponse.Data;
+                    List<ManageSubMenu> tempList = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
                     if (tempList.Any())
                     {
                         var response = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + tempList[0].Id, "DELETE", null);
@@ -411,7 +411,7 @@ namespace API_Gateway.Controllers.Admin
                 {
                     var temp = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Brands=" + brandId + "&headerId=" + headerId, "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp);
-                    List<ManageSubMenu> tempList = (List<ManageSubMenu>)baseResponse.Data;
+                    List<ManageSubMenu> tempList = baseResponse.Data as List<ManageSubMenu> ?? new List<ManageSubMenu>();
                     if (tempList.Any())
                     {
                         var response = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + tempList[0].Id, "DELETE", null);
@@ -439,7 +439,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + model.Id, "GET", null);
                 var parentBaseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageSubMenu parentSequence = (ManageSubMenu)parentBaseResponse.Data;
+                ManageSubMenu parentSequence = parentBaseResponse.Data as ManageSubMenu;
                 parentSequence.Sequence = model.Sequence;
                 parentSequence.ParentId = null;
                 parentSequence.ModifiedAt = DateTime.Now;
@@ -455,7 +455,7 @@ namespace API_Gateway.Controllers.Admin
 
                     recordCall = helper.ApiCall(URL, EndPoints.ManageSubMenu + "?Id=" + model.ChildSequence[i].Id, "GET", null);
                     baseResponse = baseResponse.JsonParseRecord(recordCall);
-                    ManageSubMenu childSequence = (ManageSubMenu)baseResponse.Data;
+                    ManageSubMenu childSequence = baseResponse.Data as ManageSubMenu;
                     childSequence.ParentId = model.ChildSequence[i].ParentId;
                     childSequence.Sequence = model.ChildSequence[i].Sequence;
                     childSequence.ModifiedAt = DateTime.Now;

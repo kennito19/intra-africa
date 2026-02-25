@@ -70,7 +70,7 @@ namespace API_Gateway.Controllers.Seller
 
             if (SellerbaseResponse.code == 200)
             {
-                SellerListModel seller = (SellerListModel)SellerbaseResponse.Data;
+                SellerListModel seller = SellerbaseResponse.Data as SellerListModel;
                 if (seller != null)
                 {
                     if (model.Status.ToLower() == "approved")
@@ -119,7 +119,7 @@ namespace API_Gateway.Controllers.Seller
             KYCDetails model = new KYCDetails();
             if (baseResponse.code == 200)
             {
-                model = (KYCDetails)baseResponse.Data;
+                model = baseResponse.Data as KYCDetails;
                 string userID = HttpContext.User.Claims.Where(x => x.Type.Equals("UserID")).FirstOrDefault().Value;
                 bool AllowAadharcard = Convert.ToBoolean(_configuration.GetValue<string>("allow_aadharcard"));
                 model.Status = sellerkyc.Status;
@@ -132,7 +132,7 @@ namespace API_Gateway.Controllers.Seller
 
                 if (SellerbaseResponse.code == 200)
                 {
-                    SellerListModel seller = (SellerListModel)SellerbaseResponse.Data;
+                    SellerListModel seller = SellerbaseResponse.Data as SellerListModel;
                     if (seller != null)
                     {
                         if (model.Status.ToLower() == "approved")
@@ -167,7 +167,7 @@ namespace API_Gateway.Controllers.Seller
                             BaseResponse<KYCDetails> KycbaseResponse = new BaseResponse<KYCDetails>();
                             var response = helper.ApiCall(URL, EndPoints.KYCDetails + "?Id=" + model.Id, "GET", null);
                             KycbaseResponse = KycbaseResponse.JsonParseRecord(response);
-                            KYCDetails kyc = (KYCDetails)KycbaseResponse.Data;
+                            KYCDetails kyc = KycbaseResponse.Data as KYCDetails;
 
                             MailSendSES objses = new MailSendSES(_configuration);
 

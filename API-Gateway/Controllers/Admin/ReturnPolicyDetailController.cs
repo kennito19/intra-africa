@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ReturnPolicyDetail + "?days=" + model.ValidityDays + "&title=" + model.Title + "&returnpolicyid=" + model.ReturnPolicyID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ReturnPolicyDetail> templist = (List<ReturnPolicyDetail>)baseResponse.Data;
+            List<ReturnPolicyDetail> templist = baseResponse.Data as List<ReturnPolicyDetail> ?? new List<ReturnPolicyDetail>();
             if (templist.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -63,7 +63,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ReturnPolicyDetail + "?days=" + model.ValidityDays + "&title=" + model.Title + "&returnpolicyid=" + model.ReturnPolicyID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ReturnPolicyDetail> templist = (List<ReturnPolicyDetail>)baseResponse.Data;
+            List<ReturnPolicyDetail> templist = baseResponse.Data as List<ReturnPolicyDetail> ?? new List<ReturnPolicyDetail>();
             if (templist.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -73,7 +73,7 @@ namespace API_Gateway.Controllers.Admin
 
                 var temp1 = helper.ApiCall(URL, EndPoints.ReturnPolicyDetail + "?id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp1);
-                List<ReturnPolicyDetail> templist1 = (List<ReturnPolicyDetail>)baseResponse.Data;
+                List<ReturnPolicyDetail> templist1 = baseResponse.Data as List<ReturnPolicyDetail> ?? new List<ReturnPolicyDetail>();
                 if (!templist1.Any())
                 {
                     baseResponse = baseResponse.NotExist();
@@ -103,7 +103,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = helper.ApiCall(URL, EndPoints.ReturnPolicyDetail + "?id=" + id, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ReturnPolicyDetail> returnPolicy = (List<ReturnPolicyDetail>)baseResponse.Data;
+            List<ReturnPolicyDetail> returnPolicy = baseResponse.Data as List<ReturnPolicyDetail> ?? new List<ReturnPolicyDetail>();
 
             if (!returnPolicy.Any())
             {
@@ -114,7 +114,7 @@ namespace API_Gateway.Controllers.Admin
                 temp = helper.ApiCall(URL, EndPoints.AssignReturnPolicyToCatagory + "?ReturnPolicyDetailID=" + id, "GET", null);
                 BaseResponse<AssignReturnPolicyToCatagoryLibrary> tmp = new BaseResponse<AssignReturnPolicyToCatagoryLibrary>();
                 var tempList = tmp.JsonParseList(temp);
-                List<AssignReturnPolicyToCatagoryLibrary> assignReturnPolicy = (List<AssignReturnPolicyToCatagoryLibrary>)tempList.Data;
+                List<AssignReturnPolicyToCatagoryLibrary> assignReturnPolicy = tempList.Data as List<AssignReturnPolicyToCatagoryLibrary> ?? new List<AssignReturnPolicyToCatagoryLibrary>();
                 if (assignReturnPolicy.Any())
                 {
                     baseResponse = baseResponse.ChildExists();

@@ -1,4 +1,4 @@
-﻿using API_Gateway.Helper;
+using API_Gateway.Helper;
 using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.Catalogue;
 using API_Gateway.Models.Entity.Order;
@@ -34,14 +34,19 @@ namespace API_Gateway.Common
 
         public BaseResponse<ManageOffersLibrary> SaveOffer(ManageOffersDTO model, string UserId, bool IsAdmin)
         {
+            if (model == null)
+            {
+                return baseResponse.InvalidInput("Invalid coupon payload.");
+            }
+
             BaseResponse<ManageOffersMapping> mappingResponse = new BaseResponse<ManageOffersMapping>();
             var temp = helper.ApiCall(_URL, EndPoints.ManageOffers + "?Code=" + model.code, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageOffersLibrary> tempList = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> tempList = baseResponse.Data as List<ManageOffersLibrary> ?? new List<ManageOffersLibrary>();
 
             var temp1 = helper.ApiCall(_URL, EndPoints.ManageOffers + "?Name=" + model.name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp1);
-            List<ManageOffersLibrary> tempList1 = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> tempList1 = baseResponse.Data as List<ManageOffersLibrary> ?? new List<ManageOffersLibrary>();
 
 
             if (tempList.Any())
@@ -56,6 +61,11 @@ namespace API_Gateway.Common
             {
                 DateTime date;
                 DateTime time;
+                if (!DateTime.TryParse(model.startDate, out date) || !DateTime.TryParse(model.startTime, out time))
+                {
+                    return baseResponse.InvalidInput("Invalid start date/time.");
+                }
+
                 ManageOffersLibrary manageOffers = new ManageOffersLibrary();
                 manageOffers.name = model.name;
                 manageOffers.code = model.code;
@@ -75,24 +85,24 @@ namespace API_Gateway.Common
                 manageOffers.onlyForOnlinePayments = model.onlyForOnlinePayments;
                 manageOffers.onlyForNewCustomers = model.onlyForNewCustomers;
 
-                date = DateTime.Parse(model.startDate);
-                time = DateTime.Parse(model.startTime);
                 manageOffers.startDate = date.Add(time.TimeOfDay);
 
-                date = DateTime.Parse(model.endDate);
-                time = DateTime.Parse(model.endTime);
+                if (!DateTime.TryParse(model.endDate, out date) || !DateTime.TryParse(model.endTime, out time))
+                {
+                    return baseResponse.InvalidInput("Invalid end date/time.");
+                }
                 manageOffers.endDate = date.Add(time.TimeOfDay);
                 manageOffers.status = model.status;
                 manageOffers.CreatedAt = DateTime.Now;
                 manageOffers.CreatedBy = UserId;
                 var response = helper.ApiCall(_URL, EndPoints.ManageOffers, "POST", manageOffers);
                 baseResponse = baseResponse.JsonParseInputResponse(response);
-                int offerId = (int)baseResponse.Data;
+                int offerId = Convert.ToInt32(baseResponse.Data);
 
                 ManageOffersMapping mapping = new ManageOffersMapping();
                 if (manageOffers.applyOn != "All Products")
                 {
-                    foreach (var item in model.offerItems)
+                    foreach (var item in model.offerItems ?? new List<ManageOffersMappingDTO>())
                     {
                         mapping.offerId = offerId;
                         mapping.categoryId = item.categoryId;
@@ -185,17 +195,26 @@ namespace API_Gateway.Common
 
         public BaseResponse<ManageOffersLibrary> UpdateOffer(ManageOffersDTO model, string UserId, bool IsAdmin)
         {
+            if (model == null)
+            {
+                return baseResponse.InvalidInput("Invalid coupon payload.");
+            }
+
             var temp = helper.ApiCall(_URL, EndPoints.ManageOffers + "?Code=" + model.code, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageOffersLibrary> tempList = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> tempList = baseResponse.Data as List<ManageOffersLibrary> ?? new List<ManageOffersLibrary>();
 
             var temp1 = helper.ApiCall(_URL, EndPoints.ManageOffers + "?Name=" + model.name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp1);
-            List<ManageOffersLibrary> tempList1 = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> tempList1 = baseResponse.Data as List<ManageOffersLibrary> ?? new List<ManageOffersLibrary>();
 
             temp = helper.ApiCall(_URL, EndPoints.ManageOffers + "?id=" + model.id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(temp);
-            ManageOffersLibrary tempRecord = (ManageOffersLibrary)baseResponse.Data;
+            ManageOffersLibrary tempRecord = baseResponse.Data as ManageOffersLibrary;
+            if (tempRecord == null)
+            {
+                return baseResponse.NotExist();
+            }
 
             if (tempList.Where(x => x.id != model.id).Any())
             {
@@ -230,12 +249,18 @@ namespace API_Gateway.Common
                 tempRecord.onlyForOnlinePayments = model.onlyForOnlinePayments;
                 tempRecord.onlyForNewCustomers = model.onlyForNewCustomers;
 
-                date = DateTime.Parse(model.startDate).Date;
-                time = DateTime.Parse(model.startTime);
+                if (!DateTime.TryParse(model.startDate, out date) || !DateTime.TryParse(model.startTime, out time))
+                {
+                    return baseResponse.InvalidInput("Invalid start date/time.");
+                }
+                date = date.Date;
                 tempRecord.startDate = date.Add(time.TimeOfDay);
 
-                date = DateTime.Parse(model.endDate).Date;
-                time = DateTime.Parse(model.endTime);
+                if (!DateTime.TryParse(model.endDate, out date) || !DateTime.TryParse(model.endTime, out time))
+                {
+                    return baseResponse.InvalidInput("Invalid end date/time.");
+                }
+                date = date.Date;
                 tempRecord.endDate = date.Add(time.TimeOfDay);
 
                 tempRecord.status = model.status;
@@ -248,7 +273,7 @@ namespace API_Gateway.Common
                 BaseResponse<ManageOffersMapping> baseResponse1 = new BaseResponse<ManageOffersMapping>();
 
                 baseResponse1 = baseResponse1.JsonParseList(temp);
-                List<ManageOffersMapping> templst = (List<ManageOffersMapping>)baseResponse1.Data;
+                List<ManageOffersMapping> templst = baseResponse1.Data as List<ManageOffersMapping>;
                 if (templst.Any())
                 {
                     for (int i = 0; i < templst.Count; i++)
@@ -261,7 +286,7 @@ namespace API_Gateway.Common
                 ManageOffersMapping mapping = new ManageOffersMapping();
                 if (model.applyOn != "All Products")
                 {
-                    foreach (var item in model.offerItems)
+                    foreach (var item in model.offerItems ?? new List<ManageOffersMappingDTO>())
                     {
                         mapping.offerId = tempRecord.id;
                         mapping.categoryId = item.categoryId;
@@ -357,7 +382,7 @@ namespace API_Gateway.Common
             baseResponse = baseResponse.JsonParseRecord(temp);
             if (baseResponse.code == 200)
             {
-                ManageOffersLibrary tempRecord = (ManageOffersLibrary)baseResponse.Data;
+                ManageOffersLibrary tempRecord = baseResponse.Data as ManageOffersLibrary;
                 tempRecord.status = status;
                 tempRecord.ModifiedAt = DateTime.Now;
                 tempRecord.ModifiedBy = userId;
@@ -376,7 +401,7 @@ namespace API_Gateway.Common
             BaseResponse<ManageOffersMapping> OffersResponse = new BaseResponse<ManageOffersMapping>();
             if (baseResponse.code == 200)
             {
-                List<ManageOffersMapping> tempRecordlist = (List<ManageOffersMapping>)baseResponse.Data;
+                List<ManageOffersMapping> tempRecordlist = baseResponse.Data as List<ManageOffersMapping>;
                 if (tempRecordlist.Count > 0)
                 {
 
@@ -423,7 +448,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.ManageOffers + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageOffersLibrary> templist = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> templist = baseResponse.Data as List<ManageOffersLibrary>;
             if (templist.Any())
             {
                 if (templist[0].startDate < DateTime.Now)
@@ -437,7 +462,7 @@ namespace API_Gateway.Common
                     BaseResponse<ManageOffersMapping> baseResponse1 = new BaseResponse<ManageOffersMapping>();
 
                     baseResponse1 = baseResponse1.JsonParseList(temp);
-                    List<ManageOffersMapping> templst = (List<ManageOffersMapping>)baseResponse1.Data;
+                    List<ManageOffersMapping> templst = baseResponse1.Data as List<ManageOffersMapping>;
                     if (templst.Any())
                     {
                         for (int i = 0; i < templst.Count; i++)
@@ -464,7 +489,7 @@ namespace API_Gateway.Common
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+                List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
 
                 BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
                 BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -473,7 +498,7 @@ namespace API_Gateway.Common
                 {
                     response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                     mapping1 = mapping1.JsonParseList(response);
-                    var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                    var dataresponse = mapping1.Data as List<ManageOffersMapping>;
 
                     var response1 = helper.ApiCall(OrderURL, EndPoints.Orders + "?Coupon=" + data[i].code, "GET", null);
                     orderlst = orderlst.JsonParseList(response1);
@@ -481,7 +506,7 @@ namespace API_Gateway.Common
                     decimal totalused = 0;
                     if (orderlst.code == 200)
                     {
-                        var dataorderresponse = (List<Orders>)orderlst.Data;
+                        var dataorderresponse = orderlst.Data as List<Orders>;
                         totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                         totalused = dataorderresponse.Count();
                     }
@@ -553,7 +578,7 @@ namespace API_Gateway.Common
             OfferMap = OfferMap.JsonParseList(OfferMapresponse);
             if (OfferMap.code == 200)
             {
-                offermapList = (List<ManageOffersMapping>)OfferMap.Data;
+                offermapList = OfferMap.Data as List<ManageOffersMapping>;
                 //offermapList = offermapList.Where(p => p.sellerOptIn == true && p.optInSellerIds.Contains(sellerId)).OrderByDescending(p => p.CreatedAt).ToList();
                 if (offermapList.Count > 0)
                 {
@@ -575,7 +600,7 @@ namespace API_Gateway.Common
                 baseResponse = baseResponse.JsonParseList(response);
                 if (baseResponse.code == 200)
                 {
-                    List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+                    List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
 
                     BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
                     BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -586,7 +611,7 @@ namespace API_Gateway.Common
                         OfferMappingRespone = OfferMappingRespone.Where(p => p.offerId == data[i].id).ToList();
                         //response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id + "&sellerId="+sellerId, "GET", null);
                         //mapping1 = mapping1.JsonParseList(response);
-                        //var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                        //var dataresponse = mapping1.Data as List<ManageOffersMapping>;
 
                         var response1 = helper.ApiCall(OrderURL, EndPoints.Orders + "?Coupon=" + data[i].code, "GET", null);
                         orderlst = orderlst.JsonParseList(response1);
@@ -594,7 +619,7 @@ namespace API_Gateway.Common
                         decimal totalused = 0;
                         if (orderlst.code == 200)
                         {
-                            var dataorderresponse = (List<Orders>)orderlst.Data;
+                            var dataorderresponse = orderlst.Data as List<Orders>;
                             totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                             totalused = dataorderresponse.Count();
                         }
@@ -668,7 +693,7 @@ namespace API_Gateway.Common
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+                List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
                 BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
                 List<ManageOffersMapping> offermapList = new List<ManageOffersMapping>();
                 BaseResponse<Orders> orderlst = new BaseResponse<Orders>();
@@ -685,7 +710,7 @@ namespace API_Gateway.Common
                         mapping1 = mapping1.JsonParseList(offresponse);
                         if (mapping1.code == 200)
                         {
-                            offermapList = (List<ManageOffersMapping>)mapping1.Data;
+                            offermapList = mapping1.Data as List<ManageOffersMapping>;
                             var offerData = offermapList.Where(p => p.sellerOptIn == true && p.sellerId != sellerId).ToList();
                             if (offerData.Count > 0)
                             {
@@ -706,7 +731,7 @@ namespace API_Gateway.Common
                                             decimal totalused = 0;
                                             if (orderlst.code == 200)
                                             {
-                                                var dataorderresponse = (List<Orders>)orderlst.Data;
+                                                var dataorderresponse = orderlst.Data as List<Orders>;
                                                 totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                                                 totalused = dataorderresponse.Count();
                                             }
@@ -787,7 +812,7 @@ namespace API_Gateway.Common
                 //{
                 //    //response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                 //    //mapping1 = mapping1.JsonParseList(response);
-                //    //offermapList = (List<ManageOffersMapping>)mapping1.Data;
+                //    //offermapList = mapping1.Data as List<ManageOffersMapping>;
                 //    bool isvisible = false;
                 //    //var offerData = offermapList.Where(p => p.sellerOptIn == true).ToList();
                 //    if (offerData.Count > 0)
@@ -897,7 +922,7 @@ namespace API_Gateway.Common
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+                List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
                 BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
                 List<ManageOffersMapping> offermapList = new List<ManageOffersMapping>();
                 BaseResponse<Orders> orderlst = new BaseResponse<Orders>();
@@ -914,7 +939,7 @@ namespace API_Gateway.Common
                         mapping1 = mapping1.JsonParseList(offresponse);
                         if (mapping1.code == 200)
                         {
-                            offermapList = (List<ManageOffersMapping>)mapping1.Data;
+                            offermapList = mapping1.Data as List<ManageOffersMapping>;
                             //var offerData = offermapList.Where(p => p.sellerOptIn == true || p.sellerId == sellerId).ToList();
                             var offerData = offermapList.Where(p => p.sellerOptIn == true).ToList();
                             if (offerData.Count > 0)
@@ -939,7 +964,7 @@ namespace API_Gateway.Common
                                             decimal totalused = 0;
                                             if (orderlst.code == 200)
                                             {
-                                                var dataorderresponse = (List<Orders>)orderlst.Data;
+                                                var dataorderresponse = orderlst.Data as List<Orders>;
                                                 totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                                                 totalused = dataorderresponse.Count();
                                             }
@@ -1014,7 +1039,7 @@ namespace API_Gateway.Common
                                             decimal totalused = 0;
                                             if (orderlst.code == 200)
                                             {
-                                                var dataorderresponse = (List<Orders>)orderlst.Data;
+                                                var dataorderresponse = orderlst.Data as List<Orders>;
                                                 totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                                                 totalused = dataorderresponse.Count();
                                             }
@@ -1087,7 +1112,7 @@ namespace API_Gateway.Common
                                     decimal totalused = 0;
                                     if (orderlst.code == 200)
                                     {
-                                        var dataorderresponse = (List<Orders>)orderlst.Data;
+                                        var dataorderresponse = orderlst.Data as List<Orders>;
                                         totalsales = dataorderresponse.Sum(p => Convert.ToDecimal(p.CoupontDiscount));
                                         totalused = dataorderresponse.Count();
                                     }
@@ -1144,7 +1169,7 @@ namespace API_Gateway.Common
                 //baseResponse = baseResponse.JsonParseList(response);
                 //if (baseResponse.code == 200)
                 //{
-                //    List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+                //    List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
                 //    data = data.Where(p => p.CreatedBy != sellerId).ToList();
                 //    List<ManageOffersMapping> offermapList = new List<ManageOffersMapping>();
                 //    BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
@@ -1153,7 +1178,7 @@ namespace API_Gateway.Common
                 //    {
                 //        response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                 //        mapping1 = mapping1.JsonParseList(response);
-                //        offermapList = (List<ManageOffersMapping>)mapping1.Data;
+                //        offermapList = mapping1.Data as List<ManageOffersMapping>;
                 //        bool isvisible = false;
                 //        var offerData = offermapList.Where(p => p.sellerOptIn == true).ToList();
                 //        if(offerData.Count > 0)
@@ -1233,7 +1258,7 @@ namespace API_Gateway.Common
             BaseResponse<ManageOffersDTO> offerResponse = new BaseResponse<ManageOffersDTO>();
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?PageIndex=0&PageSize=0" + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
 
             if (data.Count > 0)
             {
@@ -1276,7 +1301,7 @@ namespace API_Gateway.Common
                 BaseResponse<ManageOffersMapping> baseResponse1 = new BaseResponse<ManageOffersMapping>();
 
                 baseResponse1 = baseResponse1.JsonParseList(response1);
-                List<ManageOffersMapping> data1 = (List<ManageOffersMapping>)baseResponse1.Data;
+                List<ManageOffersMapping> data1 = baseResponse1.Data as List<ManageOffersMapping>;
                 var offerIdList = data1.Select(p => p.offerId).ToList();
                 //data = data.Where(num => offerIdList.Contains(num.id)).ToList();
                 //}
@@ -1317,74 +1342,102 @@ namespace API_Gateway.Common
             return offerResponse;
         }
 
-        public BaseResponse<ManageOffersLibrary> GetOfferById(int id, string? SellerId=null)
+                public BaseResponse<ManageOffersLibrary> GetOfferById(int id, string? SellerId = null)
         {
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?id=" + id, "GET", null);
-            baseResponse = baseResponse.JsonParseRecord(response);
-            ManageOffersLibrary data = (ManageOffersLibrary)baseResponse.Data;
+            baseResponse = baseResponse.JsonParseRecord(response) ?? new BaseResponse<ManageOffersLibrary>();
+            ManageOffersLibrary data = baseResponse.Data as ManageOffersLibrary;
 
-            BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
-            BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
-            if (data.id != 0 && data.id != null)
+            if (data == null || data.id == 0)
             {
-                response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data.id, "GET", null);
-                mapping1 = mapping1.JsonParseList(response);
-                var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
-                data.offerItems = dataresponse.Select(details => new ManageOffersMapping
-                {
-                    id = details.id,
-                    offerId = details.offerId,
-                    categoryId = (int)details.categoryId,
-                    sellerId = details.sellerId,
-                    brandId = (int)details.brandId,
-                    productId = details.productId,
-                    getProductId = details.getProductId,
-                    userId = details.userId,
-                    getDiscountType = details.getDiscountType,
-                    getDiscountValue = (decimal)details.getDiscountValue,
-                    getProductPrice = (decimal)details.getProductPrice,
-                    sellerOptIn = (bool)details.sellerOptIn,
-                    optInSellerIds = details.optInSellerIds,
-                    status = details.status,
-                    CategoryIds = details.CategoryIds,
-                    SellerIds = details.SellerIds,
-                    Brandids = details.Brandids,
-                    ProductIds = details.ProductIds,
-                    CreatedBy = details.CreatedBy,
-                    CreatedAt = details.CreatedAt,
-                    ModifiedBy = details.ModifiedBy,
-                    ModifiedAt = details.ModifiedAt,
-                    offerName = details.offerName,
-                    productName = details.productName,
-                    categoryName = details.categoryName,
-                    categoryPathNames = details.categoryPathNames,
-                    SellerName = !string.IsNullOrEmpty(details.ExtraDetails) ? JObject.Parse(details.ExtraDetails)["SellerDetails"]?["Display"]?.ToString() ?? JObject.Parse(details.ExtraDetails)["SellerDetails"]?["FullName"]?.ToString() ?? "Unknown Seller" : null,
-                    BrandName = !string.IsNullOrEmpty(details.ExtraDetails) ? JObject.Parse(details.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? null : null,
-                    UserName = !string.IsNullOrEmpty(details.ExtraDetails) ? JObject.Parse(details.ExtraDetails)["CustomerDetails"]?["FullName"]?.ToString() ?? null : null,
-                }).ToList();
+                return baseResponse.NotExist();
             }
 
-            bool isvalid = false;
-            
-            if (!string.IsNullOrEmpty(SellerId))
+            response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data.id, "GET", null);
+            BaseResponse<ManageOffersMapping> mappingResponse = new BaseResponse<ManageOffersMapping>();
+            mappingResponse = mappingResponse.JsonParseList(response) ?? new BaseResponse<ManageOffersMapping>();
+            List<ManageOffersMapping> dataresponse = mappingResponse.Data as List<ManageOffersMapping> ?? new List<ManageOffersMapping>();
+
+            string? SafeExtraValue(string? extraDetails, string section, string field)
             {
-                if(data.offerCreatedBy.ToLower() == "seller")
+                if (string.IsNullOrWhiteSpace(extraDetails))
                 {
-                    isvalid = data.offerItems.Where(x => x.sellerId == SellerId).ToList().Count > 0 ? true : false;
-                    
+                    return null;
+                }
+
+                try
+                {
+                    return JObject.Parse(extraDetails)?[section]?[field]?.ToString();
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            data.offerItems = dataresponse.Select(details => new ManageOffersMapping
+            {
+                id = details.id,
+                offerId = details.offerId,
+                categoryId = details.categoryId,
+                sellerId = details.sellerId,
+                brandId = details.brandId,
+                productId = details.productId,
+                getProductId = details.getProductId,
+                userId = details.userId,
+                getDiscountType = details.getDiscountType,
+                getDiscountValue = details.getDiscountValue,
+                getProductPrice = details.getProductPrice,
+                sellerOptIn = details.sellerOptIn,
+                optInSellerIds = details.optInSellerIds,
+                status = details.status,
+                CategoryIds = details.CategoryIds,
+                SellerIds = details.SellerIds,
+                Brandids = details.Brandids,
+                ProductIds = details.ProductIds,
+                CreatedBy = details.CreatedBy,
+                CreatedAt = details.CreatedAt,
+                ModifiedBy = details.ModifiedBy,
+                ModifiedAt = details.ModifiedAt,
+                offerName = details.offerName,
+                productName = details.productName,
+                categoryName = details.categoryName,
+                categoryPathNames = details.categoryPathNames,
+                SellerName = SafeExtraValue(details.ExtraDetails, "SellerDetails", "Display")
+                    ?? SafeExtraValue(details.ExtraDetails, "SellerDetails", "FullName")
+                    ?? "Unknown Seller",
+                BrandName = SafeExtraValue(details.ExtraDetails, "BrandDetails", "Name"),
+                UserName = SafeExtraValue(details.ExtraDetails, "CustomerDetails", "FullName")
+            }).ToList();
+
+            bool isvalid = false;
+
+            if (!string.IsNullOrWhiteSpace(SellerId))
+            {
+                var offerItems = data.offerItems ?? new List<ManageOffersMapping>();
+                bool isSellerCreatedOffer = string.Equals(data.offerCreatedBy, "seller", StringComparison.OrdinalIgnoreCase);
+                bool isAllProductsOffer = string.Equals(data.offerType, "all products", StringComparison.OrdinalIgnoreCase);
+
+                if (isSellerCreatedOffer)
+                {
+                    isvalid = offerItems.Any(x => string.Equals(x.sellerId, SellerId, StringComparison.OrdinalIgnoreCase));
+
                     if (!isvalid)
                     {
-                        if (data.offerType.ToLower() != "all products")
+                        if (!isAllProductsOffer)
                         {
-                            var datamap = data.offerItems.FirstOrDefault();
+                            var datamap = offerItems.FirstOrDefault();
+                            bool sellerOptIn = datamap?.sellerOptIn ?? false;
+                            string? optInSellerIds = datamap?.optInSellerIds;
+                            string? sellerIds = datamap?.SellerIds;
 
-                            if (Convert.ToBoolean(datamap.sellerOptIn) && !string.IsNullOrEmpty(datamap.optInSellerIds))
+                            if (sellerOptIn && !string.IsNullOrWhiteSpace(optInSellerIds))
                             {
-                                isvalid = data.offerItems.Where(p => p.optInSellerIds.Split(',').Any(id => id == SellerId.ToString())).ToList().Count > 0 ? true : false;
+                                isvalid = optInSellerIds.Split(',').Any(x => x == SellerId);
                             }
-                            else
+                            else if (!string.IsNullOrWhiteSpace(sellerIds))
                             {
-                                isvalid = data.offerItems.Where(p => p.SellerIds.Split(',').Any(id => id == SellerId.ToString())).ToList().Count > 0 ? true : false;
+                                isvalid = sellerIds.Split(',').Any(x => x == SellerId);
                             }
                         }
                         else
@@ -1395,17 +1448,20 @@ namespace API_Gateway.Common
                 }
                 else
                 {
-                    var datamap = data.offerItems.FirstOrDefault();
-
-                    if (data.offerType.ToLower()!= "all products")
+                    var datamap = offerItems.FirstOrDefault();
+                    if (!isAllProductsOffer)
                     {
-                        if (Convert.ToBoolean(datamap.sellerOptIn) && !string.IsNullOrEmpty(datamap.optInSellerIds))
+                        bool sellerOptIn = datamap?.sellerOptIn ?? false;
+                        string? optInSellerIds = datamap?.optInSellerIds;
+                        string? sellerIds = datamap?.SellerIds;
+
+                        if (sellerOptIn && !string.IsNullOrWhiteSpace(optInSellerIds))
                         {
-                            isvalid = data.offerItems.Where(p => p.optInSellerIds.Split(',').Any(id => id == SellerId.ToString())).ToList().Count > 0 ? true : false;
+                            isvalid = optInSellerIds.Split(',').Any(x => x == SellerId);
                         }
-                        else
+                        else if (!string.IsNullOrWhiteSpace(sellerIds))
                         {
-                            isvalid = data.offerItems.Where(p => p.SellerIds.Split(',').Any(id => id == SellerId.ToString())).ToList().Count > 0 ? true : false;
+                            isvalid = sellerIds.Split(',').Any(x => x == SellerId);
                         }
                     }
                     else
@@ -1427,14 +1483,14 @@ namespace API_Gateway.Common
             {
                 baseResponse = baseResponse.NotExist();
             }
+
             return baseResponse;
         }
-
-        public BaseResponse<ManageOffersLibrary> GetOfferByName(string name)
+public BaseResponse<ManageOffersLibrary> GetOfferByName(string name)
         {
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?name=" + name, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            ManageOffersLibrary data = (ManageOffersLibrary)baseResponse.Data;
+            ManageOffersLibrary data = baseResponse.Data as ManageOffersLibrary;
 
             BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
             BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -1442,7 +1498,7 @@ namespace API_Gateway.Common
             {
                 response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data.id, "GET", null);
                 mapping1 = mapping1.JsonParseList(response);
-                var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                var dataresponse = mapping1.Data as List<ManageOffersMapping>;
                 data.offerItems = dataresponse.Select(details => new ManageOffersMapping
                 {
                     id = details.id,
@@ -1484,7 +1540,7 @@ namespace API_Gateway.Common
         {
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?OfferType=" + offerType, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
 
             BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
             BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -1492,7 +1548,7 @@ namespace API_Gateway.Common
             {
                 response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                 mapping1 = mapping1.JsonParseList(response);
-                var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                var dataresponse = mapping1.Data as List<ManageOffersMapping>;
                 data[i].offerItems = dataresponse.Select(details => new ManageOffersMapping
                 {
                     id = details.id,
@@ -1541,7 +1597,7 @@ namespace API_Gateway.Common
             baseResponse = baseResponse.JsonParseRecord(response);
             if (baseResponse.code == 200)
             {
-                ManageOffersLibrary data = (ManageOffersLibrary)baseResponse.Data;
+                ManageOffersLibrary data = baseResponse.Data as ManageOffersLibrary;
 
                 BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
                 BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -1549,7 +1605,7 @@ namespace API_Gateway.Common
                 {
                     response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data.id, "GET", null);
                     mapping1 = mapping1.JsonParseList(response);
-                    var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                    var dataresponse = mapping1.Data as List<ManageOffersMapping>;
                     data.offerItems = dataresponse.Select(details => new ManageOffersMapping
                     {
                         id = details.id,
@@ -1592,7 +1648,7 @@ namespace API_Gateway.Common
         {
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?status=" + status, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+            List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary>;
 
             BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
             BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -1600,7 +1656,7 @@ namespace API_Gateway.Common
             {
                 response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                 mapping1 = mapping1.JsonParseList(response);
-                var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                var dataresponse = mapping1.Data as List<ManageOffersMapping>;
                 data[i].offerItems = dataresponse.Select(details => new ManageOffersMapping
                 {
                     id = details.id,
@@ -1662,7 +1718,13 @@ namespace API_Gateway.Common
 
             var response = helper.ApiCall(_URL, EndPoints.ManageOffers + "?PageIndex=" + pageindex + "&PageSize=" + pageSize + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageOffersLibrary> data = (List<ManageOffersLibrary>)baseResponse.Data;
+            if (baseResponse.code != 200)
+            {
+                baseResponse.Data = new List<ManageOffersLibrary>();
+                return baseResponse;
+            }
+
+            List<ManageOffersLibrary> data = baseResponse.Data as List<ManageOffersLibrary> ?? new List<ManageOffersLibrary>();
 
             BaseResponse<ManageOffersMapping> mapping = new BaseResponse<ManageOffersMapping>();
             BaseResponse<ManageOffersMapping> mapping1 = new BaseResponse<ManageOffersMapping>();
@@ -1670,7 +1732,7 @@ namespace API_Gateway.Common
             {
                 response = helper.ApiCall(_URL, EndPoints.ManageOffersMapping + "?offerId=" + data[i].id, "GET", null);
                 mapping1 = mapping1.JsonParseList(response);
-                var dataresponse = (List<ManageOffersMapping>)mapping1.Data;
+                var dataresponse = mapping1.Data as List<ManageOffersMapping> ?? new List<ManageOffersMapping>();
                 data[i].offerItems = dataresponse.Select(details => new ManageOffersMapping
                 {
                     id = details.id,

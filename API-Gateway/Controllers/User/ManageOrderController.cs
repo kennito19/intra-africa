@@ -300,17 +300,17 @@ namespace API_Gateway.Controllers.User
 
             var getOrderDetails = helper.ApiCall(URL, EndPoints.Orders + "?Id=" + orderId, "GET", null);
             orderResponse = orderResponse.JsonParseList(getOrderDetails);
-            List<Orders> orderbind = (List<Orders>)orderResponse.Data;
+            List<Orders> orderbind = orderResponse.Data as List<Orders> ?? new List<Orders>();
 
 
             var getOrderShipDetail = helper.ApiCall(URL, EndPoints.ShipmentInfo + "?orderId=" + orderId, "GET", null);
             orderShipResponse = orderShipResponse.JsonParseList(getOrderShipDetail);
-            List<OrderShipmentInfo> orderShip = (List<OrderShipmentInfo>)orderShipResponse.Data;
+            List<OrderShipmentInfo> orderShip = orderShipResponse.Data as List<OrderShipmentInfo> ?? new List<OrderShipmentInfo>();
 
 
             var getOrderPackedData = helper.ApiCall(URL, EndPoints.OrderPackage + "?orderId=" + orderId, "GET", null);
             orderPackResponse = orderPackResponse.JsonParseList(getOrderPackedData);
-            List<OrderPackage> orderPack = (List<OrderPackage>)orderPackResponse.Data;
+            List<OrderPackage> orderPack = orderPackResponse.Data as List<OrderPackage> ?? new List<OrderPackage>();
 
             var response = orderbind.Select(order => new
             {
@@ -382,7 +382,7 @@ namespace API_Gateway.Controllers.User
             BaseResponse<OrderTrackDetails> response = new BaseResponse<OrderTrackDetails>();
             var getOrderDetails = helper.ApiCall(URL, EndPoints.OrderTrackDetails + "?Id=" + Id + "&OrderID=" + OrderID + "&OrderItemID=" + OrderItemID + "&Isdeleted=" + Isdeleted + "&PageIndex=" + PageIndex + "&PageSize=" + PageSize, "GET", null);
             response = response.JsonParseList(getOrderDetails);
-            //List<OrderTrackDetails> orderbind = (List<OrderTrackDetails>)response.Data;
+            //List<OrderTrackDetails> orderbind = response.Data as List<OrderTrackDetails> ?? new List<OrderTrackDetails>();
 
             return Ok(response);
         }

@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?taxType=" + model.TaxType + "&ParentID=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> tempList = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> tempList = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
 
             if (tempList.Any())
             {
@@ -46,7 +46,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var temp1 = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?taxType=" + model.TaxType + "&ParentID=" + model.ParentId + "&isDeleted=" + true, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp1);
-                List<TaxTypeLibrary> tempList1 = (List<TaxTypeLibrary>)baseResponse.Data;
+                List<TaxTypeLibrary> tempList1 = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
                 TaxTypeLibrary taxType = new TaxTypeLibrary();
                 if (tempList1.Any())
                 {
@@ -89,7 +89,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?taxType=" + model.TaxType + "&ParentID=" + model.ParentId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> tempList = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> tempList = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
 
                 if (baseResponse.code == 200)
                 {
-                    TaxTypeLibrary taxType = (TaxTypeLibrary)baseResponse.Data;
+                    TaxTypeLibrary taxType = baseResponse.Data as TaxTypeLibrary;
                     
                     taxType.TaxType = model.TaxType;
                     taxType.ParentId = model.ParentId;
@@ -122,17 +122,17 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<TaxTypeLibrary> taxType = (List<TaxTypeLibrary>)baseResponse.Data;
+            List<TaxTypeLibrary> taxType = baseResponse.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
             if (!taxType.Any())
             {
                 baseResponse = baseResponse.NotExist();
             }
             else if (taxType.Any())
             {
-                var tempTaxTypeValue = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?TaxTypeId=" + taxType[0].ParentId, "GET", null);
+                var tempTaxTypeValue = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?TaxTypeId=" + taxType[0].Id, "GET", null);
                 BaseResponse<TaxTypeValueLibrary> baseResTaxTypeValue = new BaseResponse<TaxTypeValueLibrary>();
                 var TaxTypeValue = baseResTaxTypeValue.JsonParseList(tempTaxTypeValue);
-                List<TaxTypeValueLibrary> taxTypeValue = (List<TaxTypeValueLibrary>)TaxTypeValue.Data;
+                List<TaxTypeValueLibrary> taxTypeValue = TaxTypeValue.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
                 if (taxTypeValue.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("TaxTypeValue", "TaxType");
@@ -165,7 +165,7 @@ namespace API_Gateway.Controllers.Admin
                 url = "&Searchtext=" + HttpUtility.UrlEncode(searchtext);
             }
 
-            var response = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize + "&Getchild=" + true + url, "GET", null);
+            var response = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize + url, "GET", null);
             return Ok(baseResponse.JsonParseList(response));
         }
 

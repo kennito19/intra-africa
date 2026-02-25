@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayouts + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutsLibrary> tempList = (List<ManageLayoutsLibrary>)baseResponse.Data;
+            List<ManageLayoutsLibrary> tempList = baseResponse.Data as List<ManageLayoutsLibrary> ?? new List<ManageLayoutsLibrary>();
 
             if (tempList.Any())
             {
@@ -60,7 +60,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayouts + "?Name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutsLibrary> tempList = (List<ManageLayoutsLibrary>)baseResponse.Data;
+            List<ManageLayoutsLibrary> tempList = baseResponse.Data as List<ManageLayoutsLibrary> ?? new List<ManageLayoutsLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -70,7 +70,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLayouts + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageLayoutsLibrary record = (ManageLayoutsLibrary)baseResponse.Data;
+                ManageLayoutsLibrary record = baseResponse.Data as ManageLayoutsLibrary;
                 string OldName = record.ImageUrl;
                 record.Name = model.Name;
                 record.ImageUrl = UpdateDocFile(OldName, model.Name, model.ImageFile);
@@ -89,13 +89,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayouts + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutsLibrary> tempList = (List<ManageLayoutsLibrary>)baseResponse.Data;
+            List<ManageLayoutsLibrary> tempList = baseResponse.Data as List<ManageLayoutsLibrary> ?? new List<ManageLayoutsLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?LayoutId=" + id, "GET", null);
                 BaseResponse<ManageLayoutTypesLibrary> baseResponse1 = new BaseResponse<ManageLayoutTypesLibrary>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageLayoutTypesLibrary> tempList1 = (List<ManageLayoutTypesLibrary>)baseResponse1.Data;
+                List<ManageLayoutTypesLibrary> tempList1 = baseResponse1.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();

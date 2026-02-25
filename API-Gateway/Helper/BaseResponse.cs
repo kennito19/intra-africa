@@ -1,5 +1,6 @@
 using API_Gateway.Models.Dto;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace API_Gateway.Helper
 {
@@ -62,11 +63,30 @@ namespace API_Gateway.Helper
 
             if (message.IsSuccessStatusCode)
             {
-                response = JsonConvert.DeserializeObject<BaseResponse<T>>(message.Content.ReadAsStringAsync().Result);
+                var payload = message.Content.ReadAsStringAsync().Result;
+                response = JsonConvert.DeserializeObject<BaseResponse<T>>(payload) ?? new BaseResponse<T>();
                 if (response.Data != null)
                 {
-                    var data = response.Data.ToString();
-                    List<T> values = JsonConvert.DeserializeObject<List<T>>(data);
+                    var dataToken = response.Data as JToken ?? JToken.FromObject(response.Data);
+                    List<T> values = new List<T>();
+
+                    if (dataToken.Type == JTokenType.Array)
+                    {
+                        values = dataToken.ToObject<List<T>>() ?? new List<T>();
+                    }
+                    else if (dataToken.Type == JTokenType.Object)
+                    {
+                        var single = dataToken.ToObject<T>();
+                        if (single != null)
+                        {
+                            values.Add(single);
+                        }
+                    }
+                    else if (dataToken.Type == JTokenType.Null)
+                    {
+                        values = new List<T>();
+                    }
+
                     if (values.Count == 0)
                     {
                         response = response.NotExist();
@@ -103,18 +123,39 @@ namespace API_Gateway.Helper
             var response = new BaseResponse<T>();
             if (message.IsSuccessStatusCode)
             {
-                var temp = response.JsonParseList(message);
-                if (temp.code != 204)
+                var payload = message.Content.ReadAsStringAsync().Result;
+                response = JsonConvert.DeserializeObject<BaseResponse<T>>(payload) ?? new BaseResponse<T>();
+
+                if (response.Data == null)
                 {
-                    List<T> temp2 = (List<T>)temp.Data;
-                    response.Data = temp2.FirstOrDefault();
-                    response.code = 200;
-                    response.Message = "Record bind successfully.";
+                    return response.NotExist();
                 }
-                else
+
+                var dataToken = response.Data as JToken ?? JToken.FromObject(response.Data);
+                T? record = default;
+
+                if (dataToken.Type == JTokenType.Array)
                 {
-                    response = response.NotExist();
+                    var list = dataToken.ToObject<List<T>>() ?? new List<T>();
+                    record = list.FirstOrDefault();
                 }
+                else if (dataToken.Type == JTokenType.Object)
+                {
+                    record = dataToken.ToObject<T>();
+                }
+                else if (dataToken.Type != JTokenType.Null)
+                {
+                    record = JsonConvert.DeserializeObject<T>(dataToken.ToString());
+                }
+
+                if (record == null)
+                {
+                    return response.NotExist();
+                }
+
+                response.Data = record;
+                response.code = 200;
+                response.Message = "Record bind successfully.";
             }
             else
             {
@@ -128,11 +169,30 @@ namespace API_Gateway.Helper
             var response = new BaseResponse<T>();
             if (message.IsSuccessStatusCode)
             {
-                response = JsonConvert.DeserializeObject<BaseResponse<T>>(message.Content.ReadAsStringAsync().Result);
+                response = JsonConvert.DeserializeObject<BaseResponse<T>>(message.Content.ReadAsStringAsync().Result) ?? new BaseResponse<T>();
                 if (response.Data != null)
                 {
-                    var data = response.Data.ToString();
-                    response.Data = JsonConvert.DeserializeObject<int>(data);
+                    var dataToken = response.Data as JToken ?? JToken.FromObject(response.Data);
+                    if (dataToken.Type == JTokenType.Integer)
+                    {
+                        response.Data = dataToken.ToObject<int>();
+                    }
+                    else if (dataToken.Type == JTokenType.Float)
+                    {
+                        response.Data = dataToken.ToObject<double>();
+                    }
+                    else if (dataToken.Type == JTokenType.Boolean)
+                    {
+                        response.Data = dataToken.ToObject<bool>();
+                    }
+                    else if (dataToken.Type == JTokenType.String)
+                    {
+                        response.Data = dataToken.ToObject<string>();
+                    }
+                    else if (dataToken.Type == JTokenType.Object || dataToken.Type == JTokenType.Array)
+                    {
+                        response.Data = dataToken;
+                    }
                 }
             }
             else
@@ -199,6 +259,21 @@ namespace API_Gateway.Helper
             {
                 response.code = 502;
                 response.Message = "Bad Gateway";
+            }
+            else if (message.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            {
+                response.code = 500;
+                response.Message = "Internal Server Error";
+            }
+            else if (message.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+            {
+                response.code = 503;
+                response.Message = "Service Unavailable";
+            }
+            else
+            {
+                response.code = (int)message.StatusCode;
+                response.Message = !string.IsNullOrWhiteSpace(message.ReasonPhrase) ? message.ReasonPhrase : "Request failed";
             }
             return response;
         }

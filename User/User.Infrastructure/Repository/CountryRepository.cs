@@ -16,51 +16,49 @@ namespace User.Infrastructure.Repository
 {
     public class CountryRepository : ICountryRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
 
         public CountryRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(CountryLibrary countryLibrary)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
-                    new MySqlParameter("@name", countryLibrary.Name),
-                    new MySqlParameter("@status", countryLibrary.Status),
-                    new MySqlParameter("@createdBy", countryLibrary.CreatedBy),
-                    new MySqlParameter("@createdAt", countryLibrary.CreatedAt),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+INSERT INTO Country (Name, Status, CreatedBy, CreatedAt, IsDeleted)
+VALUES (@name, @status, @createdBy, @createdAt, 0);
+SELECT LAST_INSERT_ID();";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@name", countryLibrary.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@status", countryLibrary.Status ?? "Active");
+                cmd.Parameters.AddWithValue("@createdBy", countryLibrary.CreatedBy ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", countryLibrary.CreatedAt == default ? DateTime.Now : countryLibrary.CreatedAt);
+
+                var idObj = await cmd.ExecuteScalarAsync();
+                var newId = Convert.ToInt64(idObj ?? 0);
+
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record added successfully.",
+                    data = newId
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Country, output, newid, message, sqlParams.ToArray());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
@@ -68,65 +66,78 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "update"),
-                    new MySqlParameter("@id", countryLibrary.Id),
-                    new MySqlParameter("@name", countryLibrary.Name),
-                    new MySqlParameter("@status", countryLibrary.Status),
-                    new MySqlParameter("@modifiedBy", countryLibrary.ModifiedBy),
-                    new MySqlParameter("@modifiedAt", countryLibrary.ModifiedAt),
-                };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE Country
+SET Name = @name,
+    Status = @status,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", countryLibrary.Id);
+                cmd.Parameters.AddWithValue("@name", countryLibrary.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@status", countryLibrary.Status ?? "Active");
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)countryLibrary.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", (object?)countryLibrary.ModifiedAt ?? DateTime.Now);
 
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Country, output, newid: null, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                if (affected == 0)
+                {
+                    return new BaseResponse<long> { code = 204, message = "Record does not Exist.", data = 0 };
+                }
 
+                return new BaseResponse<long> { code = 200, message = "Record updated successfully.", data = countryLibrary.Id };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
-
-            //return country;
         }
 
         public async Task<BaseResponse<long>> Delete(CountryLibrary countryLibrary)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "delete"),
-                    new MySqlParameter("@id", countryLibrary.Id),
-                    new MySqlParameter("@deletedBy", countryLibrary.DeletedBy),
-                    new MySqlParameter("@deletedAt", countryLibrary.DeletedAt)
-                };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE Country
+SET IsDeleted = 1,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE Id = @id;";
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", countryLibrary.Id);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)countryLibrary.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)countryLibrary.DeletedAt ?? DateTime.Now);
 
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Country, output, newid: null, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                if (affected == 0)
+                {
+                    return new BaseResponse<long> { code = 204, message = "Record does not Exist.", data = 0 };
+                }
 
+                return new BaseResponse<long> { code = 200, message = "Record deleted successfully.", data = countryLibrary.Id };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
@@ -134,60 +145,103 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", Mode),
-                    new MySqlParameter("@id", countryLibrary.Id),
-                    new MySqlParameter("@name", countryLibrary.Name),
-                    new MySqlParameter("@status", countryLibrary.Status),
-                    new MySqlParameter("@isDeleted", countryLibrary.IsDeleted),
-                    new MySqlParameter("@pageIndex", PageIndex),
-                    new MySqlParameter("@PageSize", PageSize),
-                    new MySqlParameter("@searchtext", countryLibrary.Searchtext),
-                };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand();
+                cmd.Connection = con;
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetCountry, CountryParserAsync, output, newid: null, message, sqlParams.ToArray());
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private async Task<List<CountryLibrary>> CountryParserAsync(DbDataReader reader)
-        {
-            List<CountryLibrary> lstcountryLibraries = new List<CountryLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstcountryLibraries.Add(new CountryLibrary()
+                var where = new List<string>();
+                if (countryLibrary.Id > 0)
                 {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    Name = Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    Status = Convert.ToString(reader.GetValue(reader.GetOrdinal("Status"))),
-                    CreatedBy = Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    DeletedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy"))),
-                    DeletedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("DeletedAt"))),
-                    IsDeleted = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsDeleted"))),
-                });
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", countryLibrary.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(countryLibrary.Name))
+                {
+                    where.Add("Name = @name");
+                    cmd.Parameters.AddWithValue("@name", countryLibrary.Name);
+                }
+                if (!string.IsNullOrWhiteSpace(countryLibrary.Status))
+                {
+                    where.Add("Status = @status");
+                    cmd.Parameters.AddWithValue("@status", countryLibrary.Status);
+                }
+                if (!string.IsNullOrWhiteSpace(countryLibrary.Searchtext))
+                {
+                    where.Add("Name LIKE @search");
+                    cmd.Parameters.AddWithValue("@search", $"%{countryLibrary.Searchtext}%");
+                }
+
+                where.Add("IsDeleted = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", countryLibrary.IsDeleted);
+
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+                cmd.CommandText = $"SELECT COUNT(1) FROM Country{whereClause};";
+                var totalObj = await cmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
+
+                var items = new List<CountryLibrary>();
+                if (total > 0)
+                {
+                    var fetchAll = PageIndex <= 0 || PageSize <= 0;
+                    var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                    var safePageSize = PageSize <= 0 ? total : PageSize;
+                    var offset = (safePageIndex - 1) * safePageSize;
+
+                    cmd.CommandText = $@"
+SELECT Id, Name, Status, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeletedBy, DeletedAt, IsDeleted
+FROM Country
+{whereClause}
+ORDER BY Id DESC
+{(fetchAll ? string.Empty : "LIMIT @offset, @pageSize")};";
+
+                    if (!fetchAll)
+                    {
+                        cmd.Parameters.AddWithValue("@offset", offset);
+                        cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+                    }
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNo = 0;
+                    var pageCount = safePageSize == 0 ? 1 : (int)Math.Ceiling(total / (double)safePageSize);
+                    while (await reader.ReadAsync())
+                    {
+                        rowNo++;
+                        items.Add(new CountryLibrary
+                        {
+                            RowNumber = rowNo,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32("Id"),
+                            Name = reader.IsDBNull("Name") ? string.Empty : reader.GetString("Name"),
+                            Status = reader.IsDBNull("Status") ? string.Empty : reader.GetString("Status"),
+                            CreatedBy = reader.IsDBNull("CreatedBy") ? string.Empty : reader.GetString("CreatedBy"),
+                            CreatedAt = reader.IsDBNull("CreatedAt") ? DateTime.MinValue : reader.GetDateTime("CreatedAt"),
+                            ModifiedBy = reader.IsDBNull("ModifiedBy") ? null : reader.GetString("ModifiedBy"),
+                            ModifiedAt = reader.IsDBNull("ModifiedAt") ? null : reader.GetDateTime("ModifiedAt"),
+                            DeletedBy = reader.IsDBNull("DeletedBy") ? null : reader.GetString("DeletedBy"),
+                            DeletedAt = reader.IsDBNull("DeletedAt") ? null : reader.GetDateTime("DeletedAt"),
+                            IsDeleted = !reader.IsDBNull("IsDeleted") && reader.GetBoolean("IsDeleted")
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<CountryLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
-            return lstcountryLibraries;
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<CountryLibrary>>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<CountryLibrary>()
+                };
+            }
         }
     }
 }

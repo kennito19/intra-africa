@@ -33,7 +33,8 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageHomePageSections + "?PageIndex=0&PageSize=0" + url, "GET", null);
             BaseResponse<ManageHomePageSectionsLibrary> baseResponse = new BaseResponse<ManageHomePageSectionsLibrary>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageHomePageSectionsLibrary> homepageSection = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> homepageSection =
+                baseResponse?.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
             homepageSection = homepageSection.OrderBy(x => x.Sequence).ToList();
 
             return homepageSection;
@@ -49,7 +50,8 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageHomePageDetails + "?PageIndex=0&PageSize=0&SectionId=" + SectionId + url, "GET", null);
             BaseResponse<ManageHomePageDetailsLibrary> baseResponse = new BaseResponse<ManageHomePageDetailsLibrary>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageHomePageDetailsLibrary> homepageSectionDetails = (List<ManageHomePageDetailsLibrary>)baseResponse.Data;
+            List<ManageHomePageDetailsLibrary> homepageSectionDetails =
+                baseResponse?.Data as List<ManageHomePageDetailsLibrary> ?? new List<ManageHomePageDetailsLibrary>();
             homepageSectionDetails = homepageSectionDetails.OrderBy(x => x.Sequence).ToList();
 
             return homepageSectionDetails;
@@ -60,7 +62,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayouts + "?Id=" + id, "GET", null);
             BaseResponse<ManageLayoutsLibrary> baseResponse = new BaseResponse<ManageLayoutsLibrary>();
             baseResponse = baseResponse.JsonParseRecord(response);
-            ManageLayoutsLibrary manageLayouts = (ManageLayoutsLibrary)baseResponse.Data;
+            ManageLayoutsLibrary manageLayouts = baseResponse.Data as ManageLayoutsLibrary;
 
             return manageLayouts;
         }
@@ -70,7 +72,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayoutTypes + "?Id=" + id, "GET", null);
             BaseResponse<ManageLayoutTypesLibrary> baseResponse = new BaseResponse<ManageLayoutTypesLibrary>();
             baseResponse = baseResponse.JsonParseRecord(response);
-            ManageLayoutTypesLibrary manageLayoutType = (ManageLayoutTypesLibrary)baseResponse.Data;
+            ManageLayoutTypesLibrary manageLayoutType = baseResponse.Data as ManageLayoutTypesLibrary;
 
             return manageLayoutType;
         }
@@ -80,7 +82,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayoutTypesDetails + "?LayoutTypeId=" + LayoutTypeId, "GET", null);
             BaseResponse<ManageLayoutTypesDetails> baseResponse = new BaseResponse<ManageLayoutTypesDetails>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageLayoutTypesDetails> manageLayoutTypeDetails = (List<ManageLayoutTypesDetails>)baseResponse.Data;
+            List<ManageLayoutTypesDetails> manageLayoutTypeDetails = baseResponse.Data as List<ManageLayoutTypesDetails>;
 
             return manageLayoutTypeDetails;
         }
@@ -95,7 +97,8 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageHomePageDetails+ "/getFrontHomepageDetails" + url, "GET", null);
             BaseResponse<FrontHomepageDetailsDto> baseResponse = new BaseResponse<FrontHomepageDetailsDto>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<FrontHomepageDetailsDto> homepageSectionDetails = (List<FrontHomepageDetailsDto>)baseResponse.Data;
+            List<FrontHomepageDetailsDto> homepageSectionDetails =
+                baseResponse?.Data as List<FrontHomepageDetailsDto> ?? new List<FrontHomepageDetailsDto>();
             homepageSectionDetails = homepageSectionDetails.ToList();
 
             return homepageSectionDetails;
@@ -118,11 +121,16 @@ namespace API_Gateway.Common
 
 
                 int count = 0;
+                bool hasProductListSection = false;
                 JObject Data = new JObject();
                 foreach (var section in distinctSections)
                 {
                     JObject sectionsObj = new JObject();
                     count = count + 1;
+                    if (string.Equals(section.LayoutName, "Product List", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasProductListSection = true;
+                    }
                     List<FrontHomepageDetailsDto> HomePagedata= HomePageSections.Where(p=>p.HomePageSectionId == section.HomePageSectionId).ToList();
                     List<FrontHomepageDetailsDto> HomePageDetails = HomePageSections.Where(p => p.HomePageSectionId == section.HomePageSectionId && p.HomePageSectionDetailsId != null).OrderBy(p=>p.HomePageSectionDetailsSequence).ToList();
                     //List<ManageHomePageDetailsLibrary> HomePageDetails = GetHomePageDetails(section.Id, status);
@@ -609,8 +617,91 @@ namespace API_Gateway.Common
                     }
 
                 }
+
+                if (!hasProductListSection && HasAnyCatalogueProducts())
+                {
+                    count = count + 1;
+                    Data["section" + count] = BuildAutoFeaturedProductSection();
+                    sectionslst["code"] = 200;
+                    sectionslst["message"] = "Record bind successfully.";
+                    sectionslst["data"] = Data;
+                }
+            }
+            else
+            {
+                if (HasAnyCatalogueProducts())
+                {
+                    JObject data = new JObject();
+                    data["section1"] = BuildAutoFeaturedProductSection();
+
+                    sectionslst["code"] = 200;
+                    sectionslst["message"] = "Record bind successfully.";
+                    sectionslst["data"] = data;
+                }
+                else
+                {
+                    sectionslst["code"] = 204;
+                    sectionslst["message"] = "Record does not exist";
+                    sectionslst["data"] = null;
+                }
             }
             return sectionslst;
+        }
+
+        private bool HasAnyCatalogueProducts()
+        {
+            var response = helper.ApiCall(
+                CatelogueURL,
+                EndPoints.ManageProductHomePageSections + "?categoryId=0&topProduct=1&productId=",
+                "GET",
+                null
+            );
+            BaseResponse<ProductHomePageSectionLibrary> productResponse = new BaseResponse<ProductHomePageSectionLibrary>();
+            productResponse = productResponse.JsonParseList(response);
+            List<ProductHomePageSectionLibrary> products =
+                productResponse?.Data as List<ProductHomePageSectionLibrary> ?? new List<ProductHomePageSectionLibrary>();
+
+            return products.Count > 0;
+        }
+
+        private JObject BuildAutoFeaturedProductSection()
+        {
+            JObject sectionObj = new JObject();
+            JObject layoutObj = new JObject();
+            JObject sectionDataObj = new JObject();
+
+            layoutObj["layout_id"] = 0;
+            layoutObj["layout_type_id"] = 0;
+            layoutObj["layout_name"] = "Product List";
+            layoutObj["layout_type_name"] = "Auto Generated";
+            layoutObj["layout_class"] = "";
+            layoutObj["layout_options"] = "";
+
+            sectionDataObj["section_id"] = 0;
+            sectionDataObj["name"] = "Auto Featured Products";
+            sectionDataObj["sequence"] = 9999;
+            sectionDataObj["SectionColumns"] = 1;
+            sectionDataObj["title"] = "Featured Products";
+            sectionDataObj["sub_title"] = "Top picks from our product catalog";
+            sectionDataObj["link_text"] = "View All";
+            sectionDataObj["link"] = "/products/all";
+            sectionDataObj["status"] = "Active";
+            sectionDataObj["list_type"] = "top products";
+            sectionDataObj["top_products"] = 1;
+            sectionDataObj["title_position"] = "left";
+            sectionDataObj["link_in"] = "right";
+            sectionDataObj["link_position"] = "right";
+            sectionDataObj["background_color"] = "#ffffff";
+            sectionDataObj["title_color"] = "#0f172a";
+            sectionDataObj["text_color"] = "#475569";
+            sectionDataObj["in_container"] = true;
+            sectionDataObj["is_title_visible"] = true;
+            sectionDataObj["category_id"] = 0;
+
+            sectionObj["layoutsInfo"] = layoutObj;
+            sectionObj["section"] = sectionDataObj;
+
+            return sectionObj;
         }
          
 
@@ -628,7 +719,8 @@ namespace API_Gateway.Common
             BaseResponse<HomePageSubMenu> Sub_baseResponse = new BaseResponse<HomePageSubMenu>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageSubMenu + "?pageIndex=0&pageSize=0", "GET", null);
             Sub_baseResponse = Sub_baseResponse.JsonParseList(response);
-            List<HomePageSubMenu> subMenus = (List<HomePageSubMenu>)Sub_baseResponse.Data;
+            List<HomePageSubMenu> subMenus =
+                Sub_baseResponse?.Data as List<HomePageSubMenu> ?? new List<HomePageSubMenu>();
             List<HomePageSubMenu> submenulst = new List<HomePageSubMenu>();
             submenulst = subMenus.Where(x => x.ParentId == null)
                 .Select(x => new HomePageSubMenu
@@ -687,7 +779,8 @@ namespace API_Gateway.Common
             BaseResponse<HomepageMenu> Sub_baseResponse = new BaseResponse<HomepageMenu>();
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageHeaderMenu + "?pageIndex=0&pageSize=0", "GET", null);
             Sub_baseResponse = Sub_baseResponse.JsonParseList(response);
-            List<HomepageMenu> Menus = (List<HomepageMenu>)Sub_baseResponse.Data;
+            List<HomepageMenu> Menus =
+                Sub_baseResponse?.Data as List<HomepageMenu> ?? new List<HomepageMenu>();
             List<HomepageMenu> menulst = new List<HomepageMenu>();
             List<HomePageSubMenu> Submenulst = new List<HomePageSubMenu>();
             Submenulst = getSubmenuList().ToList();

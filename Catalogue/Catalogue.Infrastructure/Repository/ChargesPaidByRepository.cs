@@ -1,66 +1,46 @@
 using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
-using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogue.Infrastructure.Repository
 {
     public class ChargesPaidByRepository : IChargesPaidByRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
+
         public ChargesPaidByRepository(IConfiguration configuration)
         {
-
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(ChargesPaidByLibrary chargesPaidBy)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
-                    new MySqlParameter("@name", chargesPaidBy.Name),
-                    new MySqlParameter("@createdby", chargesPaidBy.CreatedBy),
-                    new MySqlParameter("@createdat", chargesPaidBy.CreatedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+INSERT INTO chargespaidbylibrary (Name, CreatedBy, CreatedAt, IsDeleted)
+VALUES (@name, @createdBy, @createdAt, 0);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@name", (object?)chargesPaidBy.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)chargesPaidBy.CreatedBy ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", chargesPaidBy.CreatedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ChargesPaidBy, output, newid, message, sqlParams.ToArray());
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -68,35 +48,33 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "update"),
-                new MySqlParameter("@id", chargesPaidBy.Id),
-                new MySqlParameter("@name", chargesPaidBy.Name),
-                new MySqlParameter("@modifiedby", chargesPaidBy.ModifiedBy),
-                new MySqlParameter("@modifiedat", chargesPaidBy.ModifiedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE chargespaidbylibrary
+SET Name = @name,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", chargesPaidBy.Id);
+                cmd.Parameters.AddWithValue("@name", (object?)chargesPaidBy.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)chargesPaidBy.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", (object?)chargesPaidBy.ModifiedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ChargesPaidBy, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = chargesPaidBy.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -104,34 +82,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "delete"),
-                new MySqlParameter("@id", chargesPaidBy.Id),
-                new MySqlParameter("@deletedby", chargesPaidBy.DeletedBy),
-                new MySqlParameter("@deletedat", chargesPaidBy.DeletedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+UPDATE chargespaidbylibrary
+SET IsDeleted = 1,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE Id = @id;";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", chargesPaidBy.Id);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)chargesPaidBy.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)chargesPaidBy.DeletedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ChargesPaidBy, output, newid, message, sqlParams.ToArray());
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = chargesPaidBy.Id
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -139,65 +115,85 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", chargesPaidBy.Id),
-                new MySqlParameter("@name", chargesPaidBy.Name),
-                new MySqlParameter("@searchText", chargesPaidBy.searchText),
-                new MySqlParameter("@isdeleted", chargesPaidBy.IsDeleted),
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-                //MySqlParameter newid = new MySqlParameter();
-                //newid.ParameterName = "@newid";
-                //newid.Direction = ParameterDirection.Output;
-                //newid.MySqlDbType = MySqlDbType.Int64;
+                var where = new List<string>();
+                if (chargesPaidBy.Id > 0)
+                {
+                    where.Add("Id = @id");
+                    cmd.Parameters.AddWithValue("@id", chargesPaidBy.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(chargesPaidBy.Name))
+                {
+                    where.Add("Name LIKE @name");
+                    cmd.Parameters.AddWithValue("@name", $"%{chargesPaidBy.Name}%");
+                }
+                where.Add("IsDeleted = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", chargesPaidBy.IsDeleted);
+                if (!string.IsNullOrWhiteSpace(chargesPaidBy.searchText))
+                {
+                    where.Add("Name LIKE @search");
+                    cmd.Parameters.AddWithValue("@search", $"%{chargesPaidBy.searchText}%");
+                }
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetChargesPaidBy, ChargesPaidByParserAsync, output, newid: null, message, sqlParams.ToArray());
+                cmd.CommandText = $"SELECT COUNT(1) FROM chargespaidbylibrary{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
 
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+                var offset = (safePageIndex - 1) * safePageSize;
+
+                var items = new List<ChargesPaidByLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT Id, Name, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeletedBy, DeletedAt, IsDeleted
+FROM chargespaidbylibrary
+{whereClause}
+ORDER BY Id DESC
+LIMIT @offset, @pageSize;";
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new ChargesPaidByLibrary
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.IsDBNull(reader.GetOrdinal("Name")) ? null : reader.GetString(reader.GetOrdinal("Name")),
+                            CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? null : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                            ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt")),
+                            DeletedBy = reader.IsDBNull(reader.GetOrdinal("DeletedBy")) ? null : reader.GetString(reader.GetOrdinal("DeletedBy")),
+                            DeletedAt = reader.IsDBNull(reader.GetOrdinal("DeletedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("DeletedAt")),
+                            IsDeleted = !reader.IsDBNull(reader.GetOrdinal("IsDeleted")) && reader.GetBoolean(reader.GetOrdinal("IsDeleted"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<ChargesPaidByLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<ChargesPaidByLibrary>> { code = 400, message = ex.Message, data = new List<ChargesPaidByLibrary>() };
             }
         }
-
-        private async Task<List<ChargesPaidByLibrary>> ChargesPaidByParserAsync(DbDataReader reader)
-        {
-            List<ChargesPaidByLibrary> lstchargesPaidBy = new List<ChargesPaidByLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstchargesPaidBy.Add(new ChargesPaidByLibrary()
-                {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    Name = Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    DeletedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy"))),
-                    DeletedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("DeletedAt"))),
-                    IsDeleted = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsDeleted"))),
-                });
-            }
-            return lstchargesPaidBy;
-        }
-
     }
-
-
 }

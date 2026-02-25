@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SizeTypeID=" + model.SizeTypeID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSizeValueToCategory> tempList = (List<AssignSizeValueToCategory>)baseResponse.Data;
+            List<AssignSizeValueToCategory> tempList = baseResponse.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
             if (tempList.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -53,7 +53,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SizeTypeID=" + model.SizeTypeID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSizeValueToCategory> tempList = (List<AssignSizeValueToCategory>)baseResponse.Data;
+            List<AssignSizeValueToCategory> tempList = baseResponse.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
             if (tempList.Any())
             {
                 temp = api.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SizeTypeID=" + model.SizeTypeID, "DELETE", null);
@@ -93,7 +93,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.AssignSizeValueToCategory + "?SizeTypeID=" + SizeTypeID + "&AssignSpecID=" + AssignSpecID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSizeValueToCategory> record = (List<AssignSizeValueToCategory>)baseResponse.Data;
+            List<AssignSizeValueToCategory> record = baseResponse.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
             if (record.Any())
             {
                 BaseResponse<CheckSizeType> AssignSpecbaseResponse = new BaseResponse<CheckSizeType>();
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
                 if (AssignSpecbaseResponse.code == 200)
                 {
                     CheckSizeType checkSpecType = new CheckSizeType();
-                    checkSpecType = (CheckSizeType)AssignSpecbaseResponse.Data;
+                    checkSpecType = AssignSpecbaseResponse.Data as CheckSizeType;
                     if (!Convert.ToBoolean(checkSpecType.IsAllowDeleteSizeType))
                     {
                         baseResponse = baseResponse.ChildAlreadyExists("Products", "AssignSizeValueToCategory");
@@ -163,10 +163,10 @@ namespace API_Gateway.Controllers.Admin
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                List<AssignSizeValueToCategory> lstassignSizeValues = (List<AssignSizeValueToCategory>)baseResponse.Data;
+                List<AssignSizeValueToCategory> lstassignSizeValues = baseResponse.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
                 if (AssignSpecbaseResponse.code == 200)
                 {
-                    CheckAssignSizeValuestoCategory checkAssignSizeValuestocat = (CheckAssignSizeValuestoCategory)AssignSpecbaseResponse.Data;
+                    CheckAssignSizeValuestoCategory checkAssignSizeValuestocat = AssignSpecbaseResponse.Data as CheckAssignSizeValuestoCategory;
 
                     var result = lstassignSizeValues.Select(x => new
                     {

@@ -29,7 +29,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderWiseExtraCharges + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderWiseExtraCharges> tmp = (List<OrderWiseExtraCharges>)baseResponse.Data;
+            List<OrderWiseExtraCharges> tmp = baseResponse.Data as List<OrderWiseExtraCharges> ?? new List<OrderWiseExtraCharges>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -60,7 +60,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderWiseExtraCharges + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderWiseExtraCharges> tmp = (List<OrderWiseExtraCharges>)baseResponse.Data;
+            List<OrderWiseExtraCharges> tmp = baseResponse.Data as List<OrderWiseExtraCharges> ?? new List<OrderWiseExtraCharges>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -69,7 +69,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderWiseExtraCharges + "?Id=" + model.Id, "GET");
                 baseResponse = baseResponse.JsonParseRecord(response);
-                OrderWiseExtraCharges owec = (OrderWiseExtraCharges)baseResponse.Data;
+                OrderWiseExtraCharges owec = baseResponse.Data as OrderWiseExtraCharges;
                 owec.OrderID = model.OrderID;
                 owec.OrderItemID = model.OrderItemID;
                 owec.ChargesType = model.ChargesType;
@@ -93,7 +93,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.OrderWiseExtraCharges + "?Id=" + id, "GET");
             baseResponse = baseResponse.JsonParseList(temp);
-            List<OrderWiseExtraCharges> templist = (List<OrderWiseExtraCharges>)baseResponse.Data;
+            List<OrderWiseExtraCharges> templist = baseResponse.Data as List<OrderWiseExtraCharges> ?? new List<OrderWiseExtraCharges>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.OrderWiseExtraCharges + "?Id=" + id, "DELETE");

@@ -1,7 +1,8 @@
-﻿using API_Gateway.Common;
+using API_Gateway.Common;
 using API_Gateway.Helper;
 using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.Catalogue;
+using API_Gateway.Models.Entity.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -17,7 +18,9 @@ namespace API_Gateway.Controllers.User
         private readonly HttpContext _httpContext;
         private readonly IConfiguration _configuration;
         public string URL = string.Empty;
+        public string UserURL = string.Empty;
         BaseResponse<ManageHomePageSectionsLibrary> baseResponse = new BaseResponse<ManageHomePageSectionsLibrary>();
+        private readonly ApiHelper helper;
 
         public ManageHomePageSectionController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
@@ -25,71 +28,17 @@ namespace API_Gateway.Controllers.User
             _httpContext = _httpContextAccessor.HttpContext;
             _configuration = configuration;
             URL = _configuration.GetSection("ApiURLs").GetSection("CatalogueApi").Value;
+            UserURL = _configuration.GetSection("ApiURLs").GetSection("UserApi").Value;
+            helper = new ApiHelper(_httpContext);
         }
 
-        //[HttpGet("GetHomePageSection")]
-        //[Authorize(Roles = "Admin, Seller")]
-        //public ActionResult<ApiHelper> GetHomePageSection(int? pageindex = 1, int? pageSize = 10)
-        //{
-        //    var response = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?PageIndex=" + pageindex + "&PageSize=" + pageSize, "GET", null, token);
-        //    BaseResponse<ManageHomePageSectionsLibrary> baseResponse = new BaseResponse<ManageHomePageSectionsLibrary>();
-        //    baseResponse = baseResponse.JsonParseList(response);
-        //    List<ManageHomePageSectionsLibrary> homepageSection = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
-        //    homepageSection = homepageSection.OrderBy(x => x.Sequence).ToList();
-
-        //    var responseDetail = helper.ApiCall(URL, EndPoints.ManageHomePageDetails, "GET", null, token);
-        //    BaseResponse<ManageHomePageDetailsLibrary> baseResponseDetail = new BaseResponse<ManageHomePageDetailsLibrary>();
-        //    baseResponseDetail = baseResponseDetail.JsonParseList(responseDetail);
-        //    List<ManageHomePageDetailsLibrary> homePageDetail = (List<ManageHomePageDetailsLibrary>)baseResponseDetail.Data;
-        //    homePageDetail = homePageDetail.OrderBy(x => x.Sequence).ToList();
-
-        //    var result = homepageSection.Select(section => new
-        //    {
-        //        Id = section.Id,
-        //        LayoutId = section.LayoutId,
-        //        LayoutName = section.LayoutName,
-        //        LayoutTypeName = section.LayoutTypeName,
-        //        LayoutTypeId = section.LayoutTypeId,
-        //        //Name = section.Name,
-        //        Sequence = section.Sequence,
-        //        Title = section.Title,
-        //        SubTitle = section.SubTitle,
-        //        Status = section.Status,
-        //        homePageSectionDetail = homePageDetail.Where(detail => detail.SectionId == section.Id)
-        //        .Select(homePageSectionDetail => new
-        //        {
-        //            Id = homePageSectionDetail.Id,
-        //            SectionId = homePageSectionDetail.SectionId,
-        //            Image = homePageSectionDetail.Image,
-        //            ImageAlt = homePageSectionDetail.ImageAlt,
-        //            Sequence = homePageSectionDetail.Sequence,
-        //            RedirectTo = homePageSectionDetail.RedirectTo,
-        //            CategoryId = homePageSectionDetail.CategoryId,
-        //            BrandIds = homePageSectionDetail.BrandIds,
-        //            SizeIds = homePageSectionDetail.SizeIds,
-        //            SpecificationIds = homePageSectionDetail.SpecificationIds,
-        //            CollectionIds = homePageSectionDetail.CollectionId,
-        //            ProductIds = homePageSectionDetail.ProductId,
-        //            OtherIds = homePageSectionDetail.StaticPageId,
-        //            AssignCity = homePageSectionDetail.AssignCity,
-        //            AssignState = homePageSectionDetail.AssignState,
-        //            AssignCountry = homePageSectionDetail.AssignCountry,
-        //            Status = homePageSectionDetail.Status,
-        //            SectionName = homePageSectionDetail.SectionName,
-        //        })
-        //        .ToList(),
-        //    }); ;
-        //    baseResponse.Data = result;
-        //    return Ok(baseResponse);
-
-        //}
         [HttpGet("GetHomePageSection")]
         [Authorize]
         public ActionResult<ApiHelper> GetHomePageSection(string? status = null)
         {
             getHomePageSections getHomePage = new getHomePageSections(_configuration, _httpContext);
             JObject res = getHomePage.setSections(status);
-            return Ok(res.ToString());
+            return Ok(res);
         }
 
 
@@ -105,6 +54,76 @@ namespace API_Gateway.Controllers.User
             baseResponse.code = 200;
 
             return Ok(baseResponse);
+        }
+
+        [HttpGet("GetBrands")]
+        [AllowAnonymous]
+        public ActionResult<ApiHelper> GetBrands(int? pageIndex = 0, int? pageSize = 0, string? status = "Active")
+        {
+            BaseResponse<BrandLibrary> brandResponse = new BaseResponse<BrandLibrary>();
+            var response = helper.ApiCall(
+                UserURL,
+                EndPoints.Brand + "?pageIndex=" + pageIndex + "&pageSize=" + pageSize,
+                "GET",
+                null
+            );
+
+            brandResponse = brandResponse.JsonParseList(response);
+            List<BrandLibrary> brands = brandResponse.Data as List<BrandLibrary> ?? new List<BrandLibrary>();
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                brands = brands.Where(b =>
+                    string.Equals(b.Status, status, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+            if (brands.Count > 0)
+            {
+                brandResponse.code = 200;
+                brandResponse.Message = "Record bind successfully.";
+                brandResponse.Data = brands;
+            }
+            else
+            {
+                brandResponse.code = 204;
+                brandResponse.Message = "Record does not exist.";
+                brandResponse.Data = new List<BrandLibrary>();
+            }
+
+            return Ok(brandResponse);
+        }
+
+        [HttpGet("GetFeaturedProducts")]
+        [AllowAnonymous]
+        public ActionResult<ApiHelper> GetFeaturedProducts(int? topProduct = 8)
+        {
+            BaseResponse<ProductHomePageSectionLibrary> productResponse = new BaseResponse<ProductHomePageSectionLibrary>();
+            var response = helper.ApiCall(
+                URL,
+                EndPoints.ManageProductHomePageSections + "?categoryId=0&topProduct=" + (topProduct ?? 8) + "&productId=",
+                "GET",
+                null
+            );
+
+            productResponse = productResponse.JsonParseList(response);
+            List<ProductHomePageSectionLibrary> products =
+                productResponse.Data as List<ProductHomePageSectionLibrary> ?? new List<ProductHomePageSectionLibrary>();
+
+            if (products.Count > 0)
+            {
+                productResponse.code = 200;
+                productResponse.Message = "Record bind successfully.";
+                productResponse.Data = products;
+            }
+            else
+            {
+                productResponse.code = 204;
+                productResponse.Message = "Record does not exist.";
+                productResponse.Data = new List<ProductHomePageSectionLibrary>();
+            }
+
+            return Ok(productResponse);
         }
     }
 }

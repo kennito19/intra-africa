@@ -37,7 +37,7 @@ namespace API_Gateway.Controllers.Seller
             {
                 var temp = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?CollectionId=" + model[i].CollectionId + "&ProductId=" + model[i].ProductId, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<ManageCollectionMappingLibrary> tempList = (List<ManageCollectionMappingLibrary>)baseResponse.Data;
+                List<ManageCollectionMappingLibrary> tempList = baseResponse.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
 
                 if (tempList.Any())
                 {
@@ -47,7 +47,7 @@ namespace API_Gateway.Controllers.Seller
                 {
                     var temp1 = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?CollectionId=" + model[i].CollectionId + "&ProductId=" + model[i].ProductId + "&IsDeleted=true", "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp1);
-                    List<ManageCollectionMappingLibrary> tempList1 = (List<ManageCollectionMappingLibrary>)baseResponse.Data;
+                    List<ManageCollectionMappingLibrary> tempList1 = baseResponse.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
 
                     if (tempList1.Any())
                     {
@@ -88,7 +88,7 @@ namespace API_Gateway.Controllers.Seller
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?CollectionId=" + model.CollectionId + "?ProductId=" + model.ProductId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageCollectionMappingLibrary> tempList = (List<ManageCollectionMappingLibrary>)baseResponse.Data;
+            List<ManageCollectionMappingLibrary> tempList = baseResponse.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -98,7 +98,7 @@ namespace API_Gateway.Controllers.Seller
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageCollectionMappingLibrary record = (ManageCollectionMappingLibrary)baseResponse.Data;
+                ManageCollectionMappingLibrary record = baseResponse.Data as ManageCollectionMappingLibrary;
                 record.CollectionId = model.CollectionId;
                 record.ProductId = model.ProductId;
                 record.Status = model.Status;
@@ -120,7 +120,7 @@ namespace API_Gateway.Controllers.Seller
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageCollectionMappingLibrary> tempList = (List<ManageCollectionMappingLibrary>)baseResponse.Data;
+            List<ManageCollectionMappingLibrary> tempList = baseResponse.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageCollectionMapping + "?Id=" + id, "DELETE", null);
@@ -143,7 +143,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse1 = baseResponse1.JsonParseList(response);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (List<ManageCollectionMappingLibrary>)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
                 baseResponse.pagination = baseResponse1.pagination;
@@ -207,7 +207,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse1 = baseResponse1.JsonParseRecord(response);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (ManageCollectionMappingLibrary)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as ManageCollectionMappingLibrary;
                 dataresponse.BrandName = !string.IsNullOrEmpty(dataresponse.ExtraDetails) ? JObject.Parse(dataresponse.ExtraDetails)["BrandDetails"]?["Name"]?.ToString() ?? dataresponse.ExtraDetails : null;
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
@@ -263,7 +263,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse1 = baseResponse1.JsonParseList(response);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (List<ManageCollectionMappingLibrary>)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
                 baseResponse.pagination = baseResponse1.pagination;
@@ -317,7 +317,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse1 = baseResponse1.JsonParseList(response);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (List<ManageCollectionMappingLibrary>)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
                 baseResponse.pagination = baseResponse1.pagination;
@@ -371,7 +371,7 @@ namespace API_Gateway.Controllers.Seller
             baseResponse1 = baseResponse1.JsonParseList(response);
             if (baseResponse1.code == 200)
             {
-                var dataresponse = (List<ManageCollectionMappingLibrary>)baseResponse1.Data;
+                var dataresponse = baseResponse1.Data as List<ManageCollectionMappingLibrary> ?? new List<ManageCollectionMappingLibrary>();
                 baseResponse.code = baseResponse1.code;
                 baseResponse.Message = baseResponse1.Message;
                 baseResponse.pagination = baseResponse1.pagination;

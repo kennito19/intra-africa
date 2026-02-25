@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
             baseResponse = baseResponse.JsonParseRecord(temp);
             if (baseResponse.code == 200)
             {
-                FlashSalePriceMasterLibrary tempList = (FlashSalePriceMasterLibrary)baseResponse.Data;
+                FlashSalePriceMasterLibrary tempList = baseResponse.Data as FlashSalePriceMasterLibrary;
 
                 if (tempList.Id != 0 && tempList.Id != null)
                 {
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.FlashSalePriceMaster + "?CollectionId=" + model.CollectionId + "&CollectionMappingId=" + model.CollectionMappingId + "&sellerProductId=" + model.SellerProductId + "&SellerWiseProductPriceMasterId=" + model.SellerWiseProductPriceMasterId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<FlashSalePriceMasterLibrary> tempList = (List<FlashSalePriceMasterLibrary>)baseResponse.Data;
+            List<FlashSalePriceMasterLibrary> tempList = baseResponse.Data as List<FlashSalePriceMasterLibrary> ?? new List<FlashSalePriceMasterLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -112,7 +112,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.FlashSalePriceMaster + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                FlashSalePriceMasterLibrary record = (FlashSalePriceMasterLibrary)baseResponse.Data;
+                FlashSalePriceMasterLibrary record = baseResponse.Data as FlashSalePriceMasterLibrary;
 
                 record.SellerProductId = model.SellerProductId;
                 record.SellerWiseProductPriceMasterId = model.SellerWiseProductPriceMasterId;
@@ -138,7 +138,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.FlashSalePriceMaster + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<FlashSalePriceMasterLibrary> tempList = (List<FlashSalePriceMasterLibrary>)baseResponse.Data;
+            List<FlashSalePriceMasterLibrary> tempList = baseResponse.Data as List<FlashSalePriceMasterLibrary> ?? new List<FlashSalePriceMasterLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.FlashSalePriceMaster + "?Id=" + id, "DELETE", null);

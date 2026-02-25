@@ -37,7 +37,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.HSNCode + "?HSNCode=" + model.HSNCode, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<HSNCodeLibrary> tempList = (List<HSNCodeLibrary>)baseResponse.Data;
+            List<HSNCodeLibrary> tempList = baseResponse.Data as List<HSNCodeLibrary> ?? new List<HSNCodeLibrary>();
 
             if (tempList.Any())
             {
@@ -62,7 +62,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.HSNCode + "?HSNCode=" + model.HSNCode, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<HSNCodeLibrary> tempList = (List<HSNCodeLibrary>)baseResponse.Data;
+            List<HSNCodeLibrary> tempList = baseResponse.Data as List<HSNCodeLibrary> ?? new List<HSNCodeLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -72,7 +72,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = api.ApiCall(CatalogueUrl, EndPoints.HSNCode + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                HSNCodeLibrary record = (HSNCodeLibrary)baseResponse.Data;
+                HSNCodeLibrary record = baseResponse.Data as HSNCodeLibrary;
                 record.HSNCode = model.HSNCode;
                 record.Description = model.Description;
                 record.ModifiedAt = DateTime.Now;
@@ -90,19 +90,19 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.HSNCode + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<HSNCodeLibrary> tempList = (List<HSNCodeLibrary>)baseResponse.Data;
+            List<HSNCodeLibrary> tempList = baseResponse.Data as List<HSNCodeLibrary> ?? new List<HSNCodeLibrary>();
 
             if (tempList.Any())
             {
                 var temptaxratetohsncode = api.ApiCall(CatalogueUrl, EndPoints.AssignTaxRateToHSNCode + "?hsncodeId=" + id, "GET", null);
                 BaseResponse<AssignTaxRateToHSNCode> baseResTaxRateToHsnCode = new BaseResponse<AssignTaxRateToHSNCode>();
                 var TaxRateToHsnCodeResponse = baseResTaxRateToHsnCode.JsonParseList(temptaxratetohsncode);
-                List<AssignTaxRateToHSNCode> taxRateToHSNCodes = (List<AssignTaxRateToHSNCode>)TaxRateToHsnCodeResponse.Data;
+                List<AssignTaxRateToHSNCode> taxRateToHSNCodes = TaxRateToHsnCodeResponse.Data as List<AssignTaxRateToHSNCode> ?? new List<AssignTaxRateToHSNCode>();
 
                 var productHsncode = api.ApiCall(CatalogueUrl, EndPoints.Product + "?HSNCode=" + tempList[0].HSNCode, "Get", null);
                 BaseResponse<Products> baseProductResponse = new BaseResponse<Products>();
                 var ProudctBaseresponse = baseProductResponse.JsonParseList(productHsncode);
-                List<Products> products = (List<Products>)ProudctBaseresponse.Data;
+                List<Products> products = ProudctBaseresponse.Data as List<Products> ?? new List<Products>();
                 if (taxRateToHSNCodes.Any() || products.Any())
                 {
                     if (taxRateToHSNCodes.Any())
@@ -215,7 +215,7 @@ namespace API_Gateway.Controllers.Admin
             var tempRes_Tax = api.ApiCall(CatalogueUrl, EndPoints.TaxType + "?PageIndex=1", "GET", null);
             BaseResponse<TaxTypeLibrary> basetax = new BaseResponse<TaxTypeLibrary>();
             basetax = basetax.JsonParseList(tempRes_Tax);
-            List<TaxTypeLibrary> tempTax = (List<TaxTypeLibrary>)basetax.Data;
+            List<TaxTypeLibrary> tempTax = basetax.Data as List<TaxTypeLibrary> ?? new List<TaxTypeLibrary>();
 
             tempTax = tempTax.Where(p => p.ParentId == 0 || p.ParentId == null).ToList();
 
@@ -234,7 +234,7 @@ namespace API_Gateway.Controllers.Admin
             var tempRes_TaxValue = api.ApiCall(CatalogueUrl, EndPoints.TaxTypeValue + "?PageIndex=1", "GET", null);
             BaseResponse<TaxTypeValueLibrary> basetaxValue = new BaseResponse<TaxTypeValueLibrary>();
             basetaxValue = basetaxValue.JsonParseList(tempRes_TaxValue);
-            List<TaxTypeValueLibrary> tempTaxValue = (List<TaxTypeValueLibrary>)basetaxValue.Data;
+            List<TaxTypeValueLibrary> tempTaxValue = basetaxValue.Data as List<TaxTypeValueLibrary> ?? new List<TaxTypeValueLibrary>();
 
             rowCount = 0;
 

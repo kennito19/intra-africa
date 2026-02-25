@@ -143,39 +143,122 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", Mode),
-                    new MySqlParameter("@id", assignBrandToSeller.Id),
-                    new MySqlParameter("@sellerid", assignBrandToSeller.SellerID),
-                    new MySqlParameter("@brandid", assignBrandToSeller.BrandId),
-                    new MySqlParameter("@sellername", assignBrandToSeller.SellerName),
-                    new MySqlParameter("@brandname", assignBrandToSeller.BrandName),
-                    new MySqlParameter("@status", assignBrandToSeller.Status),
-                    new MySqlParameter("@Brandstatus", assignBrandToSeller.BrandStatus),
-                    new MySqlParameter("@isDeleted", assignBrandToSeller.IsDeleted),
-                    new MySqlParameter("@isBrandDeleted", assignBrandToSeller.IsBrandDeleted),
-                    new MySqlParameter("@pageIndex", PageIndex),
-                    new MySqlParameter("@pageSize", PageSize),
-                    new MySqlParameter("@searchtext", assignBrandToSeller.Searchtext),
+                await using var connection = new MySqlConnection(_configuration.GetConnectionString("DBconnection"));
+                await connection.OpenAsync();
+                await using var cmd = new MySqlCommand();
+                cmd.Connection = connection;
+
+                var where = new List<string>();
+                if (assignBrandToSeller.Id > 0)
+                {
+                    where.Add("a.Id = @id");
+                    cmd.Parameters.AddWithValue("@id", assignBrandToSeller.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(assignBrandToSeller.SellerID))
+                {
+                    where.Add("a.SellerID = @sellerId");
+                    cmd.Parameters.AddWithValue("@sellerId", assignBrandToSeller.SellerID);
+                }
+                if (assignBrandToSeller.BrandId > 0)
+                {
+                    where.Add("a.BrandId = @brandId");
+                    cmd.Parameters.AddWithValue("@brandId", assignBrandToSeller.BrandId);
+                }
+                if (!string.IsNullOrWhiteSpace(assignBrandToSeller.Status))
+                {
+                    where.Add("a.Status = @status");
+                    cmd.Parameters.AddWithValue("@status", assignBrandToSeller.Status);
+                }
+                if (!string.IsNullOrWhiteSpace(assignBrandToSeller.Searchtext))
+                {
+                    where.Add("(b.Name LIKE @search OR a.SellerID LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{assignBrandToSeller.Searchtext}%");
+                }
+                where.Add("COALESCE(a.IsDeleted,0) = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", assignBrandToSeller.IsDeleted);
+
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $@"
+SELECT COUNT(1)
+FROM AssignBrandToSeller a
+LEFT JOIN Brand b ON b.ID = a.BrandId
+{whereClause};";
+                var totalObj = await cmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
+
+                var result = new List<AssignBrandToSeller>();
+                if (total > 0)
+                {
+                    var fetchAll = PageIndex <= 0 || PageSize <= 0;
+                    var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                    var safePageSize = PageSize <= 0 ? total : PageSize;
+                    var offset = (safePageIndex - 1) * safePageSize;
+
+                    cmd.CommandText = $@"
+SELECT
+    a.Id, a.SellerID, a.BrandId, a.Status, a.CreatedBy, a.CreatedAt, a.ModifiedBy, a.ModifiedAt,
+    a.DeletedBy, a.DeletedAt, a.IsDeleted, a.BrandCertificate,
+    b.Name AS BrandName, b.Logo, b.Status AS BrandStatus, b.GUID, b.Description
+FROM AssignBrandToSeller a
+LEFT JOIN Brand b ON b.ID = a.BrandId
+{whereClause}
+ORDER BY a.Id DESC
+{(fetchAll ? string.Empty : "LIMIT @offset, @pageSize")};";
+
+                    if (!fetchAll)
+                    {
+                        cmd.Parameters.AddWithValue("@offset", offset);
+                        cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+                    }
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNo = 0;
+                    var pageCount = safePageSize == 0 ? 1 : (int)Math.Ceiling(total / (double)safePageSize);
+                    while (await reader.ReadAsync())
+                    {
+                        rowNo++;
+                        result.Add(new AssignBrandToSeller
+                        {
+                            RowNumber = rowNo,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32("Id"),
+                            SellerID = reader.IsDBNull("SellerID") ? null : reader.GetString("SellerID"),
+                            BrandId = reader.IsDBNull("BrandId") ? 0 : reader.GetInt32("BrandId"),
+                            BrandName = reader.IsDBNull("BrandName") ? null : reader.GetString("BrandName"),
+                            Status = reader.IsDBNull("Status") ? null : reader.GetString("Status"),
+                            CreatedBy = reader.IsDBNull("CreatedBy") ? null : reader.GetString("CreatedBy"),
+                            CreatedAt = reader.IsDBNull("CreatedAt") ? DateTime.MinValue : reader.GetDateTime("CreatedAt"),
+                            ModifiedBy = reader.IsDBNull("ModifiedBy") ? null : reader.GetString("ModifiedBy"),
+                            ModifiedAt = reader.IsDBNull("ModifiedAt") ? null : reader.GetDateTime("ModifiedAt"),
+                            DeletedBy = reader.IsDBNull("DeletedBy") ? null : reader.GetString("DeletedBy"),
+                            DeletedAt = reader.IsDBNull("DeletedAt") ? null : reader.GetDateTime("DeletedAt"),
+                            IsDeleted = !reader.IsDBNull("IsDeleted") && reader.GetBoolean("IsDeleted"),
+                            BrandCertificate = reader.IsDBNull("BrandCertificate") ? null : reader.GetString("BrandCertificate"),
+                            Logo = reader.IsDBNull("Logo") ? null : reader.GetString("Logo"),
+                            BrandStatus = reader.IsDBNull("BrandStatus") ? null : reader.GetString("BrandStatus"),
+                            BrandGUID = reader.IsDBNull("GUID") ? null : reader.GetString("GUID"),
+                            BrandDescription = reader.IsDBNull("Description") ? null : reader.GetString("Description")
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<AssignBrandToSeller>>
+                {
+                    code = result.Count > 0 ? 200 : 204,
+                    message = result.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = result
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetAssignBrandToSeller, AssignBrandToSellerParserAsync, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<List<AssignBrandToSeller>>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<AssignBrandToSeller>()
+                };
             }
         }
 

@@ -48,7 +48,7 @@ namespace API_Gateway.Common
             }
             var temp = helper.ApiCall(_URL, EndPoints.KYCDetails + "?UserID=" + model.UserID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<KYCDetails> tmp = (List<KYCDetails>)baseResponse.Data;
+            List<KYCDetails> tmp = baseResponse.Data as List<KYCDetails>;
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -130,7 +130,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.KYCDetails + "?UserID=" + model.UserID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<KYCDetails> tmp = (List<KYCDetails>)baseResponse.Data;
+            List<KYCDetails> tmp = baseResponse.Data as List<KYCDetails>;
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -139,7 +139,7 @@ namespace API_Gateway.Common
             {
                 var response = helper.ApiCall(_URL, EndPoints.KYCDetails + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                KYCDetails kyc = (KYCDetails)baseResponse.Data;
+                KYCDetails kyc = baseResponse.Data as KYCDetails;
 
                 if (AllowAadharcard)
                 {
@@ -268,7 +268,7 @@ namespace API_Gateway.Common
             {
                 var temp = helper.ApiCall(_URL, EndPoints.KYCDetails + "?Id=" + id, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<KYCDetails> tmp = (List<KYCDetails>)baseResponse.Data;
+                List<KYCDetails> tmp = baseResponse.Data as List<KYCDetails>;
                 if (tmp.Any())
                 {
                     var response = helper.ApiCall(_URL, EndPoints.KYCDetails + "?Id=" + id, "DELETE", null);
@@ -283,7 +283,7 @@ namespace API_Gateway.Common
             {
                 var temp = helper.ApiCall(_URL, EndPoints.KYCDetails + "?userID=" + userID, "GET", null);
                 baseResponse = baseResponse.JsonParseList(temp);
-                List<KYCDetails> tmp = (List<KYCDetails>)baseResponse.Data;
+                List<KYCDetails> tmp = baseResponse.Data as List<KYCDetails>;
                 if (tmp.Any())
                 {
                     var response = helper.ApiCall(_URL, EndPoints.KYCDetails + "?userID=" + userID, "DELETE", null);
@@ -314,8 +314,8 @@ namespace API_Gateway.Common
                 BaseResponse<ChargesPaidByLibrary> baseResponseCharges = new BaseResponse<ChargesPaidByLibrary>();
                 var response1 = helper.ApiCall(_CatalougeURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                 baseResponseCharges = baseResponseCharges.JsonParseList(response1);
-                List<KYCDetails> kYCDetails = (List<KYCDetails>)baseResponse.Data;
-                List<ChargesPaidByLibrary> Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+                List<KYCDetails> kYCDetails = baseResponse.Data as List<KYCDetails>;
+                List<ChargesPaidByLibrary> Charges = baseResponseCharges.Data as List<ChargesPaidByLibrary>;
                 var result = kYCDetails.Select(x => new
                 {
                     RowNumber = x.RowNumber,
@@ -374,13 +374,13 @@ namespace API_Gateway.Common
                 BaseResponse<ChargesPaidByLibrary> baseResponseCharges = new BaseResponse<ChargesPaidByLibrary>();
                 var response1 = helper.ApiCall(_CatalougeURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                 baseResponseCharges = baseResponseCharges.JsonParseList(response1);
-                KYCDetails kYCDetails = (KYCDetails)baseResponse.Data;
+                KYCDetails kYCDetails = baseResponse.Data as KYCDetails;
 
                 if (kYCDetails.ShipmentChargesPaidBy != null && kYCDetails.ShipmentChargesPaidBy != 0)
                 {
                     if (baseResponseCharges.code == 200)
                     {
-                        List<ChargesPaidByLibrary> Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+                        List<ChargesPaidByLibrary> Charges = baseResponseCharges.Data as List<ChargesPaidByLibrary>;
                         string CName = kYCDetails.ShipmentChargesPaidBy != null ? Charges.Where(p => p.Id == kYCDetails.ShipmentChargesPaidBy).FirstOrDefault().Name.ToString() : null;
                         kYCDetails.ShipmentChargesPaidByName = CName;
                         baseResponse.Data = kYCDetails;
@@ -404,13 +404,13 @@ namespace API_Gateway.Common
                 BaseResponse<ChargesPaidByLibrary> baseResponseCharges = new BaseResponse<ChargesPaidByLibrary>();
                 var response1 = helper.ApiCall(_CatalougeURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
                 baseResponseCharges = baseResponseCharges.JsonParseList(response1);
-                KYCDetails kYCDetails = (KYCDetails)baseResponse.Data;
+                KYCDetails kYCDetails = baseResponse.Data as KYCDetails;
 
                 if (kYCDetails.ShipmentChargesPaidBy != null && kYCDetails.ShipmentChargesPaidBy != 0)
                 {
                     if (baseResponseCharges.code == 200)
                     {
-                        List<ChargesPaidByLibrary> Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+                        List<ChargesPaidByLibrary> Charges = baseResponseCharges.Data as List<ChargesPaidByLibrary>;
                         string CName = kYCDetails.ShipmentChargesPaidBy != null ? Charges.Where(p => p.Id == kYCDetails.ShipmentChargesPaidBy).FirstOrDefault().Name.ToString() : null;
                         kYCDetails.ShipmentChargesPaidByName = CName;
                         baseResponse.Data = kYCDetails;

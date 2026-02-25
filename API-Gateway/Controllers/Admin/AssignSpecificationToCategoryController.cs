@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignSpecToCat + "?CategoryID=" + model.CategoryID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSpecificationToCategoryLibrary> assignSpecifications = (List<AssignSpecificationToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecificationToCategoryLibrary> assignSpecifications = baseResponse.Data as List<AssignSpecificationToCategoryLibrary> ?? new List<AssignSpecificationToCategoryLibrary>();
             if (assignSpecifications.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -68,7 +68,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignSpecToCat + "?CategoryID=" + model.CategoryID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSpecificationToCategoryLibrary> templist = (List<AssignSpecificationToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecificationToCategoryLibrary> templist = baseResponse.Data as List<AssignSpecificationToCategoryLibrary> ?? new List<AssignSpecificationToCategoryLibrary>();
             if (templist.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -102,24 +102,24 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignSpecToCat + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSpecificationToCategoryLibrary> templist = (List<AssignSpecificationToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecificationToCategoryLibrary> templist = baseResponse.Data as List<AssignSpecificationToCategoryLibrary> ?? new List<AssignSpecificationToCategoryLibrary>();
 
             if (templist.Any())
             {
                 var tempAssignSizeToCat = helper.ApiCall(URL, EndPoints.AssignSizeValueToCategory + "?AssignSpecId=" + id, "Get", null);
                 BaseResponse<AssignSizeValueToCategory> baseResSizeToCat = new BaseResponse<AssignSizeValueToCategory>();
                 var AssignSizeToCat = baseResSizeToCat.JsonParseList(tempAssignSizeToCat);
-                List<AssignSizeValueToCategory> assignSizeToCat = (List<AssignSizeValueToCategory>)AssignSizeToCat.Data;
+                List<AssignSizeValueToCategory> assignSizeToCat = AssignSizeToCat.Data as List<AssignSizeValueToCategory> ?? new List<AssignSizeValueToCategory>();
 
                 var tempAssignSpecValuesToCat = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecID=" + id, "Get", null);
                 BaseResponse<AssignSpecValuesToCategoryLibrary> baseSpecValuseToCat = new BaseResponse<AssignSpecValuesToCategoryLibrary>();
                 var AssignSpecValuesToCat = baseSpecValuseToCat.JsonParseList(tempAssignSpecValuesToCat);
-                List<AssignSpecValuesToCategoryLibrary> assignSpecValToCat = (List<AssignSpecValuesToCategoryLibrary>)AssignSpecValuesToCat.Data;
+                List<AssignSpecValuesToCategoryLibrary> assignSpecValToCat = AssignSpecValuesToCat.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
 
                 var tempProduct = helper.ApiCall(URL, EndPoints.Product + "?AssiCategoryId=" + id, "Get", null);
                 BaseResponse<Products> baseProudcts = new BaseResponse<Products>();
                 var Products = baseProudcts.JsonParseList(tempProduct);
-                List<Products> assignCatInProduct = (List<Products>)Products.Data;
+                List<Products> assignCatInProduct = Products.Data as List<Products> ?? new List<Products>();
 
                 if (assignSpecValToCat.Any())
                 {
@@ -168,7 +168,7 @@ namespace API_Gateway.Controllers.Admin
             baseResponse = baseResponse.JsonParseRecord(response);
             if (baseResponse.code == 200)
             {
-                AssignSpecificationToCategoryLibrary _assignSpecificationToCategoryLibrary = (AssignSpecificationToCategoryLibrary)baseResponse.Data;
+                AssignSpecificationToCategoryLibrary _assignSpecificationToCategoryLibrary = baseResponse.Data as AssignSpecificationToCategoryLibrary;
                 if (AssignSpecbaseResponse.code == 200)
                 {
                     checkAssignSpecToCategory checkAssignSpecToCategory = (checkAssignSpecToCategory)AssignSpecbaseResponse.Data;

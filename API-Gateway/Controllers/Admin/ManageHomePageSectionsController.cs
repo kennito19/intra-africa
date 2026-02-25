@@ -39,7 +39,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
 
             if (tempList.Any())
             {
@@ -91,7 +91,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -101,7 +101,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageHomePageSectionsLibrary mhps = (ManageHomePageSectionsLibrary)baseResponse.Data;
+                ManageHomePageSectionsLibrary mhps = baseResponse.Data as ManageHomePageSectionsLibrary;
                 mhps.LayoutId = model.LayoutId;
                 mhps.LayoutTypeId = model.LayoutTypeId;
                 mhps.Name = model.Name;
@@ -147,13 +147,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + "?SectionId=" + id, "GET", null);
                 BaseResponse<ManageHomePageDetailsLibrary> baseResponse1 = new BaseResponse<ManageHomePageDetailsLibrary>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageHomePageDetailsLibrary> tempList1 = (List<ManageHomePageDetailsLibrary>)baseResponse1.Data;
+                List<ManageHomePageDetailsLibrary> tempList1 = baseResponse1.Data as List<ManageHomePageDetailsLibrary> ?? new List<ManageHomePageDetailsLibrary>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();
@@ -178,7 +178,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
 
             if (tempList.Any())
             {
@@ -267,7 +267,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -277,7 +277,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageHomePageSectionsLibrary mhps = (ManageHomePageSectionsLibrary)baseResponse.Data;
+                ManageHomePageSectionsLibrary mhps = baseResponse.Data as ManageHomePageSectionsLibrary;
                 mhps.LayoutId = model.LayoutId;
                 mhps.LayoutTypeId = model.LayoutTypeId;
                 mhps.Name = model.Name;
@@ -313,7 +313,7 @@ namespace API_Gateway.Controllers.Admin
 
                     if (baseResponseHomedetails.code == 200)
                     {
-                        List<ManageHomePageDetailsLibrary> manageHomePageDetailsLibraries = (List<ManageHomePageDetailsLibrary>)baseResponseHomedetails.Data;
+                        List<ManageHomePageDetailsLibrary> manageHomePageDetailsLibraries = baseResponseHomedetails.Data as List<ManageHomePageDetailsLibrary> ?? new List<ManageHomePageDetailsLibrary>();
 
                         if (manageHomePageDetailsLibraries.Count > 0)
                         {
@@ -377,13 +377,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageHomePageSections + "?Id=" + sectionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageHomePageSectionsLibrary> tempList = (List<ManageHomePageSectionsLibrary>)baseResponse.Data;
+            List<ManageHomePageSectionsLibrary> tempList = baseResponse.Data as List<ManageHomePageSectionsLibrary> ?? new List<ManageHomePageSectionsLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageHomePageDetails + "?SectionId=" + sectionId, "GET", null);
                 BaseResponse<ManageHomePageDetailsLibrary> baseResponse1 = new BaseResponse<ManageHomePageDetailsLibrary>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<ManageHomePageDetailsLibrary> tempList1 = (List<ManageHomePageDetailsLibrary>)baseResponse1.Data;
+                List<ManageHomePageDetailsLibrary> tempList1 = baseResponse1.Data as List<ManageHomePageDetailsLibrary> ?? new List<ManageHomePageDetailsLibrary>();
                 if (tempList1.Any())
                 {
                     foreach (var item in tempList1)
@@ -435,6 +435,24 @@ namespace API_Gateway.Controllers.Admin
             return Ok(baseResponse.JsonParseRecord(response));
         }
 
+        [HttpGet("search")]
+        [Authorize]
+        public ActionResult<ApiHelper> Search(string? searchtext = null, string? status = null, int? pageIndex = 1, int? pageSize = 10)
+        {
+            string url = "?PageIndex=" + pageIndex + "&PageSize=" + pageSize;
+            if (!string.IsNullOrWhiteSpace(searchtext))
+            {
+                url += "&SearchText=" + HttpUtility.UrlEncode(searchtext);
+            }
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                url += "&Status=" + HttpUtility.UrlEncode(status);
+            }
+
+            var response = helper.ApiCall(URL, EndPoints.ManageHomePageSections + url, "GET", null);
+            return Ok(baseResponse.JsonParseList(response));
+        }
+
         [HttpGet("GetProductHomePageSection")]
         [Authorize]
         public ActionResult<ApiHelper> GetProductHomePageSection(int? categoryId = 0, int? topProduct = 0, string? productId = null)
@@ -451,7 +469,7 @@ namespace API_Gateway.Controllers.Admin
 
             var response = helper.ApiCall(URL, EndPoints.ManageProductHomePageSections + "?categoryId=" + categoryId + "&topProduct=" + topProduct + "&productId=" + productId, "GET", null);
             var parsedResponse = productHomePage.JsonParseList(response);
-            List<ProductHomePageSectionLibrary> homePageDetail = (List<ProductHomePageSectionLibrary>)parsedResponse.Data;
+            List<ProductHomePageSectionLibrary> homePageDetail = parsedResponse.Data as List<ProductHomePageSectionLibrary> ?? new List<ProductHomePageSectionLibrary>();
             var result = homePageDetail.Select(section => new
             {
                 id = section.id,
@@ -510,7 +528,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<Wishlist> baseResponse = new BaseResponse<Wishlist>();
             var response = helper.ApiCall(UserURL, EndPoints.Wishlist + "?UserID=" + userId + "&pageIndex=0&pageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<Wishlist> lstwish = (List<Wishlist>)baseResponse.Data;
+            List<Wishlist> lstwish = baseResponse.Data as List<Wishlist> ?? new List<Wishlist>();
 
             return lstwish;
         }

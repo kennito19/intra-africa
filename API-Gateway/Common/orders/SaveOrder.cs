@@ -292,7 +292,7 @@ namespace API_Gateway.Common.orders
             BaseResponse<Orders> baseResponse = new BaseResponse<Orders>();
             //var GetResponse = helper.ApiCall(OrderURL, EndPoints.Orders + "?OrderNo=" + model.OrderNo, "GET", null);
             //baseResponse = baseResponse.JsonParseList(GetResponse);
-            //List<Orders> tempList = (List<Orders>)baseResponse.Data;
+            //List<Orders> tempList = baseResponse.Data as List<Orders>;
             //if (tempList.Where(x => x.OrderNo == model.OrderNo).Any())
             //{
             //    baseResponse = baseResponse.AlreadyExists();
@@ -360,7 +360,7 @@ namespace API_Gateway.Common.orders
                     Orders Order = new Orders();
                     if (OrderbaseResponse.code == 200)
                     {
-                        Order = (Orders)OrderbaseResponse.Data;
+                        Order = OrderbaseResponse.Data as Orders;
                     }
 
 
@@ -370,7 +370,7 @@ namespace API_Gateway.Common.orders
 
                     if (baseResponse.code == 200)
                     {
-                        orderItems = (List<OrderItems>)baseResponse.Data;
+                        orderItems = baseResponse.Data as List<OrderItems>;
                     }
 
                     if (Order.Status.ToString().ToLower() == "initiate" && orderItems.Count() != 0)
@@ -398,7 +398,7 @@ namespace API_Gateway.Common.orders
 
                                 var presponse = helper.ApiCall(_catlogUrl, EndPoints.ProductPriceMaster + "?SellerProductID=" + item.SellerProductID + url, "get", null);
                                 PbaseResponse = PbaseResponse.JsonParseList(presponse);
-                                List<ProductPrice> DataProductPrices = (List<ProductPrice>)PbaseResponse.Data;
+                                List<ProductPrice> DataProductPrices = PbaseResponse.Data as List<ProductPrice>;
                                 if (DataProductPrices.Count > 0)
                                 {
                                     ProductPrice PP = new ProductPrice();
@@ -445,7 +445,7 @@ namespace API_Gateway.Common.orders
                     List<Orders> Order = new List<Orders>();
                     if (OrderbaseResponse.code == 200)
                     {
-                        Order = (List<Orders>)OrderbaseResponse.Data;
+                        Order = OrderbaseResponse.Data as List<Orders>;
                     }
 
                     foreach (Orders _order in Order)
@@ -458,7 +458,7 @@ namespace API_Gateway.Common.orders
 
                         if (baseResponse.code == 200)
                         {
-                            orderItems = (List<OrderItems>)baseResponse.Data;
+                            orderItems = baseResponse.Data as List<OrderItems>;
                         }
 
                         if (_order.Status.ToString().ToLower() == "initiate" && orderItems.Count() != 0)
@@ -486,7 +486,7 @@ namespace API_Gateway.Common.orders
 
                                     var presponse = helper.ApiCall(_catlogUrl, EndPoints.ProductPriceMaster + "?SellerProductID=" + item.SellerProductID + url, "get", null);
                                     PbaseResponse = PbaseResponse.JsonParseList(presponse);
-                                    List<ProductPrice> DataProductPrices = (List<ProductPrice>)PbaseResponse.Data;
+                                    List<ProductPrice> DataProductPrices = PbaseResponse.Data as List<ProductPrice>;
                                     if (DataProductPrices.Count > 0)
                                     {
                                         ProductPrice PP = new ProductPrice();
@@ -543,11 +543,11 @@ namespace API_Gateway.Common.orders
             BaseResponse<OrderItems> baseResponse = new BaseResponse<OrderItems>();
             var temp = helper.ApiCall(OrderURL, EndPoints.Orders + "?Id=" + orderId, "GET", null);
             OrderbaseResponse = OrderbaseResponse.JsonParseList(temp);
-            List<Orders> tempList = (List<Orders>)OrderbaseResponse.Data;
+            List<Orders> tempList = OrderbaseResponse.Data as List<Orders>;
 
             var OrderItem = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?OrderId=" + orderId, "GET", null);
             baseResponse = baseResponse.JsonParseList(OrderItem);
-            List<OrderItems> orderItems = (List<OrderItems>)baseResponse.Data;
+            List<OrderItems> orderItems = baseResponse.Data as List<OrderItems>;
 
             if (orderItems.Any(x => x.Status.Contains("Delivered")))
             {
@@ -570,7 +570,7 @@ namespace API_Gateway.Common.orders
             ItembaseResponse = ItembaseResponse.JsonParseList(ordertemp);
             if (ItembaseResponse.code == 200)
             {
-                List<OrderItems> orderItemslst = (List<OrderItems>)ItembaseResponse.Data;
+                List<OrderItems> orderItemslst = ItembaseResponse.Data as List<OrderItems>;
                 string[] ItemIds = model.OrderItemIDs?.Trim('{', '}').Split(',');
                 List<OrderItems> matchingItems = orderItemslst.Where(p => ItemIds.Contains(p.Id.ToString())).ToList();
                 matchingItems = matchingItems.Where(p => p.Status.ToLower() != "confirmed").ToList();
@@ -598,7 +598,7 @@ namespace API_Gateway.Common.orders
                     baseResponseOrderPakage = baseResponseOrderPakage.JsonParseList(response1);
                     if (baseResponseOrderPakage.code == 200)
                     {
-                        packlist = (List<OrderPackage>)baseResponseOrderPakage.Data;
+                        packlist = baseResponseOrderPakage.Data as List<OrderPackage>;
 
                         if (packlist.Count > 0)
                         {
@@ -662,7 +662,7 @@ namespace API_Gateway.Common.orders
             ItembaseResponse = ItembaseResponse.JsonParseList(ordertemp);
             if (ItembaseResponse.code == 200)
             {
-                List<OrderItems> orderItemslst = (List<OrderItems>)ItembaseResponse.Data;
+                List<OrderItems> orderItemslst = ItembaseResponse.Data as List<OrderItems>;
                 string[] ItemIds = model.OrderItemIDs?.Trim('{', '}').Split(',');
                 List<OrderItems> matchingItems = orderItemslst.Where(p => ItemIds.Contains(p.Id.ToString())).ToList();
                 matchingItems = matchingItems.Where(p => p.Status.ToLower() != "packed").ToList();
@@ -689,7 +689,7 @@ namespace API_Gateway.Common.orders
 
                     var temp = helper.ApiCall(OrderURL, EndPoints.ShipmentInfo + "?OrderID=" + model.OrderID + "&OrderItemIDs=" + model.OrderItemIDs, "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp);
-                    List<OrderShipmentInfo> tmp = (List<OrderShipmentInfo>)baseResponse.Data;
+                    List<OrderShipmentInfo> tmp = baseResponse.Data as List<OrderShipmentInfo>;
                     if (tmp.Any())
                     {
                         baseResponse = baseResponse.AlreadyExists();
@@ -799,7 +799,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(temp);
             if (baseResponse.code == 200)
             {
-                List<OrderItems> orderItemslst = (List<OrderItems>)baseResponse.Data;
+                List<OrderItems> orderItemslst = baseResponse.Data as List<OrderItems>;
                 OrderItems orderRecord = orderItemslst.Where(p => p.Id == model.OrderItemId).FirstOrDefault();
 
                 if (orderRecord.Status.ToLower() != "placed")
@@ -824,7 +824,7 @@ namespace API_Gateway.Common.orders
                             productWarehouse = productWarehouse.JsonParseRecord(resp);
                             if (productWarehouse.code == 200)
                             {
-                                _productWarehouse = (ProductWareHouse)productWarehouse.Data;
+                                _productWarehouse = productWarehouse.Data as ProductWareHouse;
                                 if (_productWarehouse.Id != null || _productWarehouse.Id != 0)
                                 {
                                     if (_productWarehouse.ProductQuantity >= orderRecord.Qty)
@@ -871,7 +871,7 @@ namespace API_Gateway.Common.orders
 
                         if (Orderconfirmation)
                         {
-                            //OrderItems record = (OrderItems)baseResponse.Data;
+                            //OrderItems record = baseResponse.Data as OrderItems;
                             OrderItems record = orderRecord;
                             record.Status = "Confirmed";
                             record.WherehouseId = model.warehouseId;
@@ -906,7 +906,7 @@ namespace API_Gateway.Common.orders
             if (orderRefundresponse.code == 200)
             {
                 OrderRefund refund = new OrderRefund();
-                refund = (OrderRefund)orderRefundresponse.Data;
+                refund = orderRefundresponse.Data as OrderRefund;
                 refund.TransactionID = model.TransactionID;
                 refund.Comment = model.Comment;
                 refund.Status = model.Status;
@@ -935,7 +935,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID + "&ActionID=" + model.ActionID + "&UserId=" + model.UserId, "GET", null);
             BaseResponse = BaseResponse.JsonParseRecord(temp);
-            List<OrderCancelReturn> orderRecord = (List<OrderCancelReturn>)BaseResponse.Data;
+            List<OrderCancelReturn> orderRecord = BaseResponse.Data as List<OrderCancelReturn>;
             if (orderRecord.Any())
             {
                 BaseResponse = BaseResponse.AlreadyExists();
@@ -1000,7 +1000,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1089,7 +1089,7 @@ namespace API_Gateway.Common.orders
                 if (getOrderReturnAction.code == 200)
                 {
                     OrderReturnAction orderReturnAction = new OrderReturnAction();
-                    orderReturnAction = (OrderReturnAction)getOrderReturnAction.Data;
+                    orderReturnAction = getOrderReturnAction.Data as OrderReturnAction;
                     if (orderRecord.ActionID == orderReturnAction.Id && model.Status.ToLower() == "return approved")
                     {
                         string[] orderItemIds = model.OrderItemID.ToString()?.Trim('{', '}').Split(',');
@@ -1123,7 +1123,7 @@ namespace API_Gateway.Common.orders
                         //ItembaseResponse = ItembaseResponse.JsonParseList(temp1);
                         //if (ItembaseResponse.code == 200)
                         //{
-                        //    List<OrderItems> orderItemslst = (List<OrderItems>)ItembaseResponse.Data;
+                        //    List<OrderItems> orderItemslst = ItembaseResponse.Data as List<OrderItems>;
 
                         //    UpdateMainOrderStstus(orderItemslst, model.OrderID);
                         //}
@@ -1146,7 +1146,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1184,23 +1184,23 @@ namespace API_Gateway.Common.orders
             // api call for getting SellerProductId and ProductId.
             var orderdetail = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?orderId=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET", null);
             orderItemResponse = orderItemResponse.JsonParseRecord(orderdetail);
-            OrderItems orderRecord = (OrderItems)orderItemResponse.Data;
+            OrderItems orderRecord = orderItemResponse.Data as OrderItems;
             SellerProductID = orderRecord.SellerProductID;
             ProductID = orderRecord.ProductID;
 
             // api call for getting sellerProduct Detail.
             var sellerproduct = helper.ApiCall(_catlogUrl, EndPoints.SellerProduct + "?Id=" + SellerProductID + "&ProductID=" + ProductID, "GET", null);
             sellerProductResponse = sellerProductResponse.JsonParseRecord(sellerproduct);
-            SellerProduct sellerProduct = (SellerProduct)sellerProductResponse.Data;
+            SellerProduct sellerProduct = sellerProductResponse.Data as SellerProduct;
 
             var orderShip = helper.ApiCall(OrderURL, EndPoints.ShipmentInfo + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET", null);
             orderShipResponse = orderShipResponse.JsonParseRecord(orderShip);
-            OrderShipmentInfo orderShipment = (OrderShipmentInfo)orderShipResponse.Data;
+            OrderShipmentInfo orderShipment = orderShipResponse.Data as OrderShipmentInfo;
 
 
             var temp = helper.ApiCall(OrderURL, EndPoints.ReturnShipmentInfo + "?OrderId=" + model.OrderID + "&OrderItemId=" + model.OrderItemID + "&OrderCancelReturnID=" + model.Id, "GET", null);
             returnShipMentResponse = returnShipMentResponse.JsonParseRecord(temp);
-            List<ReturnShipmentInfo> orderRefundRecord = (List<ReturnShipmentInfo>)returnShipMentResponse.Data;
+            List<ReturnShipmentInfo> orderRefundRecord = returnShipMentResponse.Data as List<ReturnShipmentInfo>;
             if (orderRefundRecord.Any())
             {
                 returnShipMentResponse = returnShipMentResponse.AlreadyExists();
@@ -1274,7 +1274,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID + "&ActionID=" + model.ActionID + "&UserId=" + model.UserId, "GET", null);
             BaseResponse = BaseResponse.JsonParseRecord(temp);
-            List<OrderCancelReturn> orderRecord = (List<OrderCancelReturn>)BaseResponse.Data;
+            List<OrderCancelReturn> orderRecord = BaseResponse.Data as List<OrderCancelReturn>;
             if (orderRecord.Any())
             {
                 BaseResponse = BaseResponse.AlreadyExists();
@@ -1331,7 +1331,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1380,7 +1380,7 @@ namespace API_Gateway.Common.orders
                 if (getOrderReturnAction.code == 200)
                 {
                     OrderReturnAction orderReturnAction = new OrderReturnAction();
-                    orderReturnAction = (OrderReturnAction)getOrderReturnAction.Data;
+                    orderReturnAction = getOrderReturnAction.Data as OrderReturnAction;
                     if (orderRecord.ActionID == orderReturnAction.Id && model.Status.ToLower() == "replace approved")
                     {
                         string[] orderItemIds = model.OrderItemID.ToString()?.Trim('{', '}').Split(',');
@@ -1397,7 +1397,7 @@ namespace API_Gateway.Common.orders
                         //ItembaseResponse = ItembaseResponse.JsonParseList(temp1);
                         //if (ItembaseResponse.code == 200)
                         //{
-                        //    List<OrderItems> orderItemslst = (List<OrderItems>)ItembaseResponse.Data;
+                        //    List<OrderItems> orderItemslst = ItembaseResponse.Data as List<OrderItems>;
                         //    UpdateMainOrderStstus(orderItemslst, model.OrderID);
                         //}
                     }
@@ -1419,7 +1419,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1448,7 +1448,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID + "&ActionID=" + model.ActionID + "&UserId=" + model.UserId, "GET", null);
             BaseResponse = BaseResponse.JsonParseRecord(temp);
-            List<OrderCancelReturn> orderRecord = (List<OrderCancelReturn>)BaseResponse.Data;
+            List<OrderCancelReturn> orderRecord = BaseResponse.Data as List<OrderCancelReturn>;
             if (orderRecord.Any())
             {
                 BaseResponse = BaseResponse.AlreadyExists();
@@ -1506,7 +1506,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1557,7 +1557,7 @@ namespace API_Gateway.Common.orders
                 if (getOrderReturnAction.code == 200)
                 {
                     OrderReturnAction orderReturnAction = new OrderReturnAction();
-                    orderReturnAction = (OrderReturnAction)getOrderReturnAction.Data;
+                    orderReturnAction = getOrderReturnAction.Data as OrderReturnAction;
 
                     if (orderRecord.ActionID == orderReturnAction.Id && model.Status.ToLower() == "exchange approved")
                     {
@@ -1575,7 +1575,7 @@ namespace API_Gateway.Common.orders
                         //ItembaseResponse = ItembaseResponse.JsonParseList(temp1);
                         //if (ItembaseResponse.code == 200)
                         //{
-                        //    List<OrderItems> orderItemslst = (List<OrderItems>)ItembaseResponse.Data;
+                        //    List<OrderItems> orderItemslst = ItembaseResponse.Data as List<OrderItems>;
                         //    UpdateMainOrderStstus(orderItemslst, model.OrderID);
                         //}
                     }
@@ -1597,7 +1597,7 @@ namespace API_Gateway.Common.orders
             BaseResponse = BaseResponse.JsonParseRecord(temp);
             if (BaseResponse.code == 200)
             {
-                OrderCancelReturn orderRecord = (OrderCancelReturn)BaseResponse.Data;
+                OrderCancelReturn orderRecord = BaseResponse.Data as OrderCancelReturn;
 
                 string userID = UserId;
                 GetOrders getorders = new GetOrders(_configuration, _httpContext, userID);
@@ -1627,7 +1627,7 @@ namespace API_Gateway.Common.orders
 
             var getTaxInfo = helper.ApiCall(OrderURL, EndPoints.OrderTaxInfo + "?OrderId=" + model.OrderID + "&OrderItemId=" + model.OrderItemID, "GET", null);
             modelResponse = modelResponse.JsonParseRecord(getTaxInfo);
-            List<OrderTaxInfo> orderTax = (List<OrderTaxInfo>)modelResponse.Data;
+            List<OrderTaxInfo> orderTax = modelResponse.Data as List<OrderTaxInfo>;
             if (orderTax.Any())
             {
                 modelResponse = modelResponse.AlreadyExists();
@@ -1673,7 +1673,7 @@ namespace API_Gateway.Common.orders
 
             var temp = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID + "&ActionID=" + model.ActionID + "&UserId=" + model.UserId, "GET", null);
             exchange = exchange.JsonParseRecord(temp);
-            List<OrderCancelReturn> exchange1 = (List<OrderCancelReturn>)exchange.Data;
+            List<OrderCancelReturn> exchange1 = exchange.Data as List<OrderCancelReturn>;
             if (exchange1.Any())
             {
                 exchange = exchange.AlreadyExists();
@@ -1736,7 +1736,7 @@ namespace API_Gateway.Common.orders
 
             var uStatus = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?orderId=" + model.orderId + "&orderItemId=" + model.orderItemId + "&actionId=" + model.actionId, "GET", null);
             status = status.JsonParseRecord(uStatus);
-            OrderCancelReturn updateStatus = (OrderCancelReturn)status.Data;
+            OrderCancelReturn updateStatus = status.Data as OrderCancelReturn;
             if (updateStatus == null)
             {
                 status = status.NotExist();
@@ -1782,7 +1782,7 @@ namespace API_Gateway.Common.orders
             {
                 var temp = helper.ApiCall(OrderURL, EndPoints.CancelReturn + "?OrderID=" + model.OrderId + "&OrderItemID=" + orderItemIds[i] + "&ActionID=" + model.ActionID + "&UserId=" + model.UserId, "GET", null);
                 returnBaseResponse = returnBaseResponse.JsonParseList(temp);
-                List<OrderCancelReturn> orderRecord = (List<OrderCancelReturn>)returnBaseResponse.Data;
+                List<OrderCancelReturn> orderRecord = returnBaseResponse.Data as List<OrderCancelReturn>;
                 if (orderRecord.Any())
                 {
                     returnBaseResponse = returnBaseResponse.AlreadyExists();
@@ -1936,17 +1936,17 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(temp);
             if (baseResponse.code == 200)
             {
-                List<OrderItems> orderItemslst = (List<OrderItems>)baseResponse.Data;
+                List<OrderItems> orderItemslst = baseResponse.Data as List<OrderItems>;
 
                 foreach (var item in OrderItemId)
                 {
                     //var temp = helper.ApiCall(URL, EndPoints.OrderItems + "?OrderId=" + OrderId + "&Id=" + item, "Get", null);
                     //baseResponse = baseResponse.JsonParseRecord(temp);
-                    //OrderItems orderRecord = (OrderItems)baseResponse.Data;
+                    //OrderItems orderRecord = baseResponse.Data as OrderItems;
                     OrderItems orderRecord = orderItemslst.Where(p => p.Id == Convert.ToInt32(item)).FirstOrDefault();
                     if (orderRecord != null && orderRecord.Id != 0)
                     {
-                        //OrderItems record = (OrderItems)baseResponse.Data;
+                        //OrderItems record = baseResponse.Data as OrderItems;
                         OrderItems record = orderItemslst.Where(p => p.Id == Convert.ToInt32(item)).FirstOrDefault();
                         record.Status = Status;
                         if (Status.ToLower() == "delivered")
@@ -1979,7 +1979,7 @@ namespace API_Gateway.Common.orders
                                     productWarehouse = productWarehouse.JsonParseRecord(resp);
                                     if (productWarehouse.code == 200)
                                     {
-                                        _productWarehouse = (ProductWareHouse)productWarehouse.Data;
+                                        _productWarehouse = productWarehouse.Data as ProductWareHouse;
                                         if (_productWarehouse.Id != null || _productWarehouse.Id != 0)
                                         {
 
@@ -2002,7 +2002,7 @@ namespace API_Gateway.Common.orders
 
                             var presponse = helper.ApiCall(_catlogUrl, EndPoints.ProductPriceMaster + "?SellerProductID=" + orderRecord.SellerProductID + url, "get", null);
                             PbaseResponse = PbaseResponse.JsonParseList(presponse);
-                            List<ProductPrice> DataProductPrices = (List<ProductPrice>)PbaseResponse.Data;
+                            List<ProductPrice> DataProductPrices = PbaseResponse.Data as List<ProductPrice>;
                             if (DataProductPrices.Count > 0)
                             {
                                 ProductPrice PP = new ProductPrice();
@@ -2227,7 +2227,7 @@ namespace API_Gateway.Common.orders
                 baseResponse = baseResponse.JsonParseRecord(temp);
                 if (baseResponse.code == 200)
                 {
-                    Orders order = (Orders)baseResponse.Data;
+                    Orders order = baseResponse.Data as Orders;
                     order.Status = status;
                     order.ModifiedBy = UserId;
                     order.ModifiedAt = DateTime.Now;
@@ -2250,17 +2250,17 @@ namespace API_Gateway.Common.orders
 
             //var orderdetail = helper.ApiCall(URL, EndPoints.Orders + "?Id=" + shipModel.OrderID, "GET", null);
             //ordersBaseResponse = ordersBaseResponse.JsonParseRecord(orderdetail);
-            //Orders orderRecord = (Orders)ordersBaseResponse.Data;
+            //Orders orderRecord = ordersBaseResponse.Data as Orders;
             //SellerId = orderRecord.SellerID;
             SellerId = shipModel.SellerID;
 
             var orderPackage = helper.ApiCall(OrderURL, EndPoints.OrderPackage + "?Id=" + shipModel.PackageID, "GET", null);
             packageBaseResponse = packageBaseResponse.JsonParseRecord(orderPackage);
-            OrderPackage package = (OrderPackage)packageBaseResponse.Data;
+            OrderPackage package = packageBaseResponse.Data as OrderPackage;
 
             var gstDetail = helper.ApiCall(UserUrl, EndPoints.GSTInfo + "?UserID=" + SellerId + "&IsHeadOffice=" + true, "GET", null);
             gstInfoResponse = gstInfoResponse.JsonParseRecord(gstDetail);
-            GSTInfo gst = (GSTInfo)gstInfoResponse.Data;
+            GSTInfo gst = gstInfoResponse.Data as GSTInfo;
 
             OrderInvoice orderInvoice = new OrderInvoice();
             orderInvoice.SellerTradeName = gst.TradeName;
@@ -2314,7 +2314,7 @@ namespace API_Gateway.Common.orders
                 // api call for getting SellerProductId and ProductId.
                 var orderdetail = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?orderId=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET", null);
                 orderItemResponse = orderItemResponse.JsonParseRecord(orderdetail);
-                OrderItems orderRecord = (OrderItems)orderItemResponse.Data;
+                OrderItems orderRecord = orderItemResponse.Data as OrderItems;
                 SellerProductID = orderRecord.SellerProductID;
                 ProductID = orderRecord.ProductID;
                 try
@@ -2322,17 +2322,17 @@ namespace API_Gateway.Common.orders
                     // api call for getting sellerProduct Detail.
                     var sellerproduct = helper.ApiCall(_catlogUrl, EndPoints.SellerProduct + "?Id=" + SellerProductID + "&ProductID=" + ProductID, "GET", null);
                     sellerProductResponse = sellerProductResponse.JsonParseRecord(sellerproduct);
-                    SellerProduct sellerProduct = (SellerProduct)sellerProductResponse.Data;
+                    SellerProduct sellerProduct = sellerProductResponse.Data as SellerProduct;
                     try
                     {
                         // api call for getting orderShipmnet Detail.
                         var orderShip = helper.ApiCall(OrderURL, EndPoints.ShipmentInfo + "?OrderID=" + model.OrderID + "&OrderItemID=" + model.OrderItemID, "GET", null);
                         orderShipResponse = orderShipResponse.JsonParseRecord(orderShip);
-                        OrderShipmentInfo orderShipment = (OrderShipmentInfo)orderShipResponse.Data;
+                        OrderShipmentInfo orderShipment = orderShipResponse.Data as OrderShipmentInfo;
 
                         var temp = helper.ApiCall(OrderURL, EndPoints.ReturnShipmentInfo + "?OrderId=" + model.OrderID + "&OrderItemId=" + model.OrderItemID + "&OrderCancelReturnID=" + model.Id, "GET", null);
                         returnShipMentResponse = returnShipMentResponse.JsonParseRecord(temp);
-                        List<ReturnShipmentInfo> orderRefundRecord = (List<ReturnShipmentInfo>)returnShipMentResponse.Data;
+                        List<ReturnShipmentInfo> orderRefundRecord = returnShipMentResponse.Data as List<ReturnShipmentInfo>;
                         if (orderRefundRecord.Any())
                         {
                             returnShipMentResponse = returnShipMentResponse.AlreadyExists();
@@ -2426,7 +2426,7 @@ namespace API_Gateway.Common.orders
 
             var getOrder = helper.ApiCall(OrderURL, EndPoints.Orders + "?Id=" + orderId, "GET", null);
             orderBaseResponse = orderBaseResponse.JsonParseRecord(getOrder);
-            Orders order = (Orders)orderBaseResponse.Data;
+            Orders order = orderBaseResponse.Data as Orders;
             if (order == null)
             {
                 orderBaseResponse = orderBaseResponse.AlreadyExists();
@@ -2478,7 +2478,7 @@ namespace API_Gateway.Common.orders
                 var createOrder = helper.ApiCall(OrderURL, EndPoints.Orders, "POST", fillOrder);
                 orderBaseResponse = orderBaseResponse.JsonParseInputResponse(createOrder);
 
-                int newOrderId = (int)orderBaseResponse.Data;
+                int newOrderId = Convert.ToInt32(orderBaseResponse.Data);
                 exchangeOrderItem(newOrderId, orderId, OrderItemId, newProudctId, newSizeId, ExchangeSize, ExchangePriceDiff);
             }
             return orderBaseResponse;
@@ -2490,7 +2490,7 @@ namespace API_Gateway.Common.orders
             BaseResponse<OrderItems> baseResponse = new BaseResponse<OrderItems>();
             var OrderItem = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?Id=" + orderItemId + "&orderId=" + orderId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(OrderItem);
-            OrderItems orderItems = (OrderItems)baseResponse.Data;
+            OrderItems orderItems = baseResponse.Data as OrderItems;
             if (orderItems == null)
             {
                 baseResponse = baseResponse.NotExist();
@@ -2540,7 +2540,7 @@ namespace API_Gateway.Common.orders
                 var exchangeOrderItem = helper.ApiCall(OrderURL, EndPoints.OrderItems, "POST", item);
                 baseResponse = baseResponse.JsonParseInputResponse(exchangeOrderItem);
 
-                orderItemId = (int)baseResponse.Data;
+                orderItemId = Convert.ToInt32(baseResponse.Data);
                 OrderTrackEntries(item.OrderID, orderItemId, item.Status);
                 ReplaceOrdertaxinfo(orderItems.OrderID, orderItems.Id, newOrderId, orderItemId);
             }
@@ -2554,7 +2554,7 @@ namespace API_Gateway.Common.orders
 
             var getOrder = helper.ApiCall(OrderURL, EndPoints.Orders + "?Id=" + orderId, "GET", null);
             orderBaseResponse = orderBaseResponse.JsonParseRecord(getOrder);
-            Orders order = (Orders)orderBaseResponse.Data;
+            Orders order = orderBaseResponse.Data as Orders;
             if (order == null)
             {
                 orderBaseResponse = orderBaseResponse.NotExist();
@@ -2606,7 +2606,7 @@ namespace API_Gateway.Common.orders
                 var createOrder = helper.ApiCall(OrderURL, EndPoints.Orders, "POST", fillOrder);
                 orderBaseResponse = orderBaseResponse.JsonParseInputResponse(createOrder);
 
-                int newOrderId = (int)orderBaseResponse.Data;
+                int newOrderId = Convert.ToInt32(orderBaseResponse.Data);
                 ReplaceOrderItem(newOrderId, OrderItemId);
             }
             return orderBaseResponse;
@@ -2619,7 +2619,7 @@ namespace API_Gateway.Common.orders
 
             var getOrderItems = helper.ApiCall(OrderURL, EndPoints.OrderItems + "?Id=" + OrderItemId, "GET", null);
             orderItemBaseResponse = orderItemBaseResponse.JsonParseRecord(getOrderItems);
-            OrderItems orderItems = (OrderItems)orderItemBaseResponse.Data;
+            OrderItems orderItems = orderItemBaseResponse.Data as OrderItems;
             if (orderItems == null)
             {
                 orderItemBaseResponse = orderItemBaseResponse.NotExist();
@@ -2676,7 +2676,7 @@ namespace API_Gateway.Common.orders
                 orderItemBaseResponse = orderItemBaseResponse.JsonParseInputResponse(createOrderItem);
 
 
-                int orderItemId = (int)orderItemBaseResponse.Data;
+                int orderItemId = Convert.ToInt32(orderItemBaseResponse.Data);
 
                 OrderTrackEntries(items.OrderID, orderItemId, items.Status);
                 ReplaceOrdertaxinfo(orderItems.OrderID, orderItems.Id, OrderId, orderItemId);
@@ -2693,7 +2693,7 @@ namespace API_Gateway.Common.orders
 
             var getTaxInfo = helper.ApiCall(OrderURL, EndPoints.OrderTaxInfo + "?OrderId=" + OrderId + "&OrderItemId=" + OrderItemId, "GET", null);
             modelResponse = modelResponse.JsonParseRecord(getTaxInfo);
-            OrderTaxInfo orderTax = (OrderTaxInfo)modelResponse.Data;
+            OrderTaxInfo orderTax = modelResponse.Data as OrderTaxInfo;
             if (orderTax == null)
             {
                 modelResponse = modelResponse.NotExist();
@@ -2729,7 +2729,7 @@ namespace API_Gateway.Common.orders
                     AssignReturnPolicyToCatagoryLibrary policy = new AssignReturnPolicyToCatagoryLibrary();
                     if (baseResponse.code == 200)
                     {
-                        policy = (AssignReturnPolicyToCatagoryLibrary)baseResponse.Data;
+                        policy = baseResponse.Data as AssignReturnPolicyToCatagoryLibrary;
                         returnPolicy.Id = policy.Id;
                         returnPolicy.ReturnPolicyID = Convert.ToInt32(policy.ReturnPolicyID);
                         returnPolicy.ValidityDays = Convert.ToInt32(policy.ValidityDays);
@@ -2758,7 +2758,7 @@ namespace API_Gateway.Common.orders
             {
                 BaseResponse<CategoryLibrary> baseResponse = new BaseResponse<CategoryLibrary>();
                 baseResponse = baseResponse.JsonParseList(response);
-                lstCategoryLibrary = (List<CategoryLibrary>)baseResponse.Data;
+                lstCategoryLibrary = baseResponse.Data as List<CategoryLibrary>;
             }
             return lstCategoryLibrary;
 

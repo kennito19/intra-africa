@@ -50,8 +50,8 @@ namespace API_Gateway.Controllers.Seller
 
                     if (baseResponse1.code == 200)
                     {
-                        UserDetailsDTO userDetails = (UserDetailsDTO)baseResponse1.Data;
-                        if (userDetails.UserId == null && userDetails == null)
+                        UserDetailsDTO userDetails = baseResponse1.Data as UserDetailsDTO;
+                        if (userDetails == null || userDetails.UserId == null)
                         {
                             #region UserDetail Table Entry
                             string[] fullname = rsf.CurrentUser.FullName.Split(" ");
@@ -64,8 +64,8 @@ namespace API_Gateway.Controllers.Seller
                             ud.UserId = rsf.CurrentUser.UserId;
                             ud.Phone = rsf.CurrentUser.Phone;
                             ud.Gender = rsf.CurrentUser.Gender;
-                            ud.IsEmailConfirmed = (bool)rsf.CurrentUser.IsEmailConfirmed;
-                            ud.IsPhoneConfirmed = (bool)rsf.CurrentUser.IsPhoneConfirmed;
+                            ud.IsEmailConfirmed = rsf.CurrentUser.IsEmailConfirmed == true;
+                            ud.IsPhoneConfirmed = rsf.CurrentUser.IsPhoneConfirmed == true;
                             ud.UserType = "seller";
                             ud.CreatedAt = DateTime.Now;
                             ud.CreatedBy = null;
@@ -86,12 +86,59 @@ namespace API_Gateway.Controllers.Seller
         [HttpPost("Seller/SignUp")]
         public async Task<IActionResult> SignUp(SignUp model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
             {
                 var response = api.ApiCall(IDServerUrl, EndPoints.SellerSignUp, "POST", model);
-                var result = await response.Content.ReadAsStringAsync();
-                var rsf = JsonConvert.DeserializeObject<SignedInUserResponse>(result);
-                if (rsf.Message.ToString().ToLower() == "account created successfully")
+                var result = response.Content == null ? string.Empty : await response.Content.ReadAsStringAsync();
+
+                if (response == null)
+                {
+                    BaseResponse<string> nullResponse = new BaseResponse<string>();
+                    nullResponse.code = 500;
+                    nullResponse.Message = "No response from identity service";
+                    return Ok(nullResponse);
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    if (string.IsNullOrWhiteSpace(result))
+                    {
+                        BaseResponse<string> failedResponse = new BaseResponse<string>();
+                        failedResponse.code = (int)response.StatusCode;
+                        failedResponse.Message = "Seller signup failed";
+                        return StatusCode((int)response.StatusCode, failedResponse);
+                    }
+
+                    return StatusCode((int)response.StatusCode, result);
+                }
+
+                SignedInUserResponse? rsf = null;
+                try
+                {
+                    rsf = JsonConvert.DeserializeObject<SignedInUserResponse>(result);
+                }
+                catch
+                {
+                    BaseResponse<string> invalidJson = new BaseResponse<string>();
+                    invalidJson.code = 500;
+                    invalidJson.Message = "Invalid signup response format from identity service";
+                    return Ok(invalidJson);
+                }
+
+                if (rsf == null)
+                {
+                    BaseResponse<string> invalidResponse = new BaseResponse<string>();
+                    invalidResponse.code = 500;
+                    invalidResponse.Message = "Invalid signup response from identity service";
+                    return Ok(invalidResponse);
+                }
+
+                if (string.Equals(rsf.Message, "account created successfully", StringComparison.OrdinalIgnoreCase))
                 {
                     #region UserDetail Table Entry
                     UserDetails ud = new UserDetails();
@@ -100,48 +147,73 @@ namespace API_Gateway.Controllers.Seller
                     ud.Status = "Pending";
                     ud.ProfileImage = null;
                     ud.Email = model.EmailID;
-                    ud.UserId = rsf.CurrentUser.UserId;
-                    ud.Phone = rsf.CurrentUser.Phone;
-                    ud.Gender = rsf.CurrentUser.Gender;
-                    ud.IsPhoneConfirmed = rsf.CurrentUser.IsPhoneConfirmed!=null ?Convert.ToBoolean(rsf.CurrentUser.IsPhoneConfirmed) : false;
-                    ud.IsEmailConfirmed = rsf.CurrentUser.IsEmailConfirmed != null ? Convert.ToBoolean(rsf.CurrentUser.IsEmailConfirmed) : false;
+                    ud.UserId = rsf.CurrentUser?.UserId;
+                    ud.Phone = rsf.CurrentUser?.Phone;
+                    ud.Gender = rsf.CurrentUser?.Gender;
+                    ud.IsPhoneConfirmed = rsf.CurrentUser?.IsPhoneConfirmed != null ? Convert.ToBoolean(rsf.CurrentUser.IsPhoneConfirmed) : false;
+                    ud.IsEmailConfirmed = rsf.CurrentUser?.IsEmailConfirmed != null ? Convert.ToBoolean(rsf.CurrentUser.IsEmailConfirmed) : false;
                     ud.UserType = "seller";
                     ud.CreatedAt = DateTime.Now;
                     ud.CreatedBy = null;
-                    var resp = api.ApiCall(URL, EndPoints.UserDetails, "POST", ud);
+
+                    // If CurrentUser is not returned by identity service, keep signup response stable and skip profile creation.
+                    if (!string.IsNullOrWhiteSpace(ud.UserId))
+                    {
+                        try
+                        {
+                            var resp = api.ApiCall(URL, EndPoints.UserDetails, "POST", ud);
+                        }
+                        catch
+                        {
+                            // Keep seller signup successful even if UserDetails service is unavailable.
+                        }
+                    }
                     #endregion
 
                     #region send mail
-                    MailSendSES objses = new MailSendSES(_configuration);
+                    try
+                    {
+                        string templatePath = Path.Combine("Resources", "EmailTemplate", "seller", "welcome.html");
+                        if (System.IO.File.Exists(templatePath))
+                        {
+                            MailSendSES objses = new MailSendSES(_configuration);
+                            string subject = "Welcome TO Hashkart";
+                            string htmlBody = "";
+                            List<string> ReceiverEmail = new List<string>();
 
-                    string subject = "Welcome TO Hashkart";
-                    string htmlBody = "";
-                    List<string> ReceiverEmail = new List<string>();
+                            ReceiverEmail.Add(model.EmailID);
 
-                    ReceiverEmail.Add(model.EmailID);
+                            StreamReader reader = new StreamReader(templatePath);
+                            string readFile = reader.ReadToEnd();
 
-                    StreamReader reader = new StreamReader("Resources" + "\\EmailTemplate" + "\\seller" + "\\welcome.html");
-                    string readFile = reader.ReadToEnd();
+                            var request = _httpContextAccessor?.HttpContext?.Request;
+                            var baseUrl = request == null
+                                ? string.Empty
+                                : $"{request.Scheme}://{request.Host}/";
 
-                    var baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
+                            readFile = readFile.Replace("{{image_server_path}}", baseUrl);
+                            readFile = readFile.Replace("{{seller_name}}", model.FirstName + " " + model.LastName);
 
-
-                    readFile = readFile.Replace("{{image_server_path}}", baseUrl);
-                    readFile = readFile.Replace("{{seller_name}}", model.FirstName + " " + model.LastName);
-
-
-                    htmlBody = readFile;
-
-                    objses.sendMail(subject, htmlBody, ReceiverEmail);
+                            htmlBody = readFile;
+                            objses.sendMail(subject, htmlBody, ReceiverEmail);
+                        }
+                    }
+                    catch
+                    {
+                        // Keep seller signup successful even if email template/config is missing.
+                    }
                     #endregion
 
 
                 }
                 return Ok(rsf);
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest();
+                BaseResponse<string> errorResponse = new BaseResponse<string>();
+                errorResponse.code = 500;
+                errorResponse.Message = $"Seller signup failed: {ex.Message}";
+                return Ok(errorResponse);
             }
         }
 
@@ -174,32 +246,40 @@ namespace API_Gateway.Controllers.Seller
                 var response = api.ApiCall(IDServerUrl, EndPoints.SellerForgotPassword, "POST", model);
                 baseResponse = baseResponse.JsonParseList(response);
 
-                List<ResetModel> Resetdata = (List<ResetModel>)baseResponse.Data;
+                List<ResetModel> Resetdata = baseResponse.Data as List<ResetModel> ?? new List<ResetModel>();
 
                 if (Resetdata.Count > 0)
                 {
                     #region send mail
-                    MailSendSES objses = new MailSendSES(_configuration);
+                    try
+                    {
+                        string templatePath = Path.Combine("Resources", "EmailTemplate", "seller", "forgot_password.html");
+                        if (System.IO.File.Exists(templatePath))
+                        {
+                            MailSendSES objses = new MailSendSES(_configuration);
+                            string subject = "Forgot password request";
+                            string htmlBody = "";
+                            List<string> ReceiverEmail = new List<string>();
 
-                    string subject = "Forgot password request";
-                    string htmlBody = "";
-                    List<string> ReceiverEmail = new List<string>();
+                            ReceiverEmail.Add(model.Email);
 
-                    ReceiverEmail.Add(model.Email);
+                            StreamReader reader = new StreamReader(templatePath);
+                            string readFile = reader.ReadToEnd();
 
-                    StreamReader reader = new StreamReader("Resources" + "\\EmailTemplate" + "\\seller" + "\\forgot_password.html");
-                    string readFile = reader.ReadToEnd();
+                            var baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
 
-                    var baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/";
+                            readFile = readFile.Replace("{{seller_name}}", Resetdata[0].UserName);
+                            readFile = readFile.Replace("{{image_server_path}}", baseUrl);
+                            readFile = readFile.Replace("{{reset_link}}", Resetdata[0].ResetLink);
 
-
-                    readFile = readFile.Replace("{{seller_name}}", Resetdata[0].UserName);
-                    readFile = readFile.Replace("{{image_server_path}}", baseUrl);
-                    readFile = readFile.Replace("{{reset_link}}", Resetdata[0].ResetLink);
-
-                    htmlBody = readFile;
-
-                    objses.sendMail(subject, htmlBody, ReceiverEmail);
+                            htmlBody = readFile;
+                            objses.sendMail(subject, htmlBody, ReceiverEmail);
+                        }
+                    }
+                    catch
+                    {
+                        // Keep forgot-password response stable even if email template/config is missing.
+                    }
 
                     #endregion
 

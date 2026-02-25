@@ -2,6 +2,7 @@ using API_Gateway.Helper;
 using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.Catalogue;
 using API_Gateway.Models.Entity.User;
+using System.Linq;
 using System.Net.WebSockets;
 
 namespace API_Gateway.Common
@@ -38,7 +39,7 @@ namespace API_Gateway.Common
             {
                 url += "&KycStatus=" + KycStatus;
             }
-            if (UserStatus != null)
+            if (!string.IsNullOrWhiteSpace(UserStatus))
             {
                 url += "&UserStatus=" + UserStatus;
             }
@@ -47,29 +48,41 @@ namespace API_Gateway.Common
                 url += "&GetArchived=" + GetArchived;
             }
 
-            if (searchtext != null)
+            if (!string.IsNullOrWhiteSpace(searchtext))
             {
                 url += "&SearchText=" + searchtext;
             }
-            if (UserId != null)
+            if (!string.IsNullOrWhiteSpace(UserId))
             {
                 url += "&UserId=" + UserId;
             }
 
             var response = helper.ApiCall(UserURL, EndPoints.UserDetails + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize + url, "GET", null);
-            baseResponse = baseResponse.JsonParseList(response);
-            List<UserDetailsDTO> lstkyc = (List<UserDetailsDTO>)baseResponse.Data;
+            baseResponse = baseResponse.JsonParseList(response) ?? new BaseResponse<UserDetailsDTO>();
+            List<UserDetailsDTO> lstkyc = (baseResponse.Data as List<UserDetailsDTO> ?? new List<UserDetailsDTO>())
+                .Where(s => s != null)
+                .ToList();
 
             var response1_1 = helper.ApiCall(CatelogueURL, EndPoints.ChargesPaidBy + "?pageIndex=" + 0 + "&pageSize=" + 0, "GET", null);
-            baseResponseCharges = baseResponseCharges.JsonParseList(response1_1);
+            baseResponseCharges = baseResponseCharges.JsonParseList(response1_1) ?? new BaseResponse<ChargesPaidByLibrary>();
             if (baseResponseCharges.code == 200)
             {
-                Charges = (List<ChargesPaidByLibrary>)baseResponseCharges.Data;
+                Charges = (baseResponseCharges.Data as List<ChargesPaidByLibrary> ?? new List<ChargesPaidByLibrary>())
+                    .Where(c => c != null)
+                    .ToList();
 
             }
             foreach (UserDetailsDTO seller in lstkyc)
             {
-                seller.ShipmentChargesPaidByName = seller != null ? seller.ShipmentChargesPaidBy != null && seller.ShipmentChargesPaidBy != 0 ? Charges.Count > 0 ? Charges.Where(p => p.Id == Convert.ToInt32(seller.ShipmentChargesPaidBy)).FirstOrDefault().Name : null : null : null;
+                if (seller?.ShipmentChargesPaidBy != null && seller.ShipmentChargesPaidBy != 0 && Charges.Count > 0)
+                {
+                    var charge = Charges.FirstOrDefault(p => p.Id == Convert.ToInt32(seller.ShipmentChargesPaidBy));
+                    seller.ShipmentChargesPaidByName = charge?.Name;
+                }
+                else
+                {
+                    seller.ShipmentChargesPaidByName = null;
+                }
             }
 
             return lstkyc;

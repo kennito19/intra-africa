@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Name=" + model.Name + "&LendingPageId=" + model.LendingPageId + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
 
             if (tempList.Any())
             {
@@ -85,7 +85,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Name=" + model.Name + "&LendingPageId=" + model.LendingPageId + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -95,7 +95,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                LendingPageSections manageLendingPage = (LendingPageSections)baseResponse.Data;
+                LendingPageSections manageLendingPage = baseResponse.Data as LendingPageSections;
                 manageLendingPage.Id = model.Id;
                 manageLendingPage.LendingPageId = model.LendingPageId;
                 manageLendingPage.LayoutId = model.LayoutId;
@@ -138,7 +138,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Name=" + model.Name + "&LendingPageId=" + model.LendingPageId + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
 
             if (tempList.Any())
             {
@@ -226,7 +226,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Name=" + model.Name + "&LendingPageId=" + model.LendingPageId + "&LayoutId=" + model.LayoutId + "&LayoutTypeId=" + model.LayoutTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -236,7 +236,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLendingPage + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                LendingPageSections manageLendingPage = (LendingPageSections)baseResponse.Data;
+                LendingPageSections manageLendingPage = baseResponse.Data as LendingPageSections;
                 manageLendingPage.Id = model.Id;
                 manageLendingPage.LendingPageId = model.LendingPageId;
                 manageLendingPage.LayoutId = model.LayoutId;
@@ -271,7 +271,7 @@ namespace API_Gateway.Controllers.Admin
 
                     if (baseResponseHomedetails.code == 200)
                     {
-                        List<LendingPageSectionDetails> lendingPageSectionDetailslst = (List<LendingPageSectionDetails>)baseResponseHomedetails.Data;
+                        List<LendingPageSectionDetails> lendingPageSectionDetailslst = baseResponseHomedetails.Data as List<LendingPageSectionDetails> ?? new List<LendingPageSectionDetails>();
 
                         if (lendingPageSectionDetailslst.Count > 0)
                         {
@@ -335,13 +335,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Id=" + sectionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLendingPageSectionsDetail + "?LendingPageSectionId=" + sectionId, "GET", null);
                 BaseResponse<LendingPageSectionDetails> baseResponse1 = new BaseResponse<LendingPageSectionDetails>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<LendingPageSectionDetails> tempList1 = (List<LendingPageSectionDetails>)baseResponse1.Data;
+                List<LendingPageSectionDetails> tempList1 = baseResponse1.Data as List<LendingPageSectionDetails> ?? new List<LendingPageSectionDetails>();
                 if (tempList1.Any())
                 {
                     foreach (var item in tempList1)
@@ -383,13 +383,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSection + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSections> tempList = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> tempList = baseResponse.Data as List<LendingPageSections> ?? new List<LendingPageSections>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLendingPageSectionsDetail + "?LendingPageSectionId=" + id, "GET", null);
                 BaseResponse<LendingPageSectionDetails> baseResponse1 = new BaseResponse<LendingPageSectionDetails>();
                 baseResponse1 = baseResponse1.JsonParseList(response);
-                List<LendingPageSectionDetails> tempList1 = (List<LendingPageSectionDetails>)baseResponse1.Data;
+                List<LendingPageSectionDetails> tempList1 = baseResponse1.Data as List<LendingPageSectionDetails> ?? new List<LendingPageSectionDetails>();
                 if (tempList1.Any())
                 {
                     baseResponse = baseResponse.ChildExists();

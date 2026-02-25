@@ -53,7 +53,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = api.ApiCall(CatalogueUrl, EndPoints.CommissionCharges + url, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CommissionChargesLibrary> charges = (List<CommissionChargesLibrary>)baseResponse.Data;
+            List<CommissionChargesLibrary> charges = baseResponse.Data as List<CommissionChargesLibrary> ?? new List<CommissionChargesLibrary>();
 
             if (charges.Any())
             {
@@ -92,7 +92,7 @@ namespace API_Gateway.Controllers.Admin
             var temp = api.ApiCall(CatalogueUrl, EndPoints.CommissionCharges + url, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CommissionChargesLibrary> charges = (List<CommissionChargesLibrary>)baseResponse.Data;
+            List<CommissionChargesLibrary> charges = baseResponse.Data as List<CommissionChargesLibrary> ?? new List<CommissionChargesLibrary>();
             var tmp = charges.Where(x => x.ID != model.ID).FirstOrDefault();
 
             if (tmp != null)
@@ -123,7 +123,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = api.ApiCall(CatalogueUrl, EndPoints.CommissionCharges + "?ID=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<CommissionChargesLibrary> charges = (List<CommissionChargesLibrary>)baseResponse.Data;
+            List<CommissionChargesLibrary> charges = baseResponse.Data as List<CommissionChargesLibrary> ?? new List<CommissionChargesLibrary>();
 
             if (!charges.Any())
             {
@@ -311,16 +311,16 @@ namespace API_Gateway.Controllers.Admin
 
             var response2 = api.ApiCall(IdServerUrl, EndPoints.SellerById + "?ID=" + sellerId, "GET", null);
             baseResponse2 = baseResponse2.JsonParseRecord(response2);
-            SellerListModel seller = (SellerListModel)baseResponse2.Data;
+            SellerListModel seller = baseResponse2.Data as SellerListModel;
 
 
             var response = api.ApiCall(UserUrl, EndPoints.KYCDetails + "?UserID=" + sellerId, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            KYCDetails kycDetails = (KYCDetails)baseResponse.Data;
+            KYCDetails kycDetails = baseResponse.Data as KYCDetails;
 
             var response1 = api.ApiCall(UserUrl, EndPoints.GSTInfo + "?UserID=" + sellerId, "GET", null);
             baseResponse1 = baseResponse1.JsonParseRecord(response1);
-            GSTInfo gstInfo = (GSTInfo)baseResponse1.Data;
+            GSTInfo gstInfo = baseResponse1.Data as GSTInfo;
 
 
             // Create a new instance of SellerKycList
@@ -358,7 +358,7 @@ namespace API_Gateway.Controllers.Admin
             brandResponse = brandResponse.JsonParseRecord(response);
 
             BrandLibrary brand = new BrandLibrary();
-            brand = (BrandLibrary)brandResponse.Data;
+            brand = brandResponse.Data as BrandLibrary;
 
             return brand;
         }

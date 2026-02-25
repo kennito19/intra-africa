@@ -81,7 +81,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = helper.ApiCall(URL, EndPoints.ManageLendingPageSectionsDetail + "?Id=" + model.Id, "GET", null);
             baseResponse = baseResponse.JsonParseRecord(response);
-            LendingPageSectionDetails abts = (LendingPageSectionDetails)baseResponse.Data;
+            LendingPageSectionDetails abts = baseResponse.Data as LendingPageSectionDetails;
             abts.LendingPageSectionId = model.LendingPageSectionId;
             abts.LayoutTypeDetailsId = model.LayoutTypeDetailsId;
             abts.OptionId = model.OptionId;
@@ -134,7 +134,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLendingPageSectionsDetail + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<LendingPageSectionDetails> tempList = (List<LendingPageSectionDetails>)baseResponse.Data;
+            List<LendingPageSectionDetails> tempList = baseResponse.Data as List<LendingPageSectionDetails> ?? new List<LendingPageSectionDetails>();
 
             if (tempList.Any())
             {

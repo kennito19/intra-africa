@@ -49,7 +49,7 @@ namespace API_Gateway.Controllers.User
         {
             var temp = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + model.SessionId + "&SellerProductMasterId=" + model.SellerProductMasterId + "&sizeId=" + model.SizeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Cart> tmp = (List<Cart>)baseResponse.Data;
+            List<Cart> tmp = baseResponse.Data as List<Cart> ?? new List<Cart>();
 
             if (tmp.Any())
             {
@@ -127,7 +127,7 @@ namespace API_Gateway.Controllers.User
                             BaseResponse<Cart> baseCart = new BaseResponse<Cart>();
                             var tempCartCount = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + model.SessionId, "GET", null);
                             baseCart = baseCart.JsonParseList(tempCartCount);
-                            List<Cart> tmpCart = (List<Cart>)baseCart.Data;
+                            List<Cart> tmpCart = baseCart.Data as List<Cart> ?? new List<Cart>();
                             JObject jobj = new JObject();
                             jobj["id"] = baseResponse.Data.ToString();
                             jobj["cartCount"] = tmpCart.Count();
@@ -167,7 +167,7 @@ namespace API_Gateway.Controllers.User
             GetCartDetails getCart = new GetCartDetails(_configuration, _httpContext);
             //var temp = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + model.SessionId + "&SellerProductMasterId=" + model.SellerProductMasterId+"&Id=", "GET", null);
             //baseResponse = baseResponse.JsonParseList(temp);
-            //List<Cart> tmp = (List<Cart>)baseResponse.Data;
+            //List<Cart> tmp = baseResponse.Data as List<Cart> ?? new List<Cart>();
             //if (tmp.Where(x => x.Id != model.Id).Any())
             //{
             //    baseResponse = baseResponse.AlreadyExists();
@@ -185,7 +185,7 @@ namespace API_Gateway.Controllers.User
             int _qty = 0;
 
             baseResponse = baseResponse.JsonParseRecord(response);
-            Cart cart = (Cart)baseResponse.Data;
+            Cart cart = baseResponse.Data as Cart;
 
             if (lstsellerProduct.Count > 0)
             {
@@ -237,7 +237,7 @@ namespace API_Gateway.Controllers.User
                         BaseResponse<Cart> baseCart = new BaseResponse<Cart>();
                         var tempCartCount = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + model.SessionId, "GET", null);
                         baseCart = baseCart.JsonParseList(tempCartCount);
-                        List<Cart> tmpCart = (List<Cart>)baseCart.Data;
+                        List<Cart> tmpCart = baseCart.Data as List<Cart> ?? new List<Cart>();
                         //baseResponse.CartCount = tmpCart.Count();
                         JObject jobj = new JObject();
                         jobj["id"] = model.Id;
@@ -301,7 +301,7 @@ namespace API_Gateway.Controllers.User
 
             var temp = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + sessionId + url, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Cart> templist = (List<Cart>)baseResponse.Data;
+            List<Cart> templist = baseResponse.Data as List<Cart> ?? new List<Cart>();
             if (templist.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + sessionId + url, "DELETE", null);
@@ -400,7 +400,7 @@ namespace API_Gateway.Controllers.User
             GetCartDetails getCart = new GetCartDetails(_configuration, _httpContext);
             var temp = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + SessionId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<Cart> tmp = (List<Cart>)baseResponse.Data;
+            List<Cart> tmp = baseResponse.Data as List<Cart> ?? new List<Cart>();
 
             foreach (var item in tmp)
             {
@@ -419,7 +419,7 @@ namespace API_Gateway.Controllers.User
             BaseResponse<Cart> getCartbaseResponse = new BaseResponse<Cart>();
             var tempcart = helper.ApiCall(URL, EndPoints.Cart + "?SessionId=" + UserId, "GET", null);
             getCartbaseResponse = getCartbaseResponse.JsonParseList(tempcart);
-            List<Cart> tmpcart = (List<Cart>)getCartbaseResponse.Data;
+            List<Cart> tmpcart = getCartbaseResponse.Data as List<Cart> ?? new List<Cart>();
             //List<Cart> rmCart = tmpcart.DistinctBy(p => p.SellerProductMasterId).ToList();
 
             //var duplicateCounts = tmpcart.GroupBy(pair => new { Key1 = pair.SizeId, Key2 = pair.SellerProductMasterId }).Where(group => group.Count() > 1).Select(s => new { s.First().Id });
@@ -494,7 +494,7 @@ namespace API_Gateway.Controllers.User
             var response = helper.ApiCall(URL, EndPoints.Cart + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize, "GET", null);
             baseResponsecart = baseResponse.JsonParseList(response);
             List<Cart> cart = new List<Cart>();
-            cart = (List<Cart>)baseResponsecart.Data;
+            cart = baseResponsecart.Data as List<Cart> ?? new List<Cart>();
 
             var groupedCarts = cart.Where(c => c.UserId != null).DistinctBy(c => c.UserId).ToList();
 
@@ -511,7 +511,7 @@ namespace API_Gateway.Controllers.User
 
                     if (baseResponsecustomer.Data != null)
                     {
-                        customer = (CustomerListModel)baseResponsecustomer.Data;
+                        customer = baseResponsecustomer.Data as CustomerListModel;
                     }
                     var dto = new AbandonedCartDTO
                     {
@@ -551,7 +551,7 @@ namespace API_Gateway.Controllers.User
                var response = helper.ApiCall(URL, EndPoints.Cart + "?PageIndex=" + pageIndex + "&PageSize=" + pageSize, "GET", null);
                baseResponsecart = baseResponse.JsonParseList(response);
                List<Cart> cart = new List<Cart>();
-               cart = (List<Cart>)baseResponsecart.Data;
+               cart = baseResponsecart.Data as List<Cart> ?? new List<Cart>();
 
                var groupedCarts = cart.Where(c => c.UserId != null).GroupBy(c => c.UserId).ToList();
 
@@ -575,7 +575,7 @@ namespace API_Gateway.Controllers.User
 
                        if (baseResponsecustomer.Data != null)
                        {
-                           customer = (CustomerListModel)baseResponsecustomer.Data;
+                           customer = baseResponsecustomer.Data as CustomerListModel;
                        }
                        var dto = new AbandonedCartDTO
                        {

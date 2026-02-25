@@ -35,7 +35,7 @@ namespace API_Gateway.Controllers.Admin
             var tmp = helper.ApiCall(URL, EndPoints.Color + "?Code=" + temp + "&Name=" + model.Name + "&Mode=" + Mode.Check, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(tmp);
-            List<ColorLibrary> tempList = (List<ColorLibrary>)baseResponse.Data;
+            List<ColorLibrary> tempList = baseResponse.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
             if (!tempList.Any())
             {
                 ColorLibrary color = new ColorLibrary();
@@ -60,13 +60,13 @@ namespace API_Gateway.Controllers.Admin
             var temp = helper.ApiCall(URL, EndPoints.Color + "?Name=" + model.Name + "&Code=" + Code + "&Mode=" + Mode.Check, "GET", null);
 
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ColorLibrary> tempList = (List<ColorLibrary>)baseResponse.Data;
+            List<ColorLibrary> tempList = baseResponse.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
 
             if (!tempList.Where(x => x.Id != model.Id).Any())
             {
                 var recordResponse = helper.ApiCall(URL, EndPoints.Color + "?guid=" + model.Guid, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordResponse);
-                ColorLibrary color = (ColorLibrary)baseResponse.Data;
+                ColorLibrary color = baseResponse.Data as ColorLibrary;
                 color.Id = model.Id;
                 color.Guid = model.Guid;
                 color.Name = model.Name;
@@ -89,13 +89,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.Color + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ColorLibrary> tempList = (List<ColorLibrary>)baseResponse.Data;
+            List<ColorLibrary> tempList = baseResponse.Data as List<ColorLibrary> ?? new List<ColorLibrary>();
             if (tempList.Any())
             {
                 var tempProductColorMapp = helper.ApiCall(URL, EndPoints.ProductColorMapping + "?ColorID=" + id, "GET", null);
                 BaseResponse<ProductColorMapp> baseProductColor = new BaseResponse<ProductColorMapp>();
                 var ProductColorMapping = baseProductColor.JsonParseList(tempProductColorMapp);
-                List<ProductColorMapp> productColorMapp = (List<ProductColorMapp>)ProductColorMapping.Data;
+                List<ProductColorMapp> productColorMapp = ProductColorMapping.Data as List<ProductColorMapp> ?? new List<ProductColorMapp>();
                 if (productColorMapp.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("ProductColorMapping", "Color");

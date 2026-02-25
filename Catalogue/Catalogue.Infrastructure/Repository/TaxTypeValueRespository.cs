@@ -1,66 +1,48 @@
 using Catalogue.Application.IRepositories;
 using Catalogue.Domain;
 using Catalogue.Domain.Entity;
-using Catalogue.Infrastructure.Helper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using MySqlConnector;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogue.Infrastructure.Repository
 {
-    public class TaxTypeValueRespository:ITaxTypeValueRepository
+    public class TaxTypeValueRespository : ITaxTypeValueRepository
     {
-        private readonly IConfiguration _configuration;
-        private MySqlConnection con;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
+        private readonly string _connectionString;
 
         public TaxTypeValueRespository(IConfiguration configuration)
         {
-            _configuration = configuration;
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> AddTaxTypeValue(TaxTypeValueLibrary taxTypeValueLibrary)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "add"),
-                new MySqlParameter("@taxTypeID", taxTypeValueLibrary.TaxTypeID),
-                new MySqlParameter("@name", taxTypeValueLibrary.Name),
-                new MySqlParameter("@value", taxTypeValueLibrary.Value),
-                new MySqlParameter("@createdby", taxTypeValueLibrary.CreatedBy),
-                new MySqlParameter("@createdat", taxTypeValueLibrary.CreatedAt),
-            };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                const string sql = @"
+INSERT INTO taxtypevaluelibrary (TaxTypeID, Name, Value, CreatedBy, CreatedAt, IsDeleted)
+VALUES (@taxTypeId, @name, @value, @createdBy, @createdAt, 0);
+SELECT LAST_INSERT_ID();";
 
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@taxTypeId", taxTypeValueLibrary.TaxTypeID);
+                cmd.Parameters.AddWithValue("@name", (object?)taxTypeValueLibrary.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@value", (object?)taxTypeValueLibrary.Value ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdBy", (object?)taxTypeValueLibrary.CreatedBy ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", taxTypeValueLibrary.CreatedAt ?? DateTime.Now);
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxTypeValue, output, newid, message, sqlParams.ToArray());
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -68,38 +50,37 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "update"),
-                    new MySqlParameter("@id", taxTypeValueLibrary.Id),
-                    new MySqlParameter("@taxTypeID", taxTypeValueLibrary.TaxTypeID),
-                    new MySqlParameter("@name", taxTypeValueLibrary.Name),
-                    new MySqlParameter("@value", taxTypeValueLibrary.Value),
-                    new MySqlParameter("@createdby", taxTypeValueLibrary.CreatedBy),
-                    new MySqlParameter("@createdat", taxTypeValueLibrary.CreatedAt),
-                    new MySqlParameter("@modifiedBy", taxTypeValueLibrary.ModifiedBy),
-                    new MySqlParameter("@modifiedAt", taxTypeValueLibrary.ModifiedAt),
-                    new MySqlParameter("@isDeleted", taxTypeValueLibrary.IsDeleted),
-                    new MySqlParameter("@deletedby", taxTypeValueLibrary.DeletedBy),
-                    new MySqlParameter("@deletedat", taxTypeValueLibrary.DeletedAt),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+UPDATE taxtypevaluelibrary
+SET TaxTypeID = @taxTypeId,
+    Name = @name,
+    Value = @value,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt
+WHERE Id = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", taxTypeValueLibrary.Id);
+                cmd.Parameters.AddWithValue("@taxTypeId", taxTypeValueLibrary.TaxTypeID);
+                cmd.Parameters.AddWithValue("@name", (object?)taxTypeValueLibrary.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@value", (object?)taxTypeValueLibrary.Value ?? string.Empty);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)taxTypeValueLibrary.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", (object?)taxTypeValueLibrary.ModifiedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = taxTypeValueLibrary.Id
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxTypeValue, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -107,34 +88,32 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "delete"),
-                    new MySqlParameter("@id", taxTypeValueLibrary.Id),
-                    new MySqlParameter("@deletedby", taxTypeValueLibrary.DeletedBy),
-                    new MySqlParameter("@deletedat", taxTypeValueLibrary.DeletedAt),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+UPDATE taxtypevaluelibrary
+SET IsDeleted = 1,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE Id = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", taxTypeValueLibrary.Id);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)taxTypeValueLibrary.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)taxTypeValueLibrary.DeletedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = taxTypeValueLibrary.Id
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.TaxTypeValue, output, newid, message, sqlParams.ToArray());
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -142,61 +121,103 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", taxTypeValueLibrary.Id),
-                new MySqlParameter("@taxTypeID", taxTypeValueLibrary.TaxTypeID),
-                new MySqlParameter("@name", taxTypeValueLibrary.Name),
-                new MySqlParameter("@isdeleted", taxTypeValueLibrary.IsDeleted),
-                new MySqlParameter("@searchtext", taxTypeValueLibrary.Searchtext),
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@pageSize", PageSize),
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
 
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                var where = new List<string>();
+                if (taxTypeValueLibrary.Id > 0)
+                {
+                    where.Add("v.Id = @id");
+                    cmd.Parameters.AddWithValue("@id", taxTypeValueLibrary.Id);
+                }
+                if (taxTypeValueLibrary.TaxTypeID > 0)
+                {
+                    where.Add("v.TaxTypeID = @taxTypeId");
+                    cmd.Parameters.AddWithValue("@taxTypeId", taxTypeValueLibrary.TaxTypeID);
+                }
+                if (!string.IsNullOrWhiteSpace(taxTypeValueLibrary.Name))
+                {
+                    where.Add("v.Name LIKE @name");
+                    cmd.Parameters.AddWithValue("@name", $"%{taxTypeValueLibrary.Name}%");
+                }
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                where.Add("v.IsDeleted = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", taxTypeValueLibrary.IsDeleted);
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetTaxTypeValue, TaxTypeValueParserAsync, output, newid: null, message, sqlParams.ToArray());
+                if (!string.IsNullOrWhiteSpace(taxTypeValueLibrary.Searchtext))
+                {
+                    where.Add("(v.Name LIKE @search OR v.Value LIKE @search OR t.TaxType LIKE @search)");
+                    cmd.Parameters.AddWithValue("@search", $"%{taxTypeValueLibrary.Searchtext}%");
+                }
+
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $@"
+SELECT COUNT(1)
+FROM taxtypevaluelibrary v
+LEFT JOIN taxtypelibrary t ON t.Id = v.TaxTypeID
+{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
+
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
+                var offset = (safePageIndex - 1) * safePageSize;
+
+                var items = new List<TaxTypeValueLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT
+  v.Id, v.TaxTypeID, v.Name, v.Value, v.CreatedBy, v.CreatedAt, v.ModifiedBy, v.ModifiedAt, v.DeletedBy, v.DeletedAt, v.IsDeleted,
+  t.TaxType
+FROM taxtypevaluelibrary v
+LEFT JOIN taxtypelibrary t ON t.Id = v.TaxTypeID
+{whereClause}
+ORDER BY v.Id DESC
+LIMIT @offset, @pageSize;";
+
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNumber = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        rowNumber++;
+                        items.Add(new TaxTypeValueLibrary
+                        {
+                            RowNumber = rowNumber,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            TaxTypeID = reader.GetInt32(reader.GetOrdinal("TaxTypeID")),
+                            Name = reader.IsDBNull(reader.GetOrdinal("Name")) ? string.Empty : reader.GetString(reader.GetOrdinal("Name")),
+                            Value = reader.IsDBNull(reader.GetOrdinal("Value")) ? string.Empty : reader.GetString(reader.GetOrdinal("Value")),
+                            CreatedBy = reader.IsDBNull(reader.GetOrdinal("CreatedBy")) ? null : reader.GetString(reader.GetOrdinal("CreatedBy")),
+                            CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                            ModifiedBy = reader.IsDBNull(reader.GetOrdinal("ModifiedBy")) ? null : reader.GetString(reader.GetOrdinal("ModifiedBy")),
+                            ModifiedAt = reader.IsDBNull(reader.GetOrdinal("ModifiedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ModifiedAt")),
+                            DeletedBy = reader.IsDBNull(reader.GetOrdinal("DeletedBy")) ? null : reader.GetString(reader.GetOrdinal("DeletedBy")),
+                            DeletedAt = reader.IsDBNull(reader.GetOrdinal("DeletedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("DeletedAt")),
+                            IsDeleted = !reader.IsDBNull(reader.GetOrdinal("IsDeleted")) && reader.GetBoolean(reader.GetOrdinal("IsDeleted")),
+                            TaxType = reader.IsDBNull(reader.GetOrdinal("TaxType")) ? null : reader.GetString(reader.GetOrdinal("TaxType"))
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<TaxTypeValueLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<TaxTypeValueLibrary>> { code = 400, message = ex.Message, data = new List<TaxTypeValueLibrary>() };
             }
-        }
-
-        private async Task<List<TaxTypeValueLibrary>> TaxTypeValueParserAsync(DbDataReader reader)
-        {
-            List<TaxTypeValueLibrary> lstTaxType = new List<TaxTypeValueLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstTaxType.Add(new TaxTypeValueLibrary()
-                {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    TaxTypeID = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("TaxTypeID"))),
-                    Name = Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    Value = Convert.ToString(reader.GetValue(reader.GetOrdinal("Value"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    DeletedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy"))),
-                    DeletedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("DeletedAt"))),
-                    IsDeleted = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsDeleted"))),
-                    TaxType = Convert.ToString(reader.GetValue(reader.GetOrdinal("TaxType"))),
-                });
-            }
-            return lstTaxType;
         }
     }
 }

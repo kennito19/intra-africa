@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SpecID=" + model.SpecID + "&SpecTypeID=" + model.SpecTypeID, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<AssignSpecValuesToCategoryLibrary> assignSpecValues = (List<AssignSpecValuesToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecValuesToCategoryLibrary> assignSpecValues = baseResponse.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
             if (assignSpecValues.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -54,7 +54,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var response = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SpecID=" + model.SpecID + "&SpecTypeID=" + model.SpecTypeID, "GET", null);
             baseResponse = baseResponse.JsonParseList(response);
-            List<AssignSpecValuesToCategoryLibrary> assignSpecValues = (List<AssignSpecValuesToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecValuesToCategoryLibrary> assignSpecValues = baseResponse.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
             if (assignSpecValues.Any())
             {
                 response = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecID=" + model.AssignSpecID + "&SpecID=" + model.SpecID + "&SpecTypeID=" + model.SpecTypeID, "DELETE", null);
@@ -105,19 +105,19 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AssignSpecValuesToCategory + "?AssignSpecID=" + assignSpecId + "&SpecID=" + specId + "&SpecTypeID=" + specTypeId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<AssignSpecValuesToCategoryLibrary> templist = (List<AssignSpecValuesToCategoryLibrary>)baseResponse.Data;
+            List<AssignSpecValuesToCategoryLibrary> templist = baseResponse.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
             if (templist.Any())
             {
                 //var tempProducts = helper.ApiCall(URL, EndPoints.Product + "?AssiCategoryId=" + templist[0].AssignSpecID, "GET", null);
                 //baseResponse = baseResponse.JsonParseList(tempProducts);
-                //List<Products> productRecords = (List<Products>)baseResponse.Data;
+                //List<Products> productRecords = baseResponse.Data as List<Products> ?? new List<Products>();
                 BaseResponse<CheckSpecType> AssignSpecbaseResponse = new BaseResponse<CheckSpecType>();
                 var responseData = helper.ApiCall(URL, EndPoints.CheckAssignSpecsToCategory + "/checkSpecType" + "?assignSpecId=" + assignSpecId + "&specTypeId=" + specTypeId , "GET", null);
                 AssignSpecbaseResponse = AssignSpecbaseResponse.JsonParseRecord(responseData);
                 if (AssignSpecbaseResponse.code==200)
                 {
                     CheckSpecType checkSpecType = new CheckSpecType();
-                    checkSpecType = (CheckSpecType)AssignSpecbaseResponse.Data;
+                    checkSpecType = AssignSpecbaseResponse.Data as CheckSpecType;
                     if (!Convert.ToBoolean(checkSpecType.IsAllowDeleteSpecType))
                     {
                         baseResponse = baseResponse.ChildAlreadyExists("AssignSpecValuesToCategory", "Products");
@@ -244,10 +244,10 @@ namespace API_Gateway.Controllers.Admin
 
             if (baseResponse.code == 200)
             {
-                List<AssignSpecValuesToCategoryLibrary> lstassignSpecValues = (List<AssignSpecValuesToCategoryLibrary>)baseResponse.Data;
+                List<AssignSpecValuesToCategoryLibrary> lstassignSpecValues = baseResponse.Data as List<AssignSpecValuesToCategoryLibrary> ?? new List<AssignSpecValuesToCategoryLibrary>();
                 if (AssignSpecbaseResponse.code == 200)
                 {
-                    CheckAssignSpecValuestoCategory checkAssignSpecValuestocat = (CheckAssignSpecValuestoCategory)AssignSpecbaseResponse.Data;
+                    CheckAssignSpecValuestoCategory checkAssignSpecValuestocat = AssignSpecbaseResponse.Data as CheckAssignSpecValuestoCategory;
                     var result = lstassignSpecValues.Select(x => new
                     {
                         RowNumber = x.RowNumber,

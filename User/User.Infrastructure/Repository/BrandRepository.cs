@@ -1,112 +1,125 @@
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using MySqlConnector;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using User.Domain.Entity;
-using User.Domain;
-using User.Infrastructure.Helper;
 using User.Application.IRepositories;
-using System.Data.Common;
+using User.Domain;
+using User.Domain.Entity;
 
 namespace User.Infrastructure.Repository
 {
     public class BrandRepository : IBrandRepository
     {
-        private readonly MySqlConnection con;
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
+        private readonly string _connectionString;
 
         public BrandRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
-
 
         public async Task<BaseResponse<long>> Create(Brand brand)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>()
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+INSERT INTO Brand (GUID, Name, Description, Status, Logo, CreatedBy, CreatedAt, IsDeleted)
+VALUES (UUID(), @name, @description, @status, @logo, @createdBy, @createdAt, 0);
+SELECT LAST_INSERT_ID();";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@name", brand.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@description", (object?)brand.Description ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@status", brand.Status ?? "Active");
+                cmd.Parameters.AddWithValue("@logo", brand.Logo ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdBy", brand.CreatedBy ?? string.Empty);
+                cmd.Parameters.AddWithValue("@createdAt", brand.CreatedAt == default ? DateTime.Now : brand.CreatedAt);
+
+                var idObj = await cmd.ExecuteScalarAsync();
+                var newId = Convert.ToInt64(idObj ?? 0);
+
+                return new BaseResponse<long>
                 {
-                    new MySqlParameter("@mode","add"),
-                    new MySqlParameter("@id",brand.ID),
-                    new MySqlParameter("@name",brand.Name),
-                    new MySqlParameter("@description",brand.Description),
-                    new MySqlParameter("@status",brand.Status),
-                    new MySqlParameter("@logo",brand.Logo),
-                    new MySqlParameter("@createdBy", brand.CreatedBy),
-                    new MySqlParameter("@createdAt", brand.CreatedAt),
-
+                    code = 200,
+                    message = "Record added successfully.",
+                    data = newId
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Brand, output, newid, message, sqlParams.ToArray());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
+
         public async Task<BaseResponse<long>> Update(Brand brand)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "update"),
-                    new MySqlParameter("@id",brand.ID),
-                    new MySqlParameter("@name",brand.Name),
-                    new MySqlParameter("@description",brand.Description),
-                    new MySqlParameter("@status",brand.Status),
-                    new MySqlParameter("@logo",brand.Logo),
-                    new MySqlParameter("@createdBy", brand.CreatedBy),
-                    new MySqlParameter("@createdAt", brand.CreatedAt),
-                    new MySqlParameter("@modifiedBy", brand.ModifiedBy),
-                    new MySqlParameter("@modifiedAt", brand.ModifiedAt),
-                    new MySqlParameter("@isDeleted", brand.IsDeleted),
-                    new MySqlParameter("@deletedby", brand.DeletedBy),
-                    new MySqlParameter("@deletedat", brand.DeletedAt)
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
+                const string sql = @"
+UPDATE Brand
+SET Name = @name,
+    Description = @description,
+    Status = @status,
+    Logo = @logo,
+    ModifiedBy = @modifiedBy,
+    ModifiedAt = @modifiedAt,
+    IsDeleted = @isDeleted,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE ID = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", brand.ID);
+                cmd.Parameters.AddWithValue("@name", brand.Name ?? string.Empty);
+                cmd.Parameters.AddWithValue("@description", (object?)brand.Description ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@status", brand.Status ?? "Active");
+                cmd.Parameters.AddWithValue("@logo", brand.Logo ?? string.Empty);
+                cmd.Parameters.AddWithValue("@modifiedBy", (object?)brand.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@modifiedAt", (object?)brand.ModifiedAt ?? DateTime.Now);
+                cmd.Parameters.AddWithValue("@isDeleted", brand.IsDeleted);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)brand.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)brand.DeletedAt ?? DBNull.Value);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                if (affected == 0)
+                {
+                    return new BaseResponse<long>
+                    {
+                        code = 204,
+                        message = "Record does not Exist.",
+                        data = 0
+                    };
+                }
+
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record updated successfully.",
+                    data = brand.ID
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Brand, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
@@ -114,99 +127,166 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "delete"),
-                    new MySqlParameter("@id", brand.ID),
-                    new MySqlParameter("@deletedBy", brand.DeletedBy),
-                    new MySqlParameter("@deletedAt", brand.DeletedAt)
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                const string sql = @"
+UPDATE Brand
+SET IsDeleted = 1,
+    DeletedBy = @deletedBy,
+    DeletedAt = @deletedAt
+WHERE ID = @id;";
+
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", brand.ID);
+                cmd.Parameters.AddWithValue("@deletedBy", (object?)brand.DeletedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@deletedAt", (object?)brand.DeletedAt ?? DateTime.Now);
+
+                var affected = await cmd.ExecuteNonQueryAsync();
+                if (affected == 0)
+                {
+                    return new BaseResponse<long>
+                    {
+                        code = 204,
+                        message = "Record does not Exist.",
+                        data = 0
+                    };
+                }
+
+                return new BaseResponse<long>
+                {
+                    code = 200,
+                    message = "Record deleted successfully.",
+                    data = brand.ID
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.Brand, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
-        public async Task<BaseResponse<List<Brand>>> Get(Brand brand, int PageIndex, int PageSize, string Mode)
+        public async Task<BaseResponse<List<Brand>>> Get(Brand brand, int pageIndex, int pageSize, string mode)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", Mode),
-                    new MySqlParameter("@id", brand.ID),
-                    new MySqlParameter("@ids", brand.BrandIds),
-                    new MySqlParameter("@name", brand.Name),
-                    new MySqlParameter("@status", brand.Status),
-                    new MySqlParameter("@searchtext", brand.searchText),
-                    new MySqlParameter("@isDeleted", brand.IsDeleted),
-                    new MySqlParameter("@pageIndex", PageIndex),
-                    new MySqlParameter("@PageSize", PageSize),
-                };
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                var where = new List<string>();
+                await using var cmd = new MySqlCommand();
+                cmd.Connection = con;
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetBrand, BrandParserAsync, output, newid: null, message, sqlParams.ToArray());
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        private async Task<List<Brand>> BrandParserAsync(DbDataReader reader)
-        {
-            List<Brand> lstBrand = new List<Brand>();
-            while (await reader.ReadAsync())
-            {
-                lstBrand.Add(new Brand()
+                if (brand.ID > 0)
                 {
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    ID = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
+                    where.Add("ID = @id");
+                    cmd.Parameters.AddWithValue("@id", brand.ID);
+                }
 
-                    Name = Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    Description = Convert.ToString(reader.GetValue(reader.GetOrdinal("Description"))),
-                    Logo = Convert.ToString(reader.GetValue(reader.GetOrdinal("Logo"))),
-                    Status = Convert.ToString(reader.GetValue(reader.GetOrdinal("Status"))),
+                if (!string.IsNullOrWhiteSpace(brand.BrandIds))
+                {
+                    where.Add("FIND_IN_SET(CAST(ID AS CHAR), @ids)");
+                    cmd.Parameters.AddWithValue("@ids", brand.BrandIds);
+                }
 
-                    CreatedBy = Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("ModifiedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    DeletedBy = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedBy")).ToString()) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("DeletedBy"))),
-                    DeletedAt = string.IsNullOrEmpty(reader.GetValue(reader.GetOrdinal("DeletedAt")).ToString()) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("DeletedAt"))),
-                    IsDeleted = Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsDeleted"))),
+                if (!string.IsNullOrWhiteSpace(brand.Name))
+                {
+                    where.Add("Name = @name");
+                    cmd.Parameters.AddWithValue("@name", brand.Name);
+                }
 
+                if (!string.IsNullOrWhiteSpace(brand.Status))
+                {
+                    where.Add("Status = @status");
+                    cmd.Parameters.AddWithValue("@status", brand.Status);
+                }
 
-                });
+                if (!string.IsNullOrWhiteSpace(brand.searchText))
+                {
+                    where.Add("Name LIKE @search");
+                    cmd.Parameters.AddWithValue("@search", $"%{brand.searchText}%");
+                }
+
+                where.Add("IsDeleted = @isDeleted");
+                cmd.Parameters.AddWithValue("@isDeleted", brand.IsDeleted);
+
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+
+                cmd.CommandText = $"SELECT COUNT(1) FROM Brand{whereClause};";
+                var totalObj = await cmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
+
+                var items = new List<Brand>();
+                if (total > 0)
+                {
+                    var fetchAll = pageIndex <= 0 || pageSize <= 0;
+                    var safePageIndex = pageIndex <= 0 ? 1 : pageIndex;
+                    var safePageSize = pageSize <= 0 ? total : pageSize;
+                    var offset = (safePageIndex - 1) * safePageSize;
+
+                    cmd.CommandText = $@"
+SELECT ID, GUID, Name, Description, Status, Logo, CreatedBy, CreatedAt, ModifiedBy, ModifiedAt, DeletedBy, DeletedAt, IsDeleted
+FROM Brand
+{whereClause}
+ORDER BY ID DESC
+{(fetchAll ? string.Empty : "LIMIT @offset, @pageSize")};";
+
+                    if (!fetchAll)
+                    {
+                        cmd.Parameters.AddWithValue("@offset", offset);
+                        cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+                    }
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNo = 0;
+                    var pageCount = safePageSize == 0 ? 1 : (int)Math.Ceiling(total / (double)safePageSize);
+                    while (await reader.ReadAsync())
+                    {
+                        rowNo++;
+                        items.Add(new Brand
+                        {
+                            RowNumber = rowNo,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            ID = reader.GetInt32("ID"),
+                            GUID = reader.IsDBNull("GUID") ? null : reader.GetString("GUID"),
+                            Name = reader.IsDBNull("Name") ? string.Empty : reader.GetString("Name"),
+                            Description = reader.IsDBNull("Description") ? null : reader.GetString("Description"),
+                            Status = reader.IsDBNull("Status") ? string.Empty : reader.GetString("Status"),
+                            Logo = reader.IsDBNull("Logo") ? string.Empty : reader.GetString("Logo"),
+                            CreatedBy = reader.IsDBNull("CreatedBy") ? string.Empty : reader.GetString("CreatedBy"),
+                            CreatedAt = reader.IsDBNull("CreatedAt") ? DateTime.MinValue : reader.GetDateTime("CreatedAt"),
+                            ModifiedBy = reader.IsDBNull("ModifiedBy") ? null : reader.GetString("ModifiedBy"),
+                            ModifiedAt = reader.IsDBNull("ModifiedAt") ? null : reader.GetDateTime("ModifiedAt"),
+                            DeletedBy = reader.IsDBNull("DeletedBy") ? null : reader.GetString("DeletedBy"),
+                            DeletedAt = reader.IsDBNull("DeletedAt") ? null : reader.GetDateTime("DeletedAt"),
+                            IsDeleted = !reader.IsDBNull("IsDeleted") && reader.GetBoolean("IsDeleted")
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<Brand>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
-            return lstBrand;
+            catch (Exception ex)
+            {
+                return new BaseResponse<List<Brand>>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<Brand>()
+                };
+            }
         }
-
     }
 }
+

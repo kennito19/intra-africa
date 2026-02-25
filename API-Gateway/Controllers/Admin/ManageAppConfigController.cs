@@ -1,4 +1,4 @@
-﻿using API_Gateway.Helper;
+using API_Gateway.Helper;
 using API_Gateway.Models.Dto;
 using API_Gateway.Models.Entity.Catalogue;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AppConfig + "?name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageAppConfig> tempList = (List<ManageAppConfig>)baseResponse.Data;
+            List<ManageAppConfig> tempList = baseResponse.Data as List<ManageAppConfig> ?? new List<ManageAppConfig>();
 
             if (tempList.Any())
             {
@@ -60,7 +60,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AppConfig + "?name=" + model.Name, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageAppConfig> tempList = (List<ManageAppConfig>)baseResponse.Data;
+            List<ManageAppConfig> tempList = baseResponse.Data as List<ManageAppConfig> ?? new List<ManageAppConfig>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -70,7 +70,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.AppConfig + "?id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageAppConfig configKey = (ManageAppConfig)baseResponse.Data;
+                ManageAppConfig configKey = baseResponse.Data as ManageAppConfig;
                 configKey.Id = model.Id;
                 configKey.Name = model.Name;
                 configKey.Status = model.Status;
@@ -89,11 +89,11 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.AppConfig + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageAppConfig> tempList = (List<ManageAppConfig>)baseResponse.Data;
+            List<ManageAppConfig> tempList = baseResponse.Data as List<ManageAppConfig> ?? new List<ManageAppConfig>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.AppConfig + "?id=" + id, "DELETE", null);
-                baseResponse = baseResponse.JsonParseList(response);
+                baseResponse = baseResponse.JsonParseInputResponse(response);
 
             }
             else

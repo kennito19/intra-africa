@@ -29,7 +29,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?GSTNo=" + model.GSTNo, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<GSTInfo> tmp = (List<GSTInfo>)baseResponse.Data;
+            List<GSTInfo> tmp = baseResponse.Data as List<GSTInfo>;
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -45,7 +45,7 @@ namespace API_Gateway.Common
                         gbaseResponse = gbaseResponse.JsonParseRecord(response1);
                         if (gbaseResponse.code == 200)
                         {
-                            GSTInfo gstData = (GSTInfo)gbaseResponse.Data;
+                            GSTInfo gstData = gbaseResponse.Data as GSTInfo;
                             gstData.IsHeadOffice = false;
                             response1 = helper.ApiCall(_URL, EndPoints.GSTInfo, "PUT", gstData);
                         }
@@ -79,7 +79,7 @@ namespace API_Gateway.Common
                 {
                     temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?UserID=" + model.UserID, "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp);
-                    tmp = (List<GSTInfo>)baseResponse.Data;
+                    tmp = baseResponse.Data as List<GSTInfo>;
                     if (tmp.Any())
                     {
                         baseResponse = baseResponse.AlreadyExists();
@@ -118,7 +118,7 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?GSTNo=" + model.GSTNo, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<GSTInfo> tmp = (List<GSTInfo>)baseResponse.Data;
+            List<GSTInfo> tmp = baseResponse.Data as List<GSTInfo>;
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -134,7 +134,7 @@ namespace API_Gateway.Common
                         gbaseResponse = gbaseResponse.JsonParseRecord(response1);
                         if (gbaseResponse.code == 200)
                         {
-                            GSTInfo gstData = (GSTInfo)gbaseResponse.Data;
+                            GSTInfo gstData = gbaseResponse.Data as GSTInfo;
                             if (gstData.Id != model.Id)
                             {
                                 gstData.IsHeadOffice = false;
@@ -145,7 +145,7 @@ namespace API_Gateway.Common
 
                     var response = helper.ApiCall(_URL, EndPoints.GSTInfo + "?Id=" + model.Id, "GET", null);
                     baseResponse = baseResponse.JsonParseRecord(response);
-                    GSTInfo gst = (GSTInfo)baseResponse.Data;
+                    GSTInfo gst = baseResponse.Data as GSTInfo;
                     gst.UserID = model.UserID;
                     gst.GSTNo = model.GSTNo;
                     gst.LegalName = model.LegalName;
@@ -185,7 +185,7 @@ namespace API_Gateway.Common
                 {
                     temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?UserID=" + model.UserID, "GET", null);
                     baseResponse = baseResponse.JsonParseList(temp);
-                    tmp = (List<GSTInfo>)baseResponse.Data;
+                    tmp = baseResponse.Data as List<GSTInfo>;
                     if (tmp.Where(x => x.Id != model.Id).Any())
                     {
                         baseResponse = baseResponse.AlreadyExists();
@@ -194,7 +194,7 @@ namespace API_Gateway.Common
                     {
                         var response = helper.ApiCall(_URL, EndPoints.GSTInfo + "?Id=" + model.Id, "GET", null);
                         baseResponse = baseResponse.JsonParseRecord(response);
-                        GSTInfo gst = (GSTInfo)baseResponse.Data;
+                        GSTInfo gst = baseResponse.Data as GSTInfo;
                         gst.UserID = model.UserID;
                         gst.GSTNo = model.GSTNo;
                         gst.LegalName = model.LegalName;
@@ -239,13 +239,13 @@ namespace API_Gateway.Common
         {
             var temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<GSTInfo> tmp = (List<GSTInfo>)baseResponse.Data;
+            List<GSTInfo> tmp = baseResponse.Data as List<GSTInfo>;
             if (tmp.Any())
             {
                 //var userID = tmp.FirstOrDefault().UserID;
                 //temp = helper.ApiCall(_URL, EndPoints.GSTInfo + "?UserID=" + userID, "GET", null);
                 //baseResponse = baseResponse.JsonParseList(temp);
-                //List<GSTInfo> userWiseData = (List<GSTInfo>)baseResponse.Data;
+                //List<GSTInfo> userWiseData = baseResponse.Data as List<GSTInfo>;
                 var gstData = tmp.FirstOrDefault();
                 if (!Convert.ToBoolean(gstData.IsHeadOffice))
                 {

@@ -36,7 +36,7 @@ namespace API_Gateway.Controllers.Admin
             //var temp = helper.ApiCall(URL, EndPoints.WeightSlab + "?WeightSlab=" + model.WeightSlab, "GET", null);
             var temp = helper.ApiCall(URL, EndPoints.WeightSlab + "?PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<WeightSlabLibrary> weight = (List<WeightSlabLibrary>)baseResponse.Data;
+            List<WeightSlabLibrary> weight = baseResponse.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
             if (weight.Any())
             {
                 if (weight.Where(x => x.WeightSlab == model.WeightSlab).ToList().Count > 0)
@@ -112,7 +112,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.WeightSlab + "?PageIndex=0&PageSize=0", "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<WeightSlabLibrary> weight = (List<WeightSlabLibrary>)baseResponse.Data;
+            List<WeightSlabLibrary> weight = baseResponse.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
             if (weight.Any())
             {
                 if (weight.Where(x => x.WeightSlab == model.WeightSlab && x.Id != model.Id).ToList().Count > 0)
@@ -176,7 +176,7 @@ namespace API_Gateway.Controllers.Admin
 
             //var temp = helper.ApiCall(URL, EndPoints.WeightSlab + "?WeightSlab=" + model.WeightSlab, "GET", null);
             //baseResponse = baseResponse.JsonParseList(temp);
-            //List<WeightSlabLibrary> templist = (List<WeightSlabLibrary>)baseResponse.Data;
+            //List<WeightSlabLibrary> templist = baseResponse.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
             //if (templist.Where(x => x.Id != model.Id).Any())
             //{
             //    baseResponse = baseResponse.AlreadyExists();
@@ -202,13 +202,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.WeightSlab + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<WeightSlabLibrary> templist = (List<WeightSlabLibrary>)baseResponse.Data;
+            List<WeightSlabLibrary> templist = baseResponse.Data as List<WeightSlabLibrary> ?? new List<WeightSlabLibrary>();
             if (templist.Any())
             {
                 var tempSellerProduct = helper.ApiCall(URL, EndPoints.SellerProduct + "?WeightSlabId=" + id, "GET", null);
                 BaseResponse<SellerProduct> baseSellerProduct = new BaseResponse<SellerProduct>();
                 var sellerProduct = baseSellerProduct.JsonParseList(tempSellerProduct);
-                List<SellerProduct> sellerProducts = (List<SellerProduct>)sellerProduct.Data;
+                List<SellerProduct> sellerProducts = sellerProduct.Data as List<SellerProduct> ?? new List<SellerProduct>();
                 if (sellerProducts.Any())
                 {
                     baseResponse = baseResponse.ChildAlreadyExists("SellerProduct", "WeightSlab");

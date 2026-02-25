@@ -26,7 +26,9 @@ namespace API_Gateway.Helper
             HttpResponseMessage response = new HttpResponseMessage();
             var url = apiUrl + string.Format(endPoint);
 
-            HttpClient client = new HttpClient();
+            var handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            HttpClient client = new HttpClient(handler);
             
             if (authHeader.Count != 0)
             {
@@ -93,7 +95,9 @@ namespace API_Gateway.Helper
             HttpResponseMessage response = new HttpResponseMessage();
             var url = apiUrl + string.Format(endPoint);
 
-            HttpClient client = new HttpClient();
+            var handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            HttpClient client = new HttpClient(handler);
 
             client.SetBasicAuthentication("africavendoKE", "Q!7aO!2cK^5lT@5g");
 

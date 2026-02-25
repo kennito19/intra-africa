@@ -71,9 +71,14 @@ namespace User.Infrastructure.Repository
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.sp_UserDetails, output, newid, message, sqlParams.ToArray());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
         public async Task<BaseResponse<long>> Update(UserDetails userDetails)
@@ -117,9 +122,14 @@ namespace User.Infrastructure.Repository
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.sp_UserDetails, output, newid, message, sqlParams.ToArray());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
@@ -154,9 +164,14 @@ namespace User.Infrastructure.Repository
 
                 return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.sp_UserDetails, output, newid, message, sqlParams.ToArray());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<long>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = 0
+                };
             }
         }
 
@@ -164,36 +179,174 @@ namespace User.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "get"),
-                    new MySqlParameter("@id", sellerDetails.Id),
-                    new MySqlParameter("@userid", sellerDetails.UserId),
-                    new MySqlParameter("@userstatus", sellerDetails.UserStatus),
-                    new MySqlParameter("@kycstatus", KycStatus),
-                    new MySqlParameter("@getarchived", GetArchived),
-                    new MySqlParameter("@isDeleted", sellerDetails.IsDeleted),
-                    new MySqlParameter("@searchtext", SearchText),
-                    new MySqlParameter("@pageIndex", PageIndex),
-                    new MySqlParameter("@PageSize", PageSize),
+                await using var connection = new MySqlConnection(_configuration.GetConnectionString("DBconnection"));
+                await connection.OpenAsync();
+
+                await using var countCmd = new MySqlCommand();
+                countCmd.Connection = connection;
+                var where = new List<string>();
+
+                if (sellerDetails.Id > 0)
+                {
+                    where.Add("u.Id = @id");
+                    countCmd.Parameters.AddWithValue("@id", sellerDetails.Id);
+                }
+                if (!string.IsNullOrWhiteSpace(sellerDetails.UserId))
+                {
+                    where.Add("u.UserId = @userId");
+                    countCmd.Parameters.AddWithValue("@userId", sellerDetails.UserId);
+                }
+                if (!string.IsNullOrWhiteSpace(sellerDetails.UserStatus))
+                {
+                    where.Add("u.UserStatus = @userStatus");
+                    countCmd.Parameters.AddWithValue("@userStatus", sellerDetails.UserStatus);
+                }
+                if (sellerDetails.IsDeleted != null)
+                {
+                    where.Add("COALESCE(u.IsDeleted,0) = @isDeleted");
+                    countCmd.Parameters.AddWithValue("@isDeleted", sellerDetails.IsDeleted.Value);
+                }
+                if (!string.IsNullOrWhiteSpace(SearchText))
+                {
+                    where.Add("(u.UserId LIKE @search OR u.FirstName LIKE @search OR u.LastName LIKE @search OR u.Email LIKE @search OR u.Phone LIKE @search)");
+                    countCmd.Parameters.AddWithValue("@search", $"%{SearchText}%");
+                }
+
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
+                countCmd.CommandText = $"SELECT COUNT(1) FROM UserDetails u {whereClause};";
+                var totalObj = await countCmd.ExecuteScalarAsync();
+                var total = Convert.ToInt32(totalObj ?? 0);
+
+                var result = new List<UserDetailsDTO>();
+                if (total > 0)
+                {
+                    var fetchAll = !PageIndex.HasValue || !PageSize.HasValue || PageIndex <= 0 || PageSize <= 0;
+                    var safePageIndex = !PageIndex.HasValue || PageIndex <= 0 ? 1 : PageIndex.Value;
+                    var safePageSize = !PageSize.HasValue || PageSize <= 0 ? total : PageSize.Value;
+                    var offset = (safePageIndex - 1) * safePageSize;
+
+                    await using var cmd = new MySqlCommand();
+                    cmd.Connection = connection;
+                    foreach (MySqlParameter p in countCmd.Parameters)
+                    {
+                        cmd.Parameters.AddWithValue(p.ParameterName, p.Value);
+                    }
+
+                    cmd.CommandText = $@"
+SELECT
+    u.Id,
+    u.UserId,
+    u.UserType,
+    u.FirstName,
+    u.LastName,
+    u.UserStatus,
+    u.ProfileImage,
+    u.Email,
+    u.Gender,
+    u.Phone,
+    u.IsEmailConfirmed,
+    u.IsPhoneConfirmed,
+    u.IsDeleted,
+    u.CreatedBy,
+    u.CreatedAt,
+    u.ModifiedBy,
+    u.ModifiedAt,
+    u.DeletedBy,
+    u.DeletedAt
+FROM UserDetails u
+{whereClause}
+ORDER BY u.Id DESC
+{(fetchAll ? string.Empty : "LIMIT @offset, @pageSize")};";
+
+                    if (!fetchAll)
+                    {
+                        cmd.Parameters.AddWithValue("@offset", offset);
+                        cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+                    }
+
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var rowNo = 0;
+                    var pageCount = safePageSize == 0 ? 1 : (int)Math.Ceiling(total / (double)safePageSize);
+                    while (await reader.ReadAsync())
+                    {
+                        rowNo++;
+                        result.Add(new UserDetailsDTO
+                        {
+                            RowNumber = rowNo,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32("Id"),
+                            UserId = reader.IsDBNull("UserId") ? null : reader.GetString("UserId"),
+                            UserType = reader.IsDBNull("UserType") ? null : reader.GetString("UserType"),
+                            FirstName = reader.IsDBNull("FirstName") ? null : reader.GetString("FirstName"),
+                            LastName = reader.IsDBNull("LastName") ? null : reader.GetString("LastName"),
+                            UserStatus = reader.IsDBNull("UserStatus") ? null : reader.GetString("UserStatus"),
+                            ProfileImage = reader.IsDBNull("ProfileImage") ? null : reader.GetString("ProfileImage"),
+                            Email = reader.IsDBNull("Email") ? null : reader.GetString("Email"),
+                            Gender = reader.IsDBNull("Gender") ? null : reader.GetString("Gender"),
+                            Phone = reader.IsDBNull("Phone") ? null : reader.GetString("Phone"),
+                            IsEmailConfirmed = reader.IsDBNull("IsEmailConfirmed") ? null : reader.GetBoolean("IsEmailConfirmed"),
+                            IsPhoneConfirmed = reader.IsDBNull("IsPhoneConfirmed") ? null : reader.GetBoolean("IsPhoneConfirmed"),
+                            IsDeleted = reader.IsDBNull("IsDeleted") ? null : reader.GetBoolean("IsDeleted"),
+                            CreatedBy = reader.IsDBNull("CreatedBy") ? null : reader.GetString("CreatedBy"),
+                            CreatedAt = reader.IsDBNull("CreatedAt") ? null : reader.GetDateTime("CreatedAt"),
+                            ModifiedBy = reader.IsDBNull("ModifiedBy") ? null : reader.GetString("ModifiedBy"),
+                            ModifiedAt = reader.IsDBNull("ModifiedAt") ? null : reader.GetDateTime("ModifiedAt"),
+                            DeletedBy = reader.IsDBNull("DeletedBy") ? null : reader.GetString("DeletedBy"),
+                            DeletedAt = reader.IsDBNull("DeletedAt") ? null : reader.GetDateTime("DeletedAt"),
+                            KYCDetailsId = null,
+                            KYCFor = null,
+                            DisplayName = null,
+                            OwnerName = null,
+                            ContactPersonName = null,
+                            ContactPersonMobileNo = null,
+                            PanCardNo = null,
+                            NameOnPanCard = null,
+                            DateOfBirth = null,
+                            AadharCardNo = null,
+                            IsUserWithGST = null,
+                            TypeOfCompany = null,
+                            CompanyRegistrationNo = null,
+                            BussinessType = null,
+                            MSMENo = null,
+                            AccountNo = null,
+                            AccountHolderName = null,
+                            BankName = null,
+                            AccountType = null,
+                            IFSCCode = null,
+                            Logo = null,
+                            DigitalSign = null,
+                            CancelCheque = null,
+                            PanCardDoc = null,
+                            MSMEDoc = null,
+                            AadharCardFrontDoc = null,
+                            AadharCardBackDoc = null,
+                            ShipmentChargesPaidBy = null,
+                            ShipmentBy = null,
+                            Note = null,
+                            KycStatus = null,
+                            GSTInfoDetails = null,
+                            WarehouseDetails = null,
+                            SellerBrand = null
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<UserDetailsDTO>>
+                {
+                    code = result.Count > 0 ? 200 : 204,
+                    message = result.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = result
                 };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.sp_GetUserDetails, UserDetailsDataAsync, output, newid: null, message, sqlParams.ToArray());
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return new BaseResponse<List<UserDetailsDTO>>
+                {
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<UserDetailsDTO>()
+                };
             }
         }
 

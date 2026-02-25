@@ -16,59 +16,68 @@ namespace User.Infrastructure.Repository
 {
     public class KycCountRepository : IKycCountRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
 
         public KycCountRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
         public async Task<BaseResponse<List<KycCounts>>> get(string? days)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>()
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+
+                await using var cmd = new MySqlCommand();
+                cmd.Connection = con;
+
+                var dateFilter = string.Empty;
+                if (int.TryParse(days, out var dayCount) && dayCount > 0)
                 {
-                    new MySqlParameter("@date", DateTime.Now.ToString()),
-                    new MySqlParameter("@days", days),
+                    dateFilter = " AND k.CreatedAt >= DATE_SUB(NOW(), INTERVAL @days DAY) ";
+                    cmd.Parameters.AddWithValue("@days", dayCount);
+                }
+
+                cmd.CommandText = $@"
+SELECT
+    COUNT(1) AS TotalKYC,
+    COUNT(CASE WHEN LOWER(COALESCE(k.Status,'')) IN ('approved','complete','completed') THEN 1 END) AS CompleteKYC,
+    COUNT(CASE WHEN LOWER(COALESCE(k.Status,'')) IN ('pending','inprogress','in progress') THEN 1 END) AS PendingKYC,
+    COUNT(CASE WHEN LOWER(COALESCE(k.Status,'')) IN ('not approved','rejected','inactive') THEN 1 END) AS NotApprovedKYC
+FROM KYCDetails k
+WHERE COALESCE(k.IsDeleted,0) = 0
+{dateFilter};";
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+                var result = new List<KycCounts>();
+                if (await reader.ReadAsync())
+                {
+                    result.Add(new KycCounts
+                    {
+                        Total = reader.IsDBNull("TotalKYC") ? 0 : reader.GetInt32("TotalKYC"),
+                        Completed = reader.IsDBNull("CompleteKYC") ? 0 : reader.GetInt32("CompleteKYC"),
+                        Pending = reader.IsDBNull("PendingKYC") ? 0 : reader.GetInt32("PendingKYC"),
+                        NotApproved = reader.IsDBNull("NotApprovedKYC") ? 0 : reader.GetInt32("NotApprovedKYC")
+                    });
+                }
+
+                return new BaseResponse<List<KycCounts>>
+                {
+                    code = 200,
+                    message = "Record bind successfully.",
+                    data = result
                 };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetKycCount, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        private async Task<List<KycCounts>> LayoutParserAsync(DbDataReader reader)
-        {
-            List<KycCounts> lstLayouts = new List<KycCounts>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new KycCounts()
+                return new BaseResponse<List<KycCounts>>
                 {
-                    Total = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TotalKYC")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("TotalKYC"))),
-                    Completed = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CompleteKYC")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("CompleteKYC"))),
-                    Pending = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("PendingKYC")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PendingKYC"))),
-                    NotApproved = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("NotApprovedKYC")))) ? 0 : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("NotApprovedKYC"))),
-                });
+                    code = 400,
+                    message = ex.Message,
+                    data = new List<KycCounts>()
+                };
             }
-            return lstLayouts;
         }
     }
 }

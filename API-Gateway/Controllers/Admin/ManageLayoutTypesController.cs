@@ -34,7 +34,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesLibrary> tempList = (List<ManageLayoutTypesLibrary>)baseResponse.Data;
+            List<ManageLayoutTypesLibrary> tempList = baseResponse.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
 
             if (tempList.Any())
             {
@@ -67,7 +67,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Name=" + model.Name + "&LayoutId=" + model.LayoutId, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesLibrary> tempList = (List<ManageLayoutTypesLibrary>)baseResponse.Data;
+            List<ManageLayoutTypesLibrary> tempList = baseResponse.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
 
             if (tempList.Where(x => x.Id != model.Id).Any())
             {
@@ -77,7 +77,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var recordCall = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(recordCall);
-                ManageLayoutTypesLibrary record = (ManageLayoutTypesLibrary)baseResponse.Data;
+                ManageLayoutTypesLibrary record = baseResponse.Data as ManageLayoutTypesLibrary;
                 record.LayoutId = model.LayoutId;
                 record.Name = model.Name;
                 record.ImageUrl = UpdateDocFile(record.ImageUrl, model.Name, model.Image);
@@ -102,7 +102,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesLibrary> tempList = (List<ManageLayoutTypesLibrary>)baseResponse.Data;
+            List<ManageLayoutTypesLibrary> tempList = baseResponse.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
             if (tempList.Any())
             {
                 var response = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?Id=" + id, "DELETE", null);
@@ -126,7 +126,7 @@ namespace API_Gateway.Controllers.Admin
             BaseResponse<string> Responsedata = new BaseResponse<string>();
             if (baseResponse.code == 200)
             {
-                layoutlst = (List<ManageLayoutTypesLibrary>)baseResponse.Data;
+                layoutlst = baseResponse.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
 
                 if (layoutlst.Count > 0)
                 {
@@ -156,7 +156,7 @@ namespace API_Gateway.Controllers.Admin
 
                     if (Layoutresponsedata.code == 200)
                     {
-                        _layoutlst = (List<ManageLayoutsLibrary>)Layoutresponsedata.Data;
+                        _layoutlst = Layoutresponsedata.Data as List<ManageLayoutsLibrary> ?? new List<ManageLayoutsLibrary>();
                         if (_layoutlst.Count > 0)
                         {
                             _layoutlst = _layoutlst.Where(p => parentData.All(item => item.LayoutId != p.Id)).ToList();
@@ -196,7 +196,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.ManageLayoutTypes + "?PageIndex=" + 0 + "&PageSize=" + 0, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<ManageLayoutTypesLibrary> tempList = (List<ManageLayoutTypesLibrary>)baseResponse.Data;
+            List<ManageLayoutTypesLibrary> tempList = baseResponse.Data as List<ManageLayoutTypesLibrary> ?? new List<ManageLayoutTypesLibrary>();
             List<ManageLayoutTypesLibrary> manageLayoutTypesLibrary = new List<ManageLayoutTypesLibrary>();
 
             if (tempList.Count > 0)

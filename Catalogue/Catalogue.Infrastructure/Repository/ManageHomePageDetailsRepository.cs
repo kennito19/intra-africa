@@ -1,102 +1,54 @@
 using Catalogue.Application.IRepositories;
-using Catalogue.Domain.Entity;
 using Catalogue.Domain;
-using Catalogue.Infrastructure.Helper;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using MySqlConnector;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Common;
 using Catalogue.Domain.DTO;
+using Catalogue.Domain.Entity;
+using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 
 namespace Catalogue.Infrastructure.Repository
 {
     public class ManageHomePageDetailsRepository : IManageHomePageDetailsRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly DataProviderHelper _dataProviderHelper = new DataProviderHelper();
-        MySqlConnection con;
+        private readonly string _connectionString;
 
         public ManageHomePageDetailsRepository(IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("DBconnection");
-            con = new MySqlConnection(connectionString);
-
-            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("DBconnection");
         }
 
         public async Task<BaseResponse<long>> Create(ManageHomePageDetailsLibrary pageDetails)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                    new MySqlParameter("@mode", "add"),
-                    new MySqlParameter("@sectionId", pageDetails.SectionId),
-                    new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                    new MySqlParameter("@optionId", pageDetails.OptionId),
-                    new MySqlParameter("@image", pageDetails.Image),
-                    new MySqlParameter("@ImageAlt", pageDetails.ImageAlt),
-                    new MySqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
-                    new MySqlParameter("@title", pageDetails.Title),
-                    new MySqlParameter("@subTitle", pageDetails.SubTitle),
-                    new MySqlParameter("@titlePosition", pageDetails.TitlePosition),
-                    new MySqlParameter("@sequence", pageDetails.Sequence),
-                    new MySqlParameter("@columns", pageDetails.Columns),
-                    new MySqlParameter("@redirectTo", pageDetails.RedirectTo),
-                    new MySqlParameter("@categoryId", pageDetails.CategoryId),
-                    new MySqlParameter("@brandIds", pageDetails.BrandIds),
-                    new MySqlParameter("@sizeIds", pageDetails.SizeIds),
-                    new MySqlParameter("@specificationIds", pageDetails.SpecificationIds),
-                    new MySqlParameter("@colorids", pageDetails.ColorIds),
-                    new MySqlParameter("@collectionId", pageDetails.CollectionId),
-                    new MySqlParameter("@productId", pageDetails.ProductId),
-                    new MySqlParameter("@staticPageId", pageDetails.StaticPageId),
-                    new MySqlParameter("@lendingPageId", pageDetails.LendingPageId),
-                    new MySqlParameter("@customLink", pageDetails.CustomLinks),
-                    new MySqlParameter("@titleColor", pageDetails.TitleColor),
-                    new MySqlParameter("@subTitleColor", pageDetails.SubTitleColor),
-                    new MySqlParameter("@titleSize", pageDetails.TitleSize),
-                    new MySqlParameter("@subTitleSize", pageDetails.SubTitleSize),
-                    new MySqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
-                    new MySqlParameter("@italicTitle", pageDetails.ItalicTitle),
-                    new MySqlParameter("@description", pageDetails.Description),
-                    new MySqlParameter("@sliderType", pageDetails.SliderType),
-                    new MySqlParameter("@videoLinkType", pageDetails.VideoLinkType),
-                    new MySqlParameter("@videoId", pageDetails.VideoId),
-                    new MySqlParameter("@name", pageDetails.Name),
-                    new MySqlParameter("@assignCity", pageDetails.AssignCity),
-                    new MySqlParameter("@assignState", pageDetails.AssignState),
-                    new MySqlParameter("@assignCountry", pageDetails.AssignCountry),
-                    new MySqlParameter("@status", pageDetails.Status),
-                    new MySqlParameter("@createdby", pageDetails.CreatedBy),
-                new MySqlParameter("@createdat", pageDetails.CreatedAt),
-            };
+                if ((pageDetails.SectionId ?? 0) <= 0)
+                {
+                    return new BaseResponse<long> { code = 400, message = "Section is required.", data = 0 };
+                }
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                const string sql = @"
+INSERT INTO managehomepagedetails
+(SectionId, LayoutTypeDetailsId, OptionId, Image, ImageAlt, IsTitleVisible, Title, SubTitle, TitlePosition, Sequence, Columns,
+ RedirectTo, CategoryId, BrandIds, SizeIds, SpecificationIds, ColorIds, CollectionId, ProductId, StaticPageId, LendingPageId,
+ CustomLinks, TitleColor, SubTitleColor, TitleSize, SubTitleSize, ItalicSubTitle, ItalicTitle, Description, SliderType, VideoLinkType,
+ VideoId, Name, AssignCity, AssignState, AssignCountry, Status, CreatedBy, CreatedAt)
+VALUES
+(@SectionId, @LayoutTypeDetailsId, @OptionId, @Image, @ImageAlt, @IsTitleVisible, @Title, @SubTitle, @TitlePosition, @Sequence, @Columns,
+ @RedirectTo, @CategoryId, @BrandIds, @SizeIds, @SpecificationIds, @ColorIds, @CollectionId, @ProductId, @StaticPageId, @LendingPageId,
+ @CustomLinks, @TitleColor, @SubTitleColor, @TitleSize, @SubTitleSize, @ItalicSubTitle, @ItalicTitle, @Description, @SliderType, @VideoLinkType,
+ @VideoId, @Name, @AssignCity, @AssignState, @AssignCountry, @Status, @CreatedBy, @CreatedAt);
+SELECT LAST_INSERT_ID();";
+                await using var cmd = new MySqlCommand(sql, con);
+                BindCommon(cmd, pageDetails, false);
+                cmd.Parameters.AddWithValue("@CreatedBy", (object?)pageDetails.CreatedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@CreatedAt", pageDetails.CreatedAt ?? DateTime.Now);
+                var id = Convert.ToInt64(await cmd.ExecuteScalarAsync() ?? 0);
+                return new BaseResponse<long> { code = 200, message = "Record added successfully.", data = id };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -104,71 +56,39 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "update"),
-                new MySqlParameter("@id", pageDetails.Id),
-                new MySqlParameter("@sectionId", pageDetails.SectionId),
-                new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                new MySqlParameter("@optionId", pageDetails.OptionId),
-                new MySqlParameter("@image", pageDetails.Image),
-                new MySqlParameter("@ImageAlt", pageDetails.ImageAlt),
-                new MySqlParameter("@isTitleVisible", pageDetails.IsTitleVisible),
-                new MySqlParameter("@title", pageDetails.Title),
-                new MySqlParameter("@subTitle", pageDetails.SubTitle),
-                new MySqlParameter("@titlePosition", pageDetails.TitlePosition),
-                new MySqlParameter("@sequence", pageDetails.Sequence),
-                new MySqlParameter("@columns", pageDetails.Columns),
-                new MySqlParameter("@redirectTo", pageDetails.RedirectTo),
-                new MySqlParameter("@categoryId", pageDetails.CategoryId),
-                new MySqlParameter("@brandIds", pageDetails.BrandIds),
-                new MySqlParameter("@sizeIds", pageDetails.SizeIds),
-                new MySqlParameter("@specificationIds", pageDetails.SpecificationIds),
-                new MySqlParameter("@colorids", pageDetails.ColorIds),
-                new MySqlParameter("@collectionId", pageDetails.CollectionId),
-                new MySqlParameter("@productId", pageDetails.ProductId),
-                new MySqlParameter("@staticPageId", pageDetails.StaticPageId),
-                new MySqlParameter("@lendingPageId", pageDetails.LendingPageId),
-                new MySqlParameter("@customLink", pageDetails.CustomLinks),
-                new MySqlParameter("@titleColor", pageDetails.TitleColor),
-                new MySqlParameter("@subTitleColor", pageDetails.SubTitleColor),
-                new MySqlParameter("@titleSize", pageDetails.TitleSize),
-                new MySqlParameter("@subTitleSize", pageDetails.SubTitleSize),
-                new MySqlParameter("@italicSubTitle", pageDetails.ItalicSubTitle),
-                new MySqlParameter("@italicTitle", pageDetails.ItalicTitle),
-                new MySqlParameter("@description", pageDetails.Description),
-                new MySqlParameter("@sliderType", pageDetails.SliderType),
-                new MySqlParameter("@videoLinkType", pageDetails.VideoLinkType),
-                new MySqlParameter("@videoId", pageDetails.VideoId),
-                new MySqlParameter("@name", pageDetails.Name),
-                new MySqlParameter("@assignCity", pageDetails.AssignCity),
-                new MySqlParameter("@assignState", pageDetails.AssignState),
-                new MySqlParameter("@assignCountry", pageDetails.AssignCountry),
-                new MySqlParameter("@status", pageDetails.Status),
-                new MySqlParameter("@modifiedby", pageDetails.ModifiedBy),
-                new MySqlParameter("@modifiedat", pageDetails.ModifiedAt),
-            };
+                if ((pageDetails.SectionId ?? 0) <= 0)
+                {
+                    return new BaseResponse<long> { code = 400, message = "Section is required.", data = 0 };
+                }
 
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                const string sql = @"
+UPDATE managehomepagedetails SET
+SectionId=@SectionId, LayoutTypeDetailsId=@LayoutTypeDetailsId, OptionId=@OptionId, Image=@Image, ImageAlt=@ImageAlt, IsTitleVisible=@IsTitleVisible,
+Title=@Title, SubTitle=@SubTitle, TitlePosition=@TitlePosition, Sequence=@Sequence, Columns=@Columns, RedirectTo=@RedirectTo, CategoryId=@CategoryId,
+BrandIds=@BrandIds, SizeIds=@SizeIds, SpecificationIds=@SpecificationIds, ColorIds=@ColorIds, CollectionId=@CollectionId, ProductId=@ProductId,
+StaticPageId=@StaticPageId, LendingPageId=@LendingPageId, CustomLinks=@CustomLinks, TitleColor=@TitleColor, SubTitleColor=@SubTitleColor,
+TitleSize=@TitleSize, SubTitleSize=@SubTitleSize, ItalicSubTitle=@ItalicSubTitle, ItalicTitle=@ItalicTitle, Description=@Description,
+SliderType=@SliderType, VideoLinkType=@VideoLinkType, VideoId=@VideoId, Name=@Name, AssignCity=@AssignCity, AssignState=@AssignState,
+AssignCountry=@AssignCountry, Status=@Status, ModifiedBy=@ModifiedBy, ModifiedAt=@ModifiedAt
+WHERE Id=@Id;";
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@Id", pageDetails.Id);
+                BindCommon(cmd, pageDetails, false);
+                cmd.Parameters.AddWithValue("@ModifiedBy", (object?)pageDetails.ModifiedBy ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ModifiedAt", pageDetails.ModifiedAt ?? DateTime.Now);
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record updated successfully." : "Record does not Exist.",
+                    data = pageDetails.Id ?? 0
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -176,33 +96,23 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", "delete"),
-                new MySqlParameter("@id", pageDetails.Id),
-                new MySqlParameter("@sectionId", pageDetails.SectionId),
-            };
-
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
-
-                MySqlParameter newid = new MySqlParameter();
-                newid.ParameterName = "@newid";
-                newid.Direction = ParameterDirection.Output;
-                newid.MySqlDbType = MySqlDbType.Int64;
-
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
-
-                return await _dataProviderHelper.ExecuteNonQueryAsync(_configuration.GetConnectionString("DBconnection"), Procedures.ManageHomePageDetails, output, newid, message, sqlParams.ToArray());
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                var deleteById = (pageDetails.Id ?? 0) > 0;
+                var sql = deleteById ? "DELETE FROM managehomepagedetails WHERE Id=@Id;" : "DELETE FROM managehomepagedetails WHERE SectionId=@SectionId;";
+                await using var cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue(deleteById ? "@Id" : "@SectionId", deleteById ? pageDetails.Id : pageDetails.SectionId);
+                var affected = await cmd.ExecuteNonQueryAsync();
+                return new BaseResponse<long>
+                {
+                    code = affected > 0 ? 200 : 204,
+                    message = affected > 0 ? "Record deleted successfully." : "Record does not Exist.",
+                    data = (pageDetails.Id ?? pageDetails.SectionId) ?? 0
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<long> { code = 400, message = ex.Message, data = 0 };
             }
         }
 
@@ -210,215 +120,239 @@ namespace Catalogue.Infrastructure.Repository
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@id", pageDetails.Id),
-                new MySqlParameter("@sectionId", pageDetails.SectionId),
-                new MySqlParameter("@layoutTypeDetailsId", pageDetails.LayoutTypeDetailsId),
-                new MySqlParameter("@optionId", pageDetails.OptionId),
-                new MySqlParameter("@sectionname", pageDetails.SectionName),
-                new MySqlParameter("@status", pageDetails.Status),
-                new MySqlParameter("@searchtext", pageDetails.SearchText),
-                new MySqlParameter("@pageIndex", PageIndex),
-                new MySqlParameter("@PageSize", PageSize),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
+                var where = new List<string>();
+                if ((pageDetails.Id ?? 0) > 0) { where.Add("d.Id=@Id"); cmd.Parameters.AddWithValue("@Id", pageDetails.Id); }
+                if ((pageDetails.SectionId ?? 0) > 0) { where.Add("d.SectionId=@SectionId"); cmd.Parameters.AddWithValue("@SectionId", pageDetails.SectionId); }
+                if ((pageDetails.LayoutTypeDetailsId ?? 0) > 0) { where.Add("d.LayoutTypeDetailsId=@LayoutTypeDetailsId"); cmd.Parameters.AddWithValue("@LayoutTypeDetailsId", pageDetails.LayoutTypeDetailsId); }
+                if ((pageDetails.OptionId ?? 0) > 0) { where.Add("d.OptionId=@OptionId"); cmd.Parameters.AddWithValue("@OptionId", pageDetails.OptionId); }
+                if (!string.IsNullOrWhiteSpace(pageDetails.SectionName)) { where.Add("s.Name LIKE @SectionName"); cmd.Parameters.AddWithValue("@SectionName", $"%{pageDetails.SectionName}%"); }
+                if (!string.IsNullOrWhiteSpace(pageDetails.Status)) { where.Add("d.Status=@Status"); cmd.Parameters.AddWithValue("@Status", pageDetails.Status); }
+                if (!string.IsNullOrWhiteSpace(pageDetails.SearchText)) { where.Add("(d.Title LIKE @Search OR d.SubTitle LIKE @Search OR s.Name LIKE @Search)"); cmd.Parameters.AddWithValue("@Search", $"%{pageDetails.SearchText}%"); }
+                var whereClause = where.Count > 0 ? $" WHERE {string.Join(" AND ", where)}" : string.Empty;
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                cmd.CommandText = $"SELECT COUNT(1) FROM managehomepagedetails d LEFT JOIN managehomepagesections s ON s.Id=d.SectionId{whereClause};";
+                var total = Convert.ToInt32(await cmd.ExecuteScalarAsync() ?? 0);
+                var safePageIndex = PageIndex <= 0 ? 1 : PageIndex;
+                var safePageSize = PageSize <= 0 ? 10 : PageSize;
+                var offset = (safePageIndex - 1) * safePageSize;
+                var pageCount = total == 0 ? 0 : (int)Math.Ceiling(total / (double)safePageSize);
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetManageHomePageDetails, LayoutParserAsync, output, newid: null, message, sqlParams.ToArray());
+                var items = new List<ManageHomePageDetailsLibrary>();
+                if (total > 0)
+                {
+                    cmd.CommandText = $@"
+SELECT d.*, s.Name AS SectionName, o.Name AS OptionName
+FROM managehomepagedetails d
+LEFT JOIN managehomepagesections s ON s.Id=d.SectionId
+LEFT JOIN layoutoptions o ON o.Id=d.OptionId
+{whereClause}
+ORDER BY d.SectionId ASC, d.Sequence ASC, d.Id DESC
+LIMIT @offset, @pageSize;";
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@pageSize", safePageSize);
+                    await using var reader = await cmd.ExecuteReaderAsync();
+                    var row = offset;
+                    while (await reader.ReadAsync())
+                    {
+                        row++;
+                        items.Add(new ManageHomePageDetailsLibrary
+                        {
+                            RowNumber = row,
+                            PageCount = pageCount,
+                            RecordCount = total,
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            SectionId = reader.GetInt32(reader.GetOrdinal("SectionId")),
+                            LayoutTypeDetailsId = GetInt(reader, "LayoutTypeDetailsId"),
+                            OptionId = GetInt(reader, "OptionId"),
+                            Image = GetString(reader, "Image"),
+                            ImageAlt = GetString(reader, "ImageAlt"),
+                            IsTitleVisible = GetBool(reader, "IsTitleVisible"),
+                            Title = GetString(reader, "Title"),
+                            SubTitle = GetString(reader, "SubTitle"),
+                            TitlePosition = GetString(reader, "TitlePosition"),
+                            Sequence = GetInt(reader, "Sequence") ?? 0,
+                            Columns = GetInt(reader, "Columns"),
+                            RedirectTo = GetString(reader, "RedirectTo"),
+                            CategoryId = GetInt(reader, "CategoryId"),
+                            BrandIds = GetString(reader, "BrandIds"),
+                            SizeIds = GetString(reader, "SizeIds"),
+                            SpecificationIds = GetString(reader, "SpecificationIds"),
+                            ColorIds = GetString(reader, "ColorIds"),
+                            CollectionId = GetInt(reader, "CollectionId"),
+                            ProductId = GetString(reader, "ProductId"),
+                            StaticPageId = GetInt(reader, "StaticPageId"),
+                            LendingPageId = GetInt(reader, "LendingPageId"),
+                            CustomLinks = GetString(reader, "CustomLinks"),
+                            TitleColor = GetString(reader, "TitleColor"),
+                            SubTitleColor = GetString(reader, "SubTitleColor"),
+                            TitleSize = GetString(reader, "TitleSize"),
+                            SubTitleSize = GetString(reader, "SubTitleSize"),
+                            ItalicSubTitle = GetBool(reader, "ItalicSubTitle"),
+                            ItalicTitle = GetBool(reader, "ItalicTitle"),
+                            Description = GetString(reader, "Description"),
+                            SliderType = GetString(reader, "SliderType"),
+                            VideoLinkType = GetString(reader, "VideoLinkType"),
+                            VideoId = GetString(reader, "VideoId"),
+                            Name = GetString(reader, "Name"),
+                            AssignCity = GetString(reader, "AssignCity"),
+                            AssignState = GetString(reader, "AssignState"),
+                            AssignCountry = GetString(reader, "AssignCountry"),
+                            Status = GetString(reader, "Status") ?? string.Empty,
+                            CreatedBy = GetString(reader, "CreatedBy"),
+                            CreatedAt = GetDate(reader, "CreatedAt"),
+                            ModifiedBy = GetString(reader, "ModifiedBy"),
+                            ModifiedAt = GetDate(reader, "ModifiedAt"),
+                            SectionName = GetString(reader, "SectionName"),
+                            OptionName = GetString(reader, "OptionName")
+                        });
+                    }
+                }
+
+                return new BaseResponse<List<ManageHomePageDetailsLibrary>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<ManageHomePageDetailsLibrary>> { code = 400, message = ex.Message, data = new List<ManageHomePageDetailsLibrary>() };
             }
-        }
-
-        private async Task<List<ManageHomePageDetailsLibrary>> LayoutParserAsync(DbDataReader reader)
-        {
-            List<ManageHomePageDetailsLibrary> lstLayouts = new List<ManageHomePageDetailsLibrary>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new ManageHomePageDetailsLibrary()
-                {
-                    PageCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("PageCount"))),
-                    RowNumber = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RowNumber"))),
-                    RecordCount = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("RecordCount"))),
-                    Id = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Id"))),
-                    SectionId = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("SectionId"))),
-                    LayoutTypeDetailsId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsId"))),
-                    OptionId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("OptionId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("OptionId"))),
-                    Image = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Image")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Image"))),
-                    ImageAlt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageAlt")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageAlt"))),
-                    IsTitleVisible = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("IsTitleVisible")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsTitleVisible"))),
-                    Title = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Title")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Title"))),
-                    SubTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitle"))),
-                    TitlePosition = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TitlePosition")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TitlePosition"))),
-                    Sequence = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Sequence"))),
-                    Columns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Columns")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Columns"))),
-                    RedirectTo = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("RedirectTo")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("RedirectTo"))),
-                    CategoryId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("CategoryId"))),
-                    BrandIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("BrandIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("BrandIds"))),
-                    SizeIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SizeIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SizeIds"))),
-                    SpecificationIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SpecificationIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SpecificationIds"))),
-                    ColorIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ColorIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ColorIds"))),
-                    CollectionId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CollectionId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("CollectionId"))),
-                    ProductId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductId")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductId"))),
-                    StaticPageId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("StaticPageId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("StaticPageId"))),
-                    LendingPageId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LendingPageId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LendingPageId"))),
-                    CustomLinks = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CustomLinks")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CustomLinks"))),
-                    TitleColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleColor"))),
-                    SubTitleColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleColor"))),
-                    TitleSize = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleSize")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleSize"))),
-                    SubTitleSize = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleSize")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleSize"))),
-                    ItalicSubTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ItalicSubTitle")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("ItalicSubTitle"))),
-                    ItalicTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ItalicTitle")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("ItalicTitle"))),
-                    Description = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Description")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Description"))),
-                    SliderType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SliderType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SliderType"))),
-                    VideoLinkType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoLinkType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoLinkType"))),
-                    VideoId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoId")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoId"))),
-                    Name = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Name")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    AssignCity = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCity")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCity"))),
-                    AssignState = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignState")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignState"))),
-                    AssignCountry = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCountry")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCountry"))),
-                    Status = Convert.ToString(reader.GetValue(reader.GetOrdinal("Status"))),
-                    CreatedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedBy"))),
-                    CreatedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CreatedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("CreatedAt"))),
-                    ModifiedBy = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedBy"))),
-                    ModifiedAt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ModifiedAt")))) ? null : Convert.ToDateTime(reader.GetValue(reader.GetOrdinal("ModifiedAt"))),
-                    SectionName = Convert.ToString(reader.GetValue(reader.GetOrdinal("SectionName"))),
-                    OptionName = Convert.ToString(reader.GetValue(reader.GetOrdinal("OptionName"))),
-                });
-            }
-            return lstLayouts;
         }
 
         public async Task<BaseResponse<List<FrontHomepageDetailsDto>>> GetFrontHomepageDetails(string Mode, string? Status = null)
         {
             try
             {
-                var sqlParams = new List<MySqlParameter>() {
-                new MySqlParameter("@mode", Mode),
-                new MySqlParameter("@status", Status),
-            };
-                MySqlParameter output = new MySqlParameter();
-                output.ParameterName = "@output";
-                output.Direction = ParameterDirection.Output;
-                output.MySqlDbType = MySqlDbType.Int32;
+                await using var con = new MySqlConnection(_connectionString);
+                await con.OpenAsync();
+                await using var cmd = new MySqlCommand { Connection = con };
+                var where = string.Empty;
+                if (!string.IsNullOrWhiteSpace(Status))
+                {
+                    where = "WHERE s.Status = @status";
+                    cmd.Parameters.AddWithValue("@status", Status);
+                }
 
-                MySqlParameter message = new MySqlParameter();
-                message.ParameterName = "@message";
-                message.Direction = ParameterDirection.Output;
-                message.MySqlDbType = MySqlDbType.VarChar;
-                message.Size = 50;
+                cmd.CommandText = $@"
+SELECT s.Id AS HomePageSectionId, s.LayoutId, s.LayoutTypeId, s.Name AS HomePageSectionName, s.Sequence AS HomePageSectionSequence,
+       s.SectionColumns, s.Title AS HomePageSectionTitle, s.SubTitle AS HomePageSectionSubTitle, s.Status AS HomePageSectionStatus,
+       s.ListType, s.TopProducts, s.CategoryId, d.Id AS HomePageSectionDetailsId, d.LayoutTypeDetailsId, d.OptionId, d.Image,
+       d.ImageAlt, d.Title AS HomePageSectionDetailsTitle, d.SubTitle AS HomePageSectionDetailsSubTitle, d.Sequence AS HomePageSectionDetailsSequence,
+       d.RedirectTo, d.ProductId, d.Status AS HomePageSectionDetailsStatus, l.Name AS LayoutName, t.Name AS LayoutTypeName,
+       td.Name AS LayoutTypeDetailsName, o.Name AS LayoutOptionName, p.ProductName, c.Name AS CategoryName, c.PathNames AS CategoryPathName
+FROM managehomepagesections s
+LEFT JOIN managehomepagedetails d ON d.SectionId = s.Id
+LEFT JOIN managelayouts l ON l.Id = s.LayoutId
+LEFT JOIN managelayouttypes t ON t.Id = s.LayoutTypeId
+LEFT JOIN managelayouttypesdetails td ON td.Id = d.LayoutTypeDetailsId
+LEFT JOIN layoutoptions o ON o.Id = d.OptionId
+LEFT JOIN productmaster p ON p.Id = d.ProductId
+LEFT JOIN categorylibrary c ON c.Id = COALESCE(d.CategoryId, s.CategoryId)
+{where}
+ORDER BY s.Sequence ASC, d.Sequence ASC, d.Id ASC;";
 
-                return await _dataProviderHelper.ExecuteReaderAsync(_configuration.GetConnectionString("DBconnection"), Procedures.GetFrontHomepageDetails, FrontHomepageDetailsAsync, output, newid: null, message, sqlParams.ToArray());
+                var items = new List<FrontHomepageDetailsDto>();
+                await using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    items.Add(new FrontHomepageDetailsDto
+                    {
+                        HomePageSectionId = GetInt(reader, "HomePageSectionId"),
+                        LayoutId = GetInt(reader, "LayoutId"),
+                        LayoutTypeId = GetInt(reader, "LayoutTypeId"),
+                        HomePageSectionName = GetString(reader, "HomePageSectionName"),
+                        HomePageSectionSequence = GetInt(reader, "HomePageSectionSequence"),
+                        SectionColumns = GetInt(reader, "SectionColumns"),
+                        HomePageSectionTitle = GetString(reader, "HomePageSectionTitle"),
+                        HomePageSectionSubTitle = GetString(reader, "HomePageSectionSubTitle"),
+                        HomePageSectionStatus = GetString(reader, "HomePageSectionStatus"),
+                        ListType = GetString(reader, "ListType"),
+                        TopProducts = GetInt(reader, "TopProducts"),
+                        CategoryId = GetInt(reader, "CategoryId"),
+                        HomePageSectionDetailsId = GetInt(reader, "HomePageSectionDetailsId"),
+                        LayoutTypeDetailsId = GetInt(reader, "LayoutTypeDetailsId"),
+                        OptionId = GetInt(reader, "OptionId"),
+                        Image = GetString(reader, "Image"),
+                        ImageAlt = GetString(reader, "ImageAlt"),
+                        HomePageSectionDetailsTitle = GetString(reader, "HomePageSectionDetailsTitle"),
+                        HomePageSectionDetailsSubTitle = GetString(reader, "HomePageSectionDetailsSubTitle"),
+                        HomePageSectionDetailsSequence = GetInt(reader, "HomePageSectionDetailsSequence"),
+                        RedirectTo = GetString(reader, "RedirectTo"),
+                        ProductId = GetString(reader, "ProductId"),
+                        HomePageSectionDetailsStatus = GetString(reader, "HomePageSectionDetailsStatus"),
+                        LayoutName = GetString(reader, "LayoutName"),
+                        LayoutTypeName = GetString(reader, "LayoutTypeName"),
+                        LayoutTypeDetailsName = GetString(reader, "LayoutTypeDetailsName"),
+                        LayoutOptionName = GetString(reader, "LayoutOptionName"),
+                        ProductName = GetString(reader, "ProductName"),
+                        CategoryName = GetString(reader, "CategoryName"),
+                        CategoryPathName = GetString(reader, "CategoryPathName")
+                    });
+                }
+
+                return new BaseResponse<List<FrontHomepageDetailsDto>>
+                {
+                    code = items.Count > 0 ? 200 : 204,
+                    message = items.Count > 0 ? "Record bind successfully." : "Record does not Exist.",
+                    data = items
+                };
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return new BaseResponse<List<FrontHomepageDetailsDto>> { code = 400, message = ex.Message, data = new List<FrontHomepageDetailsDto>() };
             }
         }
 
-        private async Task<List<FrontHomepageDetailsDto>> FrontHomepageDetailsAsync(DbDataReader reader)
+        private static void BindCommon(MySqlCommand cmd, ManageHomePageDetailsLibrary p, bool includeId)
         {
-            List<FrontHomepageDetailsDto> lstLayouts = new List<FrontHomepageDetailsDto>();
-            while (await reader.ReadAsync())
-            {
-                lstLayouts.Add(new FrontHomepageDetailsDto()
-                {
-                    HomePageSectionId = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("HomePageSectionId"))),
-                    LayoutId = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LayoutId"))),
-                    LayoutTypeId = Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LayoutTypeId"))),
-                    HomePageSectionName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionName"))),
-                    HomePageSectionSequence = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionSequence")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("HomePageSectionSequence"))),
-                    SectionColumns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SectionColumns")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("SectionColumns"))),
-                    HomePageSectionIsTitleVisible = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionIsTitleVisible")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("HomePageSectionIsTitleVisible"))),
-                    HomePageSectionTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionTitle"))),
-                    HomePageSectionSubTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionSubTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionSubTitle"))),
-                    HomePageSectionTitlePosition = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionTitlePosition")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionTitlePosition"))),
-                    HomePageSectionLinkIn = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkIn")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkIn"))),
-                    HomePageSectionLinkText = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkText")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkText"))),
-                    HomePageSectionLink = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLink")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLink"))),
-                    HomePageSectionLinkPosition = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkPosition")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionLinkPosition"))),
-                    HomePageSectionStatus = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionStatus")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionStatus"))),
-                    ListType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ListType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ListType"))),
-                    TopProducts = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TopProducts")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("TopProducts"))),
-                    TotalRowsInSection = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TotalRowsInSection")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("TotalRowsInSection"))),
-                    IsCustomGrid = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("IsCustomGrid")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsCustomGrid"))),
-                    NumberOfImages = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("NumberOfImages")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("NumberOfImages"))),
-                    Column1 = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Column1")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Column1"))),
-                    Column2 = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Column2")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Column2"))),
-                    Column3 = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Column3")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Column3"))),
-                    Column4 = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Column4")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Column4"))),
-                    CategoryId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("CategoryId"))),
-                    BackgroundColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("BackgroundColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("BackgroundColor"))),
-                    InContainer = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("InContainer")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("InContainer"))),
-                    TitleColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleColor"))),
-                    TextColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TextColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TextColor"))),
-                    HomePageSectionDetailsId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsId"))),
-                    LayoutTypeDetailsId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsId"))),
-                    OptionId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("OptionId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("OptionId"))),
-                    Image = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Image")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Image"))),
-                    ImageAlt = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageAlt")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ImageAlt"))),
-                    IsTitleVisible = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("IsTitleVisible")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("IsTitleVisible"))),
-                    HomePageSectionDetailsTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitle"))),
-                    HomePageSectionDetailsSubTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSubTitle")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSubTitle"))),
-                    HomePageSectionDetailsTitlePosition = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitlePosition")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitlePosition"))),
-                    HomePageSectionDetailsSequence = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSequence")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSequence"))),
-                    Columns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Columns")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("Columns"))),
-                    RedirectTo = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("RedirectTo")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("RedirectTo"))),
-                    HomePageSectionDetailsCategoryId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsCategoryId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsCategoryId"))),
-                    BrandIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("BrandIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("BrandIds"))),
-                    SizeIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SizeIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SizeIds"))),
-                    SpecificationIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SpecificationIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SpecificationIds"))),
-                    ColorIds = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ColorIds")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ColorIds"))),
-                    CollectionId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CollectionId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("CollectionId"))),
-                    ProductId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductId")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductId"))),
-                    StaticPageId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("StaticPageId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("StaticPageId"))),
-                    LendingPageId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LendingPageId")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LendingPageId"))),
-                    CustomLinks = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CustomLinks")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CustomLinks"))),
-                    HomePageSectionDetailsTitleColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitleColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsTitleColor"))),
-                    HomePageSectionDetailsSubTitleColor = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSubTitleColor")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsSubTitleColor"))),
-                    TitleSize = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleSize")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("TitleSize"))),
-                    SubTitleSize = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleSize")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SubTitleSize"))),
-                    ItalicSubTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ItalicSubTitle")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("ItalicSubTitle"))),
-                    ItalicTitle = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ItalicTitle")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("ItalicTitle"))),
-                    Description = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Description")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Description"))),
-                    SliderType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SliderType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SliderType"))),
-                    VideoLinkType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoLinkType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoLinkType"))),
-                    VideoId = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoId")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("VideoId"))),
-                    Name = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Name")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Name"))),
-                    AssignCity = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCity")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCity"))),
-                    AssignState = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignState")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignState"))),
-                    AssignCountry = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCountry")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("AssignCountry"))),
-                    HomePageSectionDetailsStatus = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsStatus")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("HomePageSectionDetailsStatus"))),
-                    LayoutName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutName"))),
-                    LayoutTypeName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeName"))),
-                    ClassName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ClassName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ClassName"))),
-                    Options = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("Options")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("Options"))),
-                    HasInnerColumns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("HasInnerColumns")))) ? false : Convert.ToBoolean(reader.GetValue(reader.GetOrdinal("HasInnerColumns"))),
-                    LayoutTypeColumns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeColumns")))) ? null : Convert.ToInt32(reader.GetValue(reader.GetOrdinal("LayoutTypeColumns"))),
-                    MinImage = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("MinImage")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("MinImage"))),
-                    MaxImage = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("MaxImage")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("MaxImage"))),
-                    LayoutTypeDetailsName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutTypeDetailsName"))),
-                    SectionType = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("SectionType")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("SectionType"))),
-                    InnerColumns = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("InnerColumns")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("InnerColumns"))),
-                    LayoutOptionName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutOptionName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("LayoutOptionName"))),
-                    ProductName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("ProductName"))),
-                    CategoryName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryName"))),
-                    CategoryPathName = string.IsNullOrEmpty(Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryPathName")))) ? null : Convert.ToString(reader.GetValue(reader.GetOrdinal("CategoryPathName"))),
-                });
-            }
-            return lstLayouts;
+            if (includeId) cmd.Parameters.AddWithValue("@Id", p.Id);
+            cmd.Parameters.AddWithValue("@SectionId", p.SectionId.HasValue && p.SectionId.Value > 0 ? p.SectionId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@LayoutTypeDetailsId", p.LayoutTypeDetailsId.HasValue && p.LayoutTypeDetailsId.Value > 0 ? p.LayoutTypeDetailsId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@OptionId", p.OptionId.HasValue && p.OptionId.Value > 0 ? p.OptionId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Image", (object?)p.Image ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ImageAlt", (object?)p.ImageAlt ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@IsTitleVisible", (object?)p.IsTitleVisible ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Title", (object?)p.Title ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SubTitle", (object?)p.SubTitle ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TitlePosition", (object?)p.TitlePosition ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Sequence", p.Sequence > 0 ? p.Sequence : 1);
+            cmd.Parameters.AddWithValue("@Columns", (object?)p.Columns ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@RedirectTo", (object?)p.RedirectTo ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CategoryId", p.CategoryId.HasValue && p.CategoryId.Value > 0 ? p.CategoryId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@BrandIds", (object?)p.BrandIds ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SizeIds", (object?)p.SizeIds ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SpecificationIds", (object?)p.SpecificationIds ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ColorIds", (object?)p.ColorIds ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CollectionId", p.CollectionId.HasValue && p.CollectionId.Value > 0 ? p.CollectionId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@ProductId", (object?)p.ProductId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@StaticPageId", p.StaticPageId.HasValue && p.StaticPageId.Value > 0 ? p.StaticPageId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@LendingPageId", p.LendingPageId.HasValue && p.LendingPageId.Value > 0 ? p.LendingPageId.Value : (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@CustomLinks", (object?)p.CustomLinks ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TitleColor", (object?)p.TitleColor ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SubTitleColor", (object?)p.SubTitleColor ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TitleSize", (object?)p.TitleSize ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SubTitleSize", (object?)p.SubTitleSize ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ItalicSubTitle", (object?)p.ItalicSubTitle ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ItalicTitle", (object?)p.ItalicTitle ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Description", (object?)p.Description ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SliderType", (object?)p.SliderType ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@VideoLinkType", (object?)p.VideoLinkType ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@VideoId", (object?)p.VideoId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Name", (object?)p.Name ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@AssignCity", (object?)p.AssignCity ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@AssignState", (object?)p.AssignState ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@AssignCountry", (object?)p.AssignCountry ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Status", string.IsNullOrWhiteSpace(p.Status) ? "Active" : p.Status);
         }
 
+        private static string? GetString(MySqlDataReader r, string name) => r.IsDBNull(r.GetOrdinal(name)) ? null : r.GetString(r.GetOrdinal(name));
+        private static int? GetInt(MySqlDataReader r, string name) => r.IsDBNull(r.GetOrdinal(name)) ? null : r.GetInt32(r.GetOrdinal(name));
+        private static bool? GetBool(MySqlDataReader r, string name) => r.IsDBNull(r.GetOrdinal(name)) ? null : r.GetBoolean(r.GetOrdinal(name));
+        private static DateTime? GetDate(MySqlDataReader r, string name) => r.IsDBNull(r.GetOrdinal(name)) ? null : r.GetDateTime(r.GetOrdinal(name));
     }
 }

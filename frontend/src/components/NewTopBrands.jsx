@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import Slider from './Slider'
+import { buildResourceImageUrl, imagePlaceholderUrl } from '../lib/GetBaseUrl'
 
 function NewTopBrands({ images }) {
   return (
@@ -40,11 +41,14 @@ function NewTopBrands({ images }) {
                 key={Math.floor(Math.random() * 100000)}
               >
                 <Image
-                  src={imageObj.link}
+                  src={buildResourceImageUrl(imageObj?.link)}
                   alt='image'
                   className='grid-img'
                   width={300}
                   height={300}
+                  onError={(event) => {
+                    event.currentTarget.src = imagePlaceholderUrl
+                  }}
                 />
               </Link>
             )

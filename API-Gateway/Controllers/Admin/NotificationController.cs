@@ -56,7 +56,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 BaseResponse<NotificationLibrary> _baseResponse = new BaseResponse<NotificationLibrary>();
                 AdminbaseResponse = AdminbaseResponse.JsonParseList(Adminresponse);
-                lstAdmin = (List<AdminListModel>)AdminbaseResponse.Data;
+                lstAdmin = AdminbaseResponse.Data as List<AdminListModel> ?? new List<AdminListModel>();
                 var lstadminData = lstAdmin.Where(p => p.ReceiveNotifications.Contains(model.NotificationsOf)).ToList();
                 if (lstadminData.Count > 0)
                 {

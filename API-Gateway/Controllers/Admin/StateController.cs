@@ -33,7 +33,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.State + "?name=" + model.Name + "&countryId=" + model.CountryID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<StateLibrary> tmp = (List<StateLibrary>)baseResponse.Data;
+            List<StateLibrary> tmp = baseResponse.Data as List<StateLibrary> ?? new List<StateLibrary>();
             if (tmp.Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -59,7 +59,7 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.State + "?name=" + model.Name + "&countryId=" + model.CountryID, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<StateLibrary> tmp = (List<StateLibrary>)baseResponse.Data;
+            List<StateLibrary> tmp = baseResponse.Data as List<StateLibrary> ?? new List<StateLibrary>();
             if (tmp.Where(x => x.Id != model.Id).Any())
             {
                 baseResponse = baseResponse.AlreadyExists();
@@ -68,7 +68,7 @@ namespace API_Gateway.Controllers.Admin
             {
                 var response = helper.ApiCall(URL, EndPoints.State + "?id=" + model.Id, "GET", null);
                 baseResponse = baseResponse.JsonParseRecord(response);
-                StateLibrary state = (StateLibrary)baseResponse.Data;
+                StateLibrary state = baseResponse.Data as StateLibrary;
                 state.Id = model.Id;
                 state.CountryID = model.CountryID;
                 state.Status = model.Status;
@@ -87,13 +87,13 @@ namespace API_Gateway.Controllers.Admin
         {
             var temp = helper.ApiCall(URL, EndPoints.State + "?id=" + id, "GET", null);
             baseResponse = baseResponse.JsonParseList(temp);
-            List<StateLibrary> tmp = (List<StateLibrary>)baseResponse.Data;
+            List<StateLibrary> tmp = baseResponse.Data as List<StateLibrary> ?? new List<StateLibrary>();
             if (tmp.Any())
             {
                 temp = helper.ApiCall(URL, EndPoints.City + "?stateId=" + id, "GET", null);
                 BaseResponse<CityLibrary> baseResCity = new BaseResponse<CityLibrary>();
                 var CityResponse = baseResCity.JsonParseList(temp);
-                List<CityLibrary> City = (List<CityLibrary>)CityResponse.Data;
+                List<CityLibrary> City = CityResponse.Data as List<CityLibrary> ?? new List<CityLibrary>();
                 if (City.Any())
                 {
                     baseResponse = baseResponse.ChildExists();

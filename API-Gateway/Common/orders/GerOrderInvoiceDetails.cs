@@ -46,7 +46,7 @@ namespace API_Gateway.Common.orders
             taxValuebaseResponse = taxValuebaseResponse.JsonParseList(Taxresponse);
             if(taxValuebaseResponse.code == 200)
             {
-                taxlst = (List<TaxTypeValueLibrary>)taxValuebaseResponse.Data;
+                taxlst = taxValuebaseResponse.Data as List<TaxTypeValueLibrary>;
             }
 
             
@@ -54,7 +54,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                Invoice = (List<InvoiceDto>)baseResponse.Data;
+                Invoice = baseResponse.Data as List<InvoiceDto>;
 
                 InvoiceItemDetails InvoiceProduct = BindProduct(Invoice, taxlst);
 
@@ -149,7 +149,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                Invoice = (List<InvoiceDto>)baseResponse.Data;
+                Invoice = baseResponse.Data as List<InvoiceDto>;
                 Invoice = Invoice.DistinctBy(p => p.Id).ToList();
                 foreach (var x in Invoice)
                 {
@@ -455,7 +455,7 @@ namespace API_Gateway.Common.orders
             BaseResponse<TaxMapping> TaxbaseResponse = new BaseResponse<TaxMapping>();
             var temp = helper.ApiCall(CatelogueURL, EndPoints.TaxMapping + "?taxValueId=" + taxValueId + "&PageIndex=0&PageSize=0", "GET", null);
             TaxbaseResponse = TaxbaseResponse.JsonParseList(temp);
-            List<TaxMapping> tempList = (List<TaxMapping>)TaxbaseResponse.Data;
+            List<TaxMapping> tempList = TaxbaseResponse.Data as List<TaxMapping>;
 
             List<TaxMapping> lsttaxmap = new List<TaxMapping>();
 
@@ -906,7 +906,7 @@ namespace API_Gateway.Common.orders
             baseResponse = baseResponse.JsonParseList(response);
             if (baseResponse.code == 200)
             {
-                Invoice = (List<InvoiceDto>)baseResponse.Data;
+                Invoice = baseResponse.Data as List<InvoiceDto>;
 
                 if (Invoice != null && Invoice.Count > 0)
                 {
@@ -917,7 +917,7 @@ namespace API_Gateway.Common.orders
                     taxValuebaseResponse = taxValuebaseResponse.JsonParseList(Taxresponse);
                     if (taxValuebaseResponse.code == 200)
                     {
-                        taxlst = (List<TaxTypeValueLibrary>)taxValuebaseResponse.Data;
+                        taxlst = taxValuebaseResponse.Data as List<TaxTypeValueLibrary>;
                     }
 
                     var lstInvoice = Invoice.DistinctBy(p => p.Id).ToList();

@@ -30,7 +30,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLendingPageSection + "?LendingPageId=" + LendingPageId + "&PageIndex=0&PageSize=0" + url, "GET", null);
             BaseResponse<LendingPageSections> baseResponse = new BaseResponse<LendingPageSections>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<LendingPageSections> lendingpageSection = (List<LendingPageSections>)baseResponse.Data;
+            List<LendingPageSections> lendingpageSection = baseResponse.Data as List<LendingPageSections>;
             lendingpageSection = lendingpageSection.OrderBy(x => x.Sequence).ToList();
 
             return lendingpageSection;
@@ -47,7 +47,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLendingPageSectionsDetail + "?PageIndex=0&PageSize=0&LendingPageSectionId=" + LendingPageSectionId + url, "GET", null);
             BaseResponse<LendingPageSectionDetails> baseResponse = new BaseResponse<LendingPageSectionDetails>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<LendingPageSectionDetails> lendingpageSectionDetails = (List<LendingPageSectionDetails>)baseResponse.Data;
+            List<LendingPageSectionDetails> lendingpageSectionDetails = baseResponse.Data as List<LendingPageSectionDetails>;
             lendingpageSectionDetails = lendingpageSectionDetails.OrderBy(x => x.Sequence).ToList();
 
             return lendingpageSectionDetails;
@@ -58,7 +58,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayouts + "?Id=" + id, "GET", null);
             BaseResponse<ManageLayoutsLibrary> baseResponse = new BaseResponse<ManageLayoutsLibrary>();
             baseResponse = baseResponse.JsonParseRecord(response);
-            ManageLayoutsLibrary manageLayouts = (ManageLayoutsLibrary)baseResponse.Data;
+            ManageLayoutsLibrary manageLayouts = baseResponse.Data as ManageLayoutsLibrary;
 
             return manageLayouts;
         }
@@ -68,7 +68,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayoutTypes + "?Id=" + id, "GET", null);
             BaseResponse<ManageLayoutTypesLibrary> baseResponse = new BaseResponse<ManageLayoutTypesLibrary>();
             baseResponse = baseResponse.JsonParseRecord(response);
-            ManageLayoutTypesLibrary manageLayoutType = (ManageLayoutTypesLibrary)baseResponse.Data;
+            ManageLayoutTypesLibrary manageLayoutType = baseResponse.Data as ManageLayoutTypesLibrary;
 
             return manageLayoutType;
         }
@@ -78,7 +78,7 @@ namespace API_Gateway.Common
             var response = helper.ApiCall(CatelogueURL, EndPoints.ManageLayoutTypesDetails + "?LayoutTypeId=" + LayoutTypeId, "GET", null);
             BaseResponse<ManageLayoutTypesDetails> baseResponse = new BaseResponse<ManageLayoutTypesDetails>();
             baseResponse = baseResponse.JsonParseList(response);
-            List<ManageLayoutTypesDetails> manageLayoutTypeDetails = (List<ManageLayoutTypesDetails>)baseResponse.Data;
+            List<ManageLayoutTypesDetails> manageLayoutTypeDetails = baseResponse.Data as List<ManageLayoutTypesDetails>;
 
             return manageLayoutTypeDetails;
         }
