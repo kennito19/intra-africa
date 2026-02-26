@@ -417,6 +417,18 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
               ))}
 
             <div className='res_hidd important_links-link'>
+              {/* Show Login/Signup button prominently when not logged in */}
+              {!(isloaded && user?.userId) && (
+                <li className='navbar__list'>
+                  <button
+                    className='mobile-menu-login-btn'
+                    onClick={() => setShowModal()}
+                  >
+                    LOGIN / SIGN UP
+                  </button>
+                </li>
+              )}
+              {isloaded && user?.userId && (
               <li className='navbar__list'>
                 <Link
                   className='navbar__link dropdown__icon'
@@ -430,6 +442,7 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
                   My Order
                 </Link>
               </li>
+              )}
               {isloaded && user?.userId && (
                 <li className='navbar__list'>
                   <Link

@@ -168,6 +168,10 @@ header {
 .login_image {
   @apply w-full h-24 object-cover;
 }
+/* Visible LOGIN / SIGN UP button in mobile slide-out menu */
+.mobile-menu-login-btn {
+  @apply w-full text-left text-base font-bold text-primary py-3 px-2 uppercase tracking-wide border-b border-gray-100;
+}
 .res_hidd {
   @apply md:hidden;
 }
