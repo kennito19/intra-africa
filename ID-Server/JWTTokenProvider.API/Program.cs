@@ -22,7 +22,7 @@ string[] generalScope = new string[] { "general" };
 // Add services to the container.
 var EncLoader = new EncryptionLoader();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AspNetIdentityDBContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), b => b.MigrationsAssembly("JWTTokenProvider.API")));
+builder.Services.AddDbContext<AspNetIdentityDBContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 32)), b => b.MigrationsAssembly("JWTTokenProvider.API")));
 
 
 //Change this settings to true, once we integrate email and SMS capability
