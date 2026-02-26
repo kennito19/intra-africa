@@ -111,7 +111,7 @@ const Header = ({ categoryMenu }) => {
                   className='m_nav_logo desktop_logo'
                 />
                 <img
-                  src='/images/logo.png'
+                  src='/images/mobile-logo.png'
                   alt='Intra-Africa-logo'
                   className='m_nav_logo responsive_logo'
                 />

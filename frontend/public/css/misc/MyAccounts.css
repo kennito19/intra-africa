@@ -1,5 +1,5 @@
 .my-account-wrapper{
-    @apply hidden md:flex order-2 md:order-none  items-center justify-center gap-4 md:gap-[1rem] [&>*:nth-child(4)]:hidden lg:[&>*:nth-child(4)]:block;
+    @apply flex order-2 md:order-none  items-center justify-center gap-2 md:gap-[1rem] [&>*:nth-child(4)]:hidden lg:[&>*:nth-child(4)]:block;
 }
 .my-account-link{
     @apply flex flex-col items-center justify-center ;
@@ -45,9 +45,14 @@
 }
 
 .my-account-wrapper .my-account-item:first-child{
+    @apply block;
+}
+/* Hide wishlist on mobile, show on md+ */
+.my-account-wrapper .my-account-item:nth-child(2){
     @apply hidden md:block;
 }
-.my-account-wrapper .my-account-item:not(:first-child) .my-account-link .my-account-name{
+/* Hide all account name labels on mobile */
+.my-account-wrapper .my-account-item .my-account-link .my-account-name{
     @apply hidden md:block ;
 }
 .my-account-profile-login-wrapper{
