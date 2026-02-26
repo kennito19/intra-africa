@@ -82,3 +82,7 @@
 .my-account-profile-details-list{
     @apply text-slategrey text-14 font-medium pb-3 capitalize hover:text-primary hover:font-semibold;
 }
+/* Mobile-only visible Login button */
+.mobile-login-btn {
+    @apply text-white text-sm font-semibold bg-primary rounded-full px-3 py-1 whitespace-nowrap;
+}

@@ -198,6 +198,18 @@ const MyAccount = ({ user, isloaded, toast, setToast }) => {
               </span>
             </Link>
           </li>
+
+          {/* Mobile-only visible Login button — shown when not logged in */}
+          {!userIdCookie && (
+            <li className='my-account-item block md:hidden'>
+              <button
+                className='mobile-login-btn'
+                onClick={setShowModal}
+              >
+                Login
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </>
