@@ -8,18 +8,24 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: ConnectionStrings__DBconnection
-        sync: false
       - key: ApiURLs__CatalogueApi
-        sync: false
+        value: "https://intra-catalogue.onrender.com/"
       - key: ApiURLs__IDServerApi
-        sync: false
+        value: "https://intra-idserver.onrender.com/"
       - key: ApiURLs__OrderAPI
-        sync: false
+        value: "https://intra-order.onrender.com/"
       - key: ApiURLs__UserApi
-        sync: false
+        value: "https://intra-user.onrender.com/"
       - key: ApiURLs__UserLog
-        sync: false
+        value: "https://intra-log.onrender.com/"
+      - key: JWT__ValidAudience
+        value: "https://intra-idserver.onrender.com"
+      - key: JWT__ValidIssuer
+        value: "https://intra-idserver.onrender.com"
+      - key: JWT__Secret
+        value: "fdf14ddc-1eeb-11ee-be56-0242ac120002"
+      - key: JWT__Encryption_Key_id
+        value: "aec9dac0-a291-4f21-8d0f-75cb3d339ec4"
 
   - type: web
     name: intra-catalogue
