@@ -19,7 +19,6 @@ namespace JWTTokenProvider.API.Middleware
         private string _validAudience;
         private string _validIssuer;
         private AuthHelper _encLoader;
-        private readonly AspNetIdentityDBContext _dbContext;
 
         public TokenInterceptMiddleware(RequestDelegate next, IConfiguration config)
         {
@@ -30,7 +29,7 @@ namespace JWTTokenProvider.API.Middleware
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, AspNetIdentityDBContext dBContext)
+        public async Task Invoke(HttpContext httpContext)
         {
             var authHeader = httpContext.Request.Headers["Authorization"];
 
@@ -39,6 +38,9 @@ namespace JWTTokenProvider.API.Middleware
                 await _next(httpContext);
                 return;
             }
+
+            // Lazy resolution: only get DbContext when we actually need it (avoids MySQL connection for anonymous requests)
+            var dBContext = httpContext.RequestServices.GetRequiredService<AspNetIdentityDBContext>();
 
             var deviceId = httpContext.Request.Headers["device_id"];
             if (deviceId.Count == 0)
