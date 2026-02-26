@@ -17,5 +17,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 COPY --from=build /src/JWTTokenProvider.API/StaticFiles ./StaticFiles
+COPY entrypoint.sh /entrypoint.sh
+RUN apt-get update && apt-get install -y openssh-client && rm -rf /var/lib/apt/lists/* && chmod +x /entrypoint.sh
 ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "JWTTokenProvider.API.dll"]
+ENTRYPOINT ["/entrypoint.sh", "dotnet", "JWTTokenProvider.API.dll"]
