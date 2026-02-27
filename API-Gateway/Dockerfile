@@ -14,5 +14,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 COPY --from=build /src/StaticFiles ./StaticFiles
 COPY --from=build /src/Resources ./Resources
+COPY entrypoint.sh /entrypoint.sh
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/* && sed -i 's/\r//' /entrypoint.sh && chmod +x /entrypoint.sh
 ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "API-Gateway.dll"]
+ENTRYPOINT ["/entrypoint.sh", "dotnet", "API-Gateway.dll"]
