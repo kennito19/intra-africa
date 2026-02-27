@@ -209,30 +209,29 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
             ></div>
           )}
           <ul ref={specificPartRef} className='navbar__items'>
+            {/* Mobile header: not logged in */}
             {isloaded && !user?.userId && (
               <>
-                <Link href='#.' className='res_hidd' onClick={setShowModal}>
-                  <Image
-                    src={
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT40bKdGB_AF5LvkTHyvRaW3GqCZY7G2vLN30rm8Y5ubA&usqp=CAU&ec=48600112'
-                    }
-                    className='login_image'
-                    width={100}
-                    height={100}
-                    alt='image'
+                <div className='res_hidd mobile-menu-top-bar'>
+                  <img
+                    src='/images/logo.png'
+                    alt='Intra Africa'
+                    className='mobile-menu-brand-logo'
                   />
-                </Link>
-                <MBtn
-                  buttonClass={'pv-toggle-close resimg_welclosebtn res_hidd'}
-                  withIcon
-                  iconClass={'closetoggle-icon'}
-                  onClick={() => {
-                    setIsOpen(() => false)
-                    document.body.style.overflow = ''
-                  }}
-                />
+                  <MBtn
+                    buttonClass={'pv-toggle-close'}
+                    withIcon
+                    iconClass={'closetoggle-icon'}
+                    onClick={() => {
+                      setIsOpen(() => false)
+                      document.body.style.overflow = ''
+                    }}
+                  />
+                </div>
               </>
             )}
+
+            {/* Mobile header: logged in */}
             {isloaded && user?.userId && (
               <div>
                 <ul className='res_hidd after_login_div'>
@@ -257,38 +256,10 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
                     buttonClass={'pv-toggle-close'}
                     withIcon
                     iconClass={'closetoggle-icon'}
-                    onClick={() => setIsOpen(false)}
-                  />
-                </ul>
-              </div>
-            )}
-
-            {user?.userId && (
-              <div>
-                <ul className='res_hidd after_login_div'>
-                  <li className='navbar__list li-f_fir'>
-                    <Link
-                      className='navbar__link dropdown__icon'
-                      href='/user/profile'
-                    >
-                      <i className='m-icon m-after-login_icon'></i>
-                    </Link>
-                  </li>
-                  <li className='navbar__list li-s_sec'>
-                    <Link
-                      className='navbar__link dropdown__icon'
-                      href='/user/profile'
-                    >
-                      {user?.fullName}
-                      <i className='m-icon menu-dropdown-icon'></i>
-                    </Link>
-                  </li>
-
-                  <MBtn
-                    buttonClass={'pv-toggle-close'}
-                    withIcon
-                    iconClass={'closetoggle-icon'}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                      setIsOpen(false)
+                      document.body.style.overflow = ''
+                    }}
                   />
                 </ul>
               </div>
@@ -417,7 +388,7 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
               ))}
 
             <div className='res_hidd important_links-link'>
-              {/* Show Login/Signup button prominently when not logged in */}
+              {/* LOGIN / SIGN UP at top when not logged in */}
               {!(isloaded && user?.userId) && (
                 <li className='navbar__list'>
                   <button
@@ -429,25 +400,23 @@ const HeaderMenu = ({ categoryMenu, user, isloaded }) => {
                 </li>
               )}
               {isloaded && user?.userId && (
-              <li className='navbar__list'>
-                <Link
-                  className='navbar__link dropdown__icon'
-                  href={
-                    isloaded && user?.userId ? '/user/orders?pi=1&ps=10' : '#.'
-                  }
-                  onClick={() => {
-                    setShowModal()
-                  }}
-                >
-                  My Order
-                </Link>
-              </li>
+                <li className='navbar__list'>
+                  <Link
+                    className='navbar__link dropdown__icon'
+                    href='/user/orders?pi=1&ps=10'
+                    onClick={() => {
+                      setShowModal()
+                    }}
+                  >
+                    My Order
+                  </Link>
+                </li>
               )}
               {isloaded && user?.userId && (
                 <li className='navbar__list'>
                   <Link
                     className='navbar__link dropdown__icon'
-                    href={user?.userId ? '/user/profile' : '#.'}
+                    href='/user/profile'
                     onClick={() => {
                       setShowModal()
                     }}

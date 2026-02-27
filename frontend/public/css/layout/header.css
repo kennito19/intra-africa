@@ -176,7 +176,7 @@ header {
   @apply md:hidden;
 }
 .after_login_div {
-  @apply w-full  bg-[#3f3947];
+  @apply w-full bg-[#3f3947];
 }
 .after_login_div a {
   @apply text-white;
@@ -191,17 +191,26 @@ header {
   @apply pt-1;
 }
 .m-after-login_icon {
-  @apply bg-[url('/icon/men-white.svg')] bg-no-repeat;
+  @apply bg-[url('/icon/men-white.svg')] bg-no-repeat bg-center bg-contain;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
 }
 .navbar__items .navbar__list {
   @apply md:border-none border-b ps-4 md:ps-0;
 }
-
 .important_links-link .navbar__list {
   @apply border-none;
 }
 .important_links-link .navbar__list .navbar__link {
   @apply font-normal;
+}
+/* Mobile top bar: logo + close when not logged in */
+.mobile-menu-top-bar {
+  @apply flex items-center justify-between px-4 py-3 border-b border-gray-100;
+}
+.mobile-menu-brand-logo {
+  @apply h-9 w-auto object-contain;
 }
 
 .pv-nav-menu-mobile .submenu_wrapper {
